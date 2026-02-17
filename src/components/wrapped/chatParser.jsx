@@ -17,7 +17,7 @@ const STOP_WORDS = new Set([
   'gif','sticker','audio','document','contact','location','live'
 ]);
 
-const LAUGH_PATTERNS = /\b(haha|hahaha|hahahaha|lol|lmao|lmfao|hehe|hihi)\b/gi;
+const LAUGH_PATTERNS = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|weak)\b|😂|🤣|💀|😭)/gi;
 const EMOJI_REGEX = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
 
 export function parseChatFile(text) {
@@ -103,7 +103,7 @@ function analyzeMessages(messages) {
     const words = m.content.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/).filter(w => w.length > 2 && !STOP_WORDS.has(w));
     words.forEach(w => { wordCounts[w] = (wordCounts[w] || 0) + 1; });
   });
-  const topWords = Object.entries(wordCounts).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([word, count]) => ({ word, count }));
+  const topWords = Object.entries(wordCounts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([word, count]) => ({ word, count }));
 
   const emojiCounts = {};
   participants.forEach(p => (emojiCounts[p] = {}));
@@ -137,6 +137,54 @@ function analyzeMessages(messages) {
     .sort(() => Math.random() - 0.5)
     .slice(0, 10);
 
+  // Reply times
+  const replyTimes = {};
+  participants.forEach(p => (replyTimes[p] = { total: 0, count: 0 }));
+  for (let i = 1; i < filtered.length; i++) {
+    const prev = filtered[i - 1];
+    const curr = filtered[i];
+    if (curr.sender !== prev.sender && participants.includes(curr.sender) && participants.includes(prev.sender)) {
+      const parseTime = (m) => {
+        const parts = m.date.split('/').map(Number);
+        const [mm, dd, yy] = parts;
+        const year = yy < 100 ? 2000 + yy : yy;
+        const h = m.hour;
+        const minMatch = m.time.match(/:(\d{2})/);
+        const min = minMatch ? parseInt(minMatch[1]) : 0;
+        return new Date(year, mm - 1, dd, h, min).getTime();
+      };
+      const delta = (parseTime(curr) - parseTime(prev)) / 60000; // minutes
+      if (delta > 0 && delta < 1440) {
+        replyTimes[curr.sender].total += delta;
+        replyTimes[curr.sender].count++;
+      }
+    }
+  }
+  const avgReplyTimes = {};
+  participants.forEach(p => {
+    avgReplyTimes[p] = replyTimes[p].count > 0 ? replyTimes[p].total / replyTimes[p].count : 0;
+  });
+
+  // Conversation starters (message after 6h silence)
+  const initiatorCounts = {};
+  participants.forEach(p => (initiatorCounts[p] = 0));
+  for (let i = 1; i < filtered.length; i++) {
+    const prev = filtered[i - 1];
+    const curr = filtered[i];
+    const parseTime2 = (m) => {
+      const parts = m.date.split('/').map(Number);
+      const [mm, dd, yy] = parts;
+      const year = yy < 100 ? 2000 + yy : yy;
+      const minMatch = m.time.match(/:(\d{2})/);
+      const min = minMatch ? parseInt(minMatch[1]) : 0;
+      return new Date(year, mm - 1, dd, m.hour, min).getTime();
+    };
+    const delta = (parseTime2(curr) - parseTime2(prev)) / 60000;
+    if (delta > 360 && participants.includes(curr.sender)) {
+      initiatorCounts[curr.sender]++;
+    }
+  }
+
   const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const dayCountsArr = Array(7).fill(0);
   filtered.forEach(m => {
@@ -150,7 +198,7 @@ function analyzeMessages(messages) {
   });
   const dayOfWeekData = DAY_NAMES.map((day, i) => ({ day, count: dayCountsArr[i] }));
 
-  return { participants, totalMessages: filtered.length, msgCounts, hourlyData, dayOfWeekData, topWords, signatureEmojis, laughCounts, nightOwlCounts, quotes, isMock: false };
+  return { participants, totalMessages: filtered.length, msgCounts, hourlyData, dayOfWeekData, topWords, signatureEmojis, laughCounts, nightOwlCounts, quotes, replyTimes: avgReplyTimes, initiatorCounts, isMock: false };
 }
 
 export function generateMockData() {
@@ -180,10 +228,17 @@ export function generateMockData() {
       { word: 'bruh',      count: 241 },
       { word: 'actually',  count: 198 },
       { word: 'insane',    count: 175 },
+      { word: 'lowkey',    count: 143 },
+      { word: 'bestie',    count: 121 },
+      { word: 'vibes',     count: 98 },
+      { word: 'frfr',      count: 87 },
+      { word: 'periodt',   count: 72 },
     ],
     signatureEmojis: { Alex: '😂', Jordan: '❤️' },
     laughCounts: { Alex: 423, Jordan: 189 },
     nightOwlCounts: { Alex: 234, Jordan: 567 },
+    replyTimes: { Alex: 7, Jordan: 148 },
+    initiatorCounts: { Alex: 312, Jordan: 189 },
     quotes: [
       { sender: 'Alex',   content: 'wait that actually happened??' },
       { sender: 'Jordan', content: 'i literally cannot stop laughing' },
