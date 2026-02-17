@@ -1,5 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+
+const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const ALL_EMOJIS = ['😂', '❤️', '🔥', '😭', '😍', '🙏', '💀', '😅', '🥹', '😤', '🤣', '✨', '💯', '🫶', '🤯', '😩', '🫠', '💅', '👀', '🥺'];
 
 function launchConfetti() {
   if (typeof window !== 'undefined' && window.confetti) {
@@ -7,132 +10,77 @@ function launchConfetti() {
   }
 }
 
-function QuoteQuestion({ data, onAnswer }) {
-  const quote = data.quotes[Math.floor(Math.random() * Math.min(data.quotes.length, 5))];
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function MultiChoiceQuestion({ questionNum, totalQuestions, prompt, emoji, options, correctAnswer, onAnswer }) {
   const [answered, setAnswered] = useState(null);
   const [shake, setShake] = useState(false);
 
-  const handleAnswer = (p) => {
+  const shuffledOptions = useMemo(() => shuffle(options), []);
+
+  const handleAnswer = (opt) => {
     if (answered) return;
-    const correct = p === quote.sender;
-    setAnswered({ chosen: p, correct });
+    const correct = opt === correctAnswer;
+    setAnswered({ chosen: opt, correct });
     if (correct) launchConfetti();
     else { setShake(true); setTimeout(() => setShake(false), 600); }
-    setTimeout(() => onAnswer(correct), 1500);
+    setTimeout(() => onAnswer(correct), 1600);
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8">
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-2">Trivia Round 1</p>
-        <h2 className="text-white text-2xl font-black">Who said this? 🤔</h2>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-2">
+          Round {questionNum} of {totalQuestions}
+        </p>
+        <div className="text-4xl mb-2">{emoji}</div>
+        <h2 className="text-white text-xl font-black leading-snug">{prompt}</h2>
       </motion.div>
 
       <motion.div
-        animate={shake ? { x: [-10, 10, -8, 8, -5, 5, 0], backgroundColor: ['rgba(239,68,68,0.3)', 'rgba(255,255,255,0.06)'] } : {}}
+        animate={shake ? { x: [-12, 12, -8, 8, -4, 4, 0] } : {}}
         transition={{ duration: 0.5 }}
-        initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
-        className="w-full rounded-3xl p-6 text-center"
-        style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)', border: '1px solid rgba(255,255,255,0.1)' }}>
-        <p className="text-3xl mb-3">💬</p>
-        <p className="text-white text-xl font-semibold italic">"{quote?.content}"</p>
-      </motion.div>
-
-      <div className="flex gap-3 w-full">
-        {data.participants.map((p, i) => {
-          const isChosen = answered?.chosen === p;
-          const isCorrect = answered?.correct && isChosen;
-          const isWrong = !answered?.correct && isChosen;
+        className="grid grid-cols-2 gap-3 w-full">
+        {shuffledOptions.map((opt, i) => {
+          const isChosen = answered?.chosen === opt;
+          const isCorrect = opt === correctAnswer;
+          const showCorrect = answered && isCorrect;
+          const showWrong = answered && isChosen && !isCorrect;
           return (
-            <motion.button key={p}
+            <motion.button key={opt}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.07 }}
               whileHover={!answered ? { scale: 1.04 } : {}}
               whileTap={!answered ? { scale: 0.96 } : {}}
-              onClick={() => handleAnswer(p)}
+              onClick={() => handleAnswer(opt)}
               disabled={!!answered}
-              className="flex-1 py-4 rounded-2xl font-bold text-white text-lg transition-all duration-300"
+              className="py-4 px-2 rounded-2xl font-bold text-white text-base transition-all duration-300 text-center"
               style={{
-                background: isCorrect ? 'linear-gradient(135deg, #059669, #10b981)' :
-                  isWrong ? 'linear-gradient(135deg, #dc2626, #ef4444)' :
-                    i === 0 ? 'linear-gradient(135deg, #7c3aed, #9333ea)' : 'linear-gradient(135deg, #db2777, #ec4899)',
-                opacity: answered && !isChosen ? 0.4 : 1,
+                background: showCorrect
+                  ? 'linear-gradient(135deg, #059669, #10b981)'
+                  : showWrong
+                    ? 'linear-gradient(135deg, #dc2626, #ef4444)'
+                    : 'rgba(255,255,255,0.08)',
+                border: showCorrect
+                  ? '2px solid #10b981'
+                  : showWrong
+                    ? '2px solid #ef4444'
+                    : '2px solid rgba(255,255,255,0.12)',
+                opacity: answered && !isChosen && !isCorrect ? 0.35 : 1,
               }}>
-              {isCorrect ? '✅ Correct!' : isWrong ? '❌ Wrong!' : p}
+              {showCorrect ? '✅ ' : showWrong ? '❌ ' : ''}{opt}
             </motion.button>
           );
         })}
-      </div>
-
-      {answered && (
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className={`text-center font-semibold ${answered.correct ? 'text-emerald-400' : 'text-red-400'}`}>
-          {answered.correct ? '🎉 You know each other so well!' : `It was ${quote?.sender}! Better luck next time 😅`}
-        </motion.p>
-      )}
-    </div>
-  );
-}
-
-function NightOwlQuestion({ data, onAnswer }) {
-  const [answered, setAnswered] = useState(null);
-  const [shake, setShake] = useState(false);
-  const nightOwlWinner = data.nightOwlCounts[data.participants[0]] >= data.nightOwlCounts[data.participants[1]]
-    ? data.participants[0] : data.participants[1];
-
-  const handleAnswer = (p) => {
-    if (answered) return;
-    const correct = p === nightOwlWinner;
-    setAnswered({ chosen: p, correct });
-    if (correct) launchConfetti();
-    else { setShake(true); setTimeout(() => setShake(false), 600); }
-    setTimeout(() => onAnswer(correct), 1500);
-  };
-
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8">
-      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-2">Trivia Round 2</p>
-        <h2 className="text-white text-2xl font-black">Who's the Night Owl? 🦉</h2>
-        <p className="text-white/40 text-sm mt-1">Based on messages sent after midnight</p>
       </motion.div>
 
-      <div className="flex gap-3 w-full">
-        {data.participants.map((p) => (
-          <motion.div key={p} className="flex-1 rounded-2xl p-4 text-center"
-            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
-            <p className="text-3xl mb-1">🌙</p>
-            <p className="text-white/60 text-xs">{data.nightOwlCounts[p]} late msgs</p>
-          </motion.div>
-        ))}
-      </div>
-
-      <div className="flex gap-3 w-full">
-        {data.participants.map((p, i) => {
-          const isChosen = answered?.chosen === p;
-          const isCorrect = answered?.correct && isChosen;
-          const isWrong = !answered?.correct && isChosen;
-          return (
-            <motion.button key={p}
-              whileHover={!answered ? { scale: 1.04 } : {}}
-              whileTap={!answered ? { scale: 0.96 } : {}}
-              onClick={() => handleAnswer(p)}
-              disabled={!!answered}
-              className="flex-1 py-4 rounded-2xl font-bold text-white text-lg transition-all"
-              style={{
-                background: isCorrect ? 'linear-gradient(135deg, #059669, #10b981)' :
-                  isWrong ? 'linear-gradient(135deg, #dc2626, #ef4444)' :
-                    i === 0 ? 'linear-gradient(135deg, #7c3aed, #9333ea)' : 'linear-gradient(135deg, #db2777, #ec4899)',
-                opacity: answered && !isChosen ? 0.4 : 1,
-              }}>
-              {isCorrect ? '✅ Correct!' : isWrong ? '❌ Wrong!' : p}
-            </motion.button>
-          );
-        })}
-      </div>
-
       {answered && (
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className={`text-center font-semibold ${answered.correct ? 'text-emerald-400' : 'text-red-400'}`}>
-          {answered.correct ? '🎉 You know your night owl!' : `It was ${nightOwlWinner}! They never sleep 🌙`}
+          className={`text-center font-semibold text-sm ${answered.correct ? 'text-emerald-400' : 'text-red-400'}`}>
+          {answered.correct ? '🎉 Nailed it!' : `The answer was "${correctAnswer}" 😅`}
         </motion.p>
       )}
     </div>
@@ -140,16 +88,16 @@ function NightOwlQuestion({ data, onAnswer }) {
 }
 
 function ScoreScreen({ score, total, onContinue }) {
-  useEffect(() => { if (score === total) launchConfetti(); }, []);
+  useEffect(() => { if (score >= total - 1) launchConfetti(); }, []);
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8 text-center">
       <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 10 }}
-        className="text-8xl">{score === total ? '🏆' : score > 0 ? '🤔' : '😬'}</motion.div>
+        className="text-8xl">{score === total ? '🏆' : score >= total / 2 ? '🤔' : '😬'}</motion.div>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">Trivia Results</p>
         <h2 className="text-white font-black text-4xl">{score}/{total} Correct</h2>
         <p className="text-white/50 mt-2">
-          {score === total ? 'You two are literally soulmates.' : score > 0 ? 'Not bad, you know each other pretty well!' : 'Do you even know this person? 😂'}
+          {score === total ? 'You two are literally soulmates.' : score >= total / 2 ? 'Not bad — you know each other pretty well!' : 'Do you even know this person? 😂'}
         </p>
       </motion.div>
       <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
@@ -162,8 +110,80 @@ function ScoreScreen({ score, total, onContinue }) {
   );
 }
 
+function buildQuestions(data) {
+  const qs = [];
+
+  // Q1: Who said this quote?
+  if (data.quotes && data.quotes.length > 0) {
+    const quote = data.quotes[Math.floor(Math.random() * Math.min(data.quotes.length, 6))];
+    qs.push({
+      type: 'quote',
+      prompt: `"${quote?.content}"`,
+      emoji: '💬',
+      questionLabel: 'Who said this?',
+      options: data.participants,
+      correct: quote?.sender,
+    });
+  }
+
+  // Q2: Most active day of week
+  if (data.dayOfWeekData) {
+    const topDay = data.dayOfWeekData.reduce((a, b) => b.count > a.count ? b : a, data.dayOfWeekData[0]);
+    const wrongDays = DAYS.filter(d => d !== topDay.day).sort(() => Math.random() - 0.5).slice(0, 3);
+    qs.push({
+      type: 'day',
+      prompt: 'Which day are you two most active?',
+      emoji: '📅',
+      options: [topDay.day, ...wrongDays],
+      correct: topDay.day,
+    });
+  }
+
+  // Q3: Signature emoji for participant 0
+  const p0 = data.participants[0];
+  if (data.signatureEmojis?.[p0]) {
+    const correctEmoji = data.signatureEmojis[p0];
+    const wrongEmojis = ALL_EMOJIS.filter(e => e !== correctEmoji).sort(() => Math.random() - 0.5).slice(0, 3);
+    qs.push({
+      type: 'emoji',
+      prompt: `What's ${p0}'s signature emoji?`,
+      emoji: '✨',
+      options: [correctEmoji, ...wrongEmojis],
+      correct: correctEmoji,
+    });
+  }
+
+  // Q4: Signature emoji for participant 1
+  const p1 = data.participants[1];
+  if (data.signatureEmojis?.[p1]) {
+    const correctEmoji = data.signatureEmojis[p1];
+    const wrongEmojis = ALL_EMOJIS.filter(e => e !== correctEmoji && e !== data.signatureEmojis[p0]).sort(() => Math.random() - 0.5).slice(0, 3);
+    qs.push({
+      type: 'emoji',
+      prompt: `What's ${p1}'s signature emoji?`,
+      emoji: '🎭',
+      options: [correctEmoji, ...wrongEmojis],
+      correct: correctEmoji,
+    });
+  }
+
+  // Q5: Night Owl
+  const nightOwl = (data.nightOwlCounts[data.participants[0]] || 0) >= (data.nightOwlCounts[data.participants[1]] || 0)
+    ? data.participants[0] : data.participants[1];
+  qs.push({
+    type: 'nightowl',
+    prompt: 'Who is the Night Owl? 🌙',
+    emoji: '🦉',
+    options: data.participants,
+    correct: nightOwl,
+  });
+
+  return qs.slice(0, 5);
+}
+
 export default function SlideTrivia({ data, onNext }) {
-  const [step, setStep] = useState(0); // 0=quote, 1=nightowl, 2=score
+  const questions = useMemo(() => buildQuestions(data), [data]);
+  const [step, setStep] = useState(0);
   const [score, setScore] = useState(0);
 
   const handleAnswer = useCallback((correct) => {
@@ -171,21 +191,29 @@ export default function SlideTrivia({ data, onNext }) {
     setStep(s => s + 1);
   }, []);
 
+  const total = questions.length;
+  const isScore = step >= total;
+  const q = questions[step];
+
   return (
     <AnimatePresence mode="wait">
-      {step === 0 && (
-        <motion.div key="quote" className="w-full h-full" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
-          <QuoteQuestion data={data} onAnswer={handleAnswer} />
+      {!isScore && q ? (
+        <motion.div key={`q-${step}`} className="w-full h-full"
+          initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
+          <MultiChoiceQuestion
+            questionNum={step + 1}
+            totalQuestions={total}
+            prompt={q.questionLabel || q.prompt}
+            emoji={q.emoji}
+            options={q.options}
+            correctAnswer={q.correct}
+            onAnswer={handleAnswer}
+          />
         </motion.div>
-      )}
-      {step === 1 && (
-        <motion.div key="nightowl" className="w-full h-full" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
-          <NightOwlQuestion data={data} onAnswer={handleAnswer} />
-        </motion.div>
-      )}
-      {step === 2 && (
-        <motion.div key="score" className="w-full h-full" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
-          <ScoreScreen score={score} total={2} onContinue={onNext} />
+      ) : (
+        <motion.div key="score" className="w-full h-full"
+          initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
+          <ScoreScreen score={score} total={total} onContinue={onNext} />
         </motion.div>
       )}
     </AnimatePresence>
