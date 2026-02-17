@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Star, FileText, Flame } from 'lucide-react';
 
@@ -33,7 +34,6 @@ export default function SlidePaywall({ data }) {
         </div>
 
         <div className="p-6 space-y-4">
-          {/* Features */}
           {[
             { icon: <Flame size={16} />, label: 'Roast Mode', desc: 'Savage AI analysis of your chat' },
             { icon: <FileText size={16} />, label: 'PDF Export', desc: 'Beautiful shareable report' },
@@ -52,13 +52,11 @@ export default function SlidePaywall({ data }) {
             </motion.div>
           ))}
 
-          {/* Price */}
           <div className="flex items-baseline justify-center gap-1 pt-2">
             <span className="text-white/40 text-sm line-through">$9.99</span>
             <span className="text-white font-black text-4xl">$4.99</span>
           </div>
 
-          {/* CTA */}
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
@@ -80,5 +78,3 @@ export default function SlidePaywall({ data }) {
     </div>
   );
 }
-
-import { useState } from 'react';
