@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Zap, Star, FileText, Flame } from 'lucide-react';
 
-export default function SlidePaywall({ data }) {
+export default function SlidePaywall({ data, onUnlock }) {
   const [clicked, setClicked] = useState(false);
 
   return (
@@ -60,11 +60,11 @@ export default function SlidePaywall({ data }) {
           <motion.button
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
-            onClick={() => setClicked(true)}
+            onClick={() => { setClicked(true); setTimeout(() => onUnlock && onUnlock(), 1200); }}
             className="w-full py-4 rounded-2xl font-black text-white text-lg flex items-center justify-center gap-2 transition-all"
             style={{ background: 'linear-gradient(135deg, #7c3aed, #db2777)' }}>
             <Zap size={20} className="text-yellow-300" />
-            {clicked ? 'Coming Soon 🚀' : 'Unlock Full Report'}
+            {clicked ? '✅ Unlocking...' : 'Unlock Full Report'}
           </motion.button>
 
           <p className="text-center text-white/30 text-xs">One-time payment · No subscription</p>
