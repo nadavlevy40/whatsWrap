@@ -8,8 +8,9 @@ import SlideVibeCheck from './SlideVibeCheck';
 import SlideEmotions from './SlideEmotions';
 import SlideTrivia from './SlideTrivia';
 import SlidePaywall from './SlidePaywall';
+import SlideShare from './SlideShare';
 
-const SLIDES = ['volume', 'chatterbox', 'vibe', 'emotions', 'trivia', 'paywall'];
+const SLIDES = ['volume', 'chatterbox', 'vibe', 'emotions', 'trivia', 'paywall', 'share'];
 
 export default function StoryContainer({ data, onRestart }) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -61,7 +62,8 @@ export default function StoryContainer({ data, onRestart }) {
                 {slideKey === 'trivia' && (
                   <SlideTrivia data={data} onNext={goNext} />
                 )}
-                {slideKey === 'paywall' && <SlidePaywall data={data} />}
+                {slideKey === 'paywall' && <SlidePaywall data={data} onUnlock={goNext} />}
+                {slideKey === 'share' && <SlideShare data={data} onRestart={onRestart} />}
               </div>
             </StorySlide>
           </AnimatePresence>
