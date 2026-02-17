@@ -12,8 +12,6 @@ if (typeof window !== 'undefined' && !window.confetti) {
   document.head.appendChild(script);
 }
 
-type Phase = 'landing' | 'loading' | 'story';
-
 export default function Home() {
   const [phase, setPhase] = useState('landing');
   const [chatData, setChatData] = useState(null);
