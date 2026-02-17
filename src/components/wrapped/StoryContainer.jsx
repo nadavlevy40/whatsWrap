@@ -6,11 +6,14 @@ import SlideVolume from './SlideVolume';
 import SlideChatterbox from './SlideChatterbox';
 import SlideVibeCheck from './SlideVibeCheck';
 import SlideEmotions from './SlideEmotions';
+import SlideWordPodium from './SlideWordPodium';
+import SlideLOLMeter from './SlideLOLMeter';
+import SlideGhostInitiator from './SlideGhostInitiator';
 import SlideTrivia from './SlideTrivia';
 import SlidePaywall from './SlidePaywall';
 import SlideShare from './SlideShare';
 
-const SLIDES = ['volume', 'chatterbox', 'vibe', 'emotions', 'trivia', 'paywall', 'share'];
+const SLIDES = ['volume', 'chatterbox', 'podium', 'lol', 'ghost', 'emotions', 'trivia', 'paywall', 'share'];
 
 export default function StoryContainer({ data, onRestart }) {
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -58,6 +61,9 @@ export default function StoryContainer({ data, onRestart }) {
                 {slideKey === 'volume' && <SlideVolume data={data} />}
                 {slideKey === 'chatterbox' && <SlideChatterbox data={data} />}
                 {slideKey === 'vibe' && <SlideVibeCheck data={data} />}
+                {slideKey === 'podium' && <SlideWordPodium data={data} />}
+                {slideKey === 'lol' && <SlideLOLMeter data={data} />}
+                {slideKey === 'ghost' && <SlideGhostInitiator data={data} />}
                 {slideKey === 'emotions' && <SlideEmotions data={data} />}
                 {slideKey === 'trivia' && (
                   <SlideTrivia data={data} onNext={goNext} />
