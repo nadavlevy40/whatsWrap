@@ -1,5 +1,6 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Lock, Zap, Star, FileText, Flame } from 'lucide-react';
+import { Zap, Star, FileText, Flame } from 'lucide-react';
 
 export default function SlidePaywall({ data }) {
   const [clicked, setClicked] = useState(false);
