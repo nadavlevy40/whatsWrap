@@ -137,7 +137,20 @@ function analyzeMessages(messages) {
     .sort(() => Math.random() - 0.5)
     .slice(0, 10);
 
-  return { participants, totalMessages: filtered.length, msgCounts, hourlyData, topWords, signatureEmojis, laughCounts, nightOwlCounts, quotes, isMock: false };
+  const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const dayCountsArr = Array(7).fill(0);
+  filtered.forEach(m => {
+    const parts = m.date.split('/');
+    if (parts.length >= 3) {
+      let [mm, dd, yy] = parts.map(Number);
+      const year = yy < 100 ? 2000 + yy : yy;
+      const d = new Date(year, mm - 1, dd);
+      if (!isNaN(d)) dayCountsArr[d.getDay()]++;
+    }
+  });
+  const dayOfWeekData = DAY_NAMES.map((day, i) => ({ day, count: dayCountsArr[i] }));
+
+  return { participants, totalMessages: filtered.length, msgCounts, hourlyData, dayOfWeekData, topWords, signatureEmojis, laughCounts, nightOwlCounts, quotes, isMock: false };
 }
 
 export function generateMockData() {
