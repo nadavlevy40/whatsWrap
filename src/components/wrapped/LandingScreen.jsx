@@ -120,6 +120,13 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
           <span className="text-emerald-400/70 text-xs font-medium">100% Secure · Offline Processing · Nothing Leaves Your Device</span>
         </motion.div>
       </div>
+
+      {/* Below-fold sections */}
+      <LandingFeatures />
+      <LandingSneakPeeks />
+      <LandingTestimonials />
+
+      {showGuide && <ExportGuideModal onClose={() => setShowGuide(false)} />}
     </div>
   );
 }
