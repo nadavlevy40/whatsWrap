@@ -5,7 +5,6 @@ import ExportGuideModal from './ExportGuideModal';
 
 export default function LandingScreen({ onFileUpload, onUseMockData }) {
   const [isDragging, setIsDragging] = useState(false);
-  const [showGuide, setShowGuide] = useState(false);
   const fileRef = useRef(null);
 
   const handleDrop = (e) => {
@@ -81,17 +80,6 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
             </div>
             <input ref={fileRef} type="file" accept=".txt" className="hidden" onChange={handleFileChange} />
           </div>
-        </motion.div>
-
-        {/* Export guide link */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 }}>
-          <button
-            onClick={() => setShowGuide(true)}
-            className="flex items-center gap-1.5 text-white/40 hover:text-white/70 transition-colors text-xs mx-auto"
-          >
-            <HelpCircle size={13} />
-            <span>Need help exporting your chat? <span className="underline underline-offset-2">View Guide.</span></span>
-          </button>
         </motion.div>
 
         {/* Divider */}
