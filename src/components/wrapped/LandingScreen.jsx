@@ -111,8 +111,6 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
           <ChevronRight size={18} className="opacity-70" />
         </motion.button>
 
-        {showGuide && <ExportGuideModal onClose={() => setShowGuide(false)} />}
-
         {/* Privacy Badge */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
           className="flex items-center gap-2">
