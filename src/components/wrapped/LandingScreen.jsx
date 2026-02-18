@@ -28,7 +28,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
       style={{ background: 'linear-gradient(135deg, #0f0c29 0%, #1a0533 40%, #24074a 100%)' }}>
 
       {/* Ambient orbs */}
-      <div className="fixed inset-0 pointer-events-none" style={{ zIndex: 0 }}>
+      <div className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
         <motion.div animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }} transition={{ duration: 6, repeat: Infinity }}
           className="absolute top-[-10%] left-[-10%] w-[500px] h-[500px] rounded-full"
           style={{ background: 'radial-gradient(circle, rgba(147,51,234,0.4) 0%, transparent 70%)' }} />
