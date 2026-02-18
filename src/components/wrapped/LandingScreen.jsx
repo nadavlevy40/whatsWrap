@@ -40,7 +40,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
           style={{ background: 'radial-gradient(circle, rgba(59,130,246,0.25) 0%, transparent 70%)' }} />
       </div>
 
-      <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center gap-10">
+      <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center gap-10 min-h-screen justify-center py-16">
         {/* Badge */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5">
