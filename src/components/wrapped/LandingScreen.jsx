@@ -24,7 +24,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
   };
 
   return (
-    <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden"
+    <div className="w-full flex flex-col items-center relative overflow-x-hidden"
       style={{ background: 'linear-gradient(135deg, #0f0c29 0%, #1a0533 40%, #24074a 100%)' }}>
 
       {/* Ambient orbs */}
