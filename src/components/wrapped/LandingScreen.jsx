@@ -21,6 +21,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
   };
 
   return (
+    <>
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden"
       style={{ background: 'linear-gradient(135deg, #0f0c29 0%, #1a0533 40%, #24074a 100%)' }}>
 
@@ -83,6 +84,17 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
           </div>
         </motion.div>
 
+        {/* Export guide link */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.75 }}>
+          <button
+            onClick={() => setShowGuide(true)}
+            className="flex items-center gap-1.5 text-white/40 hover:text-white/70 transition-colors text-xs mx-auto"
+          >
+            <HelpCircle size={13} />
+            <span>Need help exporting your chat? <span className="underline underline-offset-2">View Guide.</span></span>
+          </button>
+        </motion.div>
+
         {/* Divider */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="flex items-center gap-4 w-full">
           <div className="flex-1 h-px bg-white/10" />
@@ -108,5 +120,8 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
         </motion.div>
       </div>
     </div>
+
+    {showGuide && <ExportGuideModal onClose={() => setShowGuide(false)} />}
+    </>
   );
 }
