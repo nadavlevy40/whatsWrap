@@ -2,6 +2,9 @@ import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Shield, Upload, Zap, ChevronRight, HelpCircle } from 'lucide-react';
 import ExportGuideModal from './ExportGuideModal';
+import LandingFeatures from './LandingFeatures';
+import LandingTestimonials from './LandingTestimonials';
+import LandingSneakPeeks from './LandingSneakPeeks';
 
 export default function LandingScreen({ onFileUpload, onUseMockData }) {
   const [isDragging, setIsDragging] = useState(false);
