@@ -198,7 +198,97 @@ function analyzeMessages(messages) {
   });
   const dayOfWeekData = DAY_NAMES.map((day, i) => ({ day, count: dayCountsArr[i] }));
 
-  return { participants, totalMessages: filtered.length, msgCounts, hourlyData, dayOfWeekData, topWords, signatureEmojis, laughCounts, nightOwlCounts, quotes, replyTimes: avgReplyTimes, initiatorCounts, isMock: false };
+  // Media counts (images, stickers, videos, gifs)
+  const mediaCounts = {};
+  participants.forEach(p => (mediaCounts[p] = 0));
+  filtered.forEach(m => {
+    if (m.content.includes('omitted') || /\.(jpg|jpeg|png|gif|mp4|webp)/i.test(m.content)) {
+      if (mediaCounts[m.sender] !== undefined) mediaCounts[m.sender]++;
+    }
+  });
+
+  // Caps lock counts
+  const capsLockCounts = {};
+  participants.forEach(p => (capsLockCounts[p] = 0));
+  filtered.forEach(m => {
+    const words = m.content.split(/\s+/);
+    words.forEach(w => {
+      if (w.length >= 3 && w === w.toUpperCase() && /[A-Z]/.test(w)) {
+        if (capsLockCounts[m.sender] !== undefined) capsLockCounts[m.sender]++;
+      }
+    });
+  });
+
+  // Organizer score (dinner, time, when, plan, meet, schedule, where, tomorrow, tonight, today)
+  const ORGANIZER_WORDS = new Set(['dinner', 'lunch', 'meeting', 'meet', 'plan', 'plans', 'schedule', 'tomorrow', 'tonight', 'today', 'where', 'when', 'come', 'coming', 'join', 'time', 'date', 'birthday', 'party', 'event']);
+  const organizerScore = {};
+  participants.forEach(p => (organizerScore[p] = 0));
+  filtered.forEach(m => {
+    const words = m.content.toLowerCase().split(/\s+/);
+    words.forEach(w => {
+      if (ORGANIZER_WORDS.has(w) && organizerScore[m.sender] !== undefined) organizerScore[m.sender]++;
+    });
+  });
+
+  // Summoning spells: find low-activity users and what triggers them
+  const allParticipants = sortedSenders.map(([name]) => name);
+  const summoningSpells = [];
+  if (allParticipants.length > 2) {
+    const avgMsg = userMessages.length / allParticipants.length;
+    const lowActivity = allParticipants.filter(p => (senderCounts[p] || 0) < avgMsg * 0.5);
+    
+    lowActivity.slice(0, 2).forEach(targetUser => {
+      const triggerWords = {};
+      const allFiltered = userMessages.filter(m => 
+        !m.content.includes('end-to-end encrypted') && !m.content.includes('Messages and calls')
+      );
+      
+      for (let i = 1; i < allFiltered.length; i++) {
+        if (allFiltered[i].sender === targetUser) {
+          // Look at previous 3 messages
+          for (let j = Math.max(0, i - 3); j < i; j++) {
+            const words = allFiltered[j].content.toLowerCase()
+              .replace(/[^a-z\s]/g, ' ').split(/\s+/)
+              .filter(w => w.length > 3 && !STOP_WORDS.has(w));
+            words.forEach(w => { triggerWords[w] = (triggerWords[w] || 0) + 1; });
+          }
+        }
+      }
+      
+      const topTriggers = Object.entries(triggerWords).sort((a, b) => b[1] - a[1]).slice(0, 3);
+      if (topTriggers.length > 0) {
+        summoningSpells.push({
+          user: targetUser,
+          keywords: topTriggers.map(([w]) => w),
+          activations: topTriggers[0][1],
+        });
+      }
+    });
+  }
+
+  const suggestedMode = allParticipants.length > 2 ? 'friends' : 'couple';
+
+  return { 
+    participants, 
+    allParticipants,
+    totalMessages: filtered.length, 
+    msgCounts, 
+    hourlyData, 
+    dayOfWeekData, 
+    topWords, 
+    signatureEmojis, 
+    laughCounts, 
+    nightOwlCounts, 
+    quotes, 
+    replyTimes: avgReplyTimes, 
+    initiatorCounts, 
+    mediaCounts,
+    capsLockCounts,
+    organizerScore,
+    summoningSpells,
+    suggestedMode,
+    isMock: false 
+  };
 }
 
 export function generateMockData() {
