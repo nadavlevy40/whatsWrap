@@ -2,30 +2,49 @@ import { useState, useCallback } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import ProgressBar from './ProgressBar';
 import StorySlide from './StorySlide';
+
+// Couple slides
 import SlideVolume from './SlideVolume';
 import SlideChatterbox from './SlideChatterbox';
-import SlideVibeCheck from './SlideVibeCheck';
-import SlideEmotions from './SlideEmotions';
 import SlideWordPodium from './SlideWordPodium';
 import SlideLOLMeter from './SlideLOLMeter';
 import SlideGhostInitiator from './SlideGhostInitiator';
+import SlideEmotions from './SlideEmotions';
 import SlideTrivia from './SlideTrivia';
+
+// Family slides
+import SlideFamilyMediaMogul from './SlideFamilyMediaMogul';
+import SlideFamilyGhost from './SlideFamilyGhost';
+import SlideFamilyCapsLock from './SlideFamilyCapsLock';
+import SlideFamilyAwards from './SlideFamilyAwards';
+
+// Friends slides
+import SlideFriendsRoastMaster from './SlideFriendsRoastMaster';
+import SlideFriendsNightShift from './SlideFriendsNightShift';
+import SlideFriendsSummoningSpell from './SlideFriendsSummoningSpell';
+
+// Shared
 import SlidePaywall from './SlidePaywall';
 import SlideShare from './SlideShare';
 
-const SLIDES = ['volume', 'chatterbox', 'podium', 'lol', 'ghost', 'emotions', 'trivia', 'paywall', 'share'];
+const SLIDE_SETS = {
+  couple: ['volume', 'chatterbox', 'podium', 'lol', 'ghost', 'emotions', 'trivia', 'paywall', 'share'],
+  family: ['volume', 'family-media', 'family-ghost', 'family-caps', 'family-awards', 'paywall', 'share'],
+  friends: ['volume', 'chatterbox', 'friends-roast', 'friends-night', 'friends-summon', 'podium', 'paywall', 'share'],
+};
 
-export default function StoryContainer({ data, onRestart }) {
+export default function StoryContainer({ data, mode, onRestart }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [triviaComplete, setTriviaComplete] = useState(false);
+
+  const SLIDES = SLIDE_SETS[mode] || SLIDE_SETS.couple;
 
   const goNext = useCallback(() => {
     if (currentSlide < SLIDES.length - 1) {
       setDirection(1);
       setCurrentSlide(s => s + 1);
     }
-  }, [currentSlide]);
+  }, [currentSlide, SLIDES.length]);
 
   const goPrev = useCallback(() => {
     if (currentSlide > 0) {
@@ -43,39 +62,44 @@ export default function StoryContainer({ data, onRestart }) {
 
   const slideKey = SLIDES[currentSlide];
 
-  return (
-    <div className="fixed inset-0 flex items-center justify-center"
-      style={{ background: '#000' }}>
-      {/* Phone frame on desktop */}
-      <div className="relative w-full h-full max-w-sm mx-auto overflow-hidden"
-        style={{ maxHeight: '100dvh' }}>
+  const renderSlide = () => {
+    switch (slideKey) {
+      case 'volume':        return <SlideVolume data={data} />;
+      case 'chatterbox':    return <SlideChatterbox data={data} />;
+      case 'podium':        return <SlideWordPodium data={data} />;
+      case 'lol':           return <SlideLOLMeter data={data} />;
+      case 'ghost':         return <SlideGhostInitiator data={data} />;
+      case 'emotions':      return <SlideEmotions data={data} />;
+      case 'trivia':        return <SlideTrivia data={data} onNext={goNext} />;
+      case 'family-media':  return <SlideFamilyMediaMogul data={data} />;
+      case 'family-ghost':  return <SlideFamilyGhost data={data} />;
+      case 'family-caps':   return <SlideFamilyCapsLock data={data} />;
+      case 'family-awards': return <SlideFamilyAwards data={data} />;
+      case 'friends-roast': return <SlideFriendsRoastMaster data={data} />;
+      case 'friends-night': return <SlideFriendsNightShift data={data} />;
+      case 'friends-summon':return <SlideFriendsSummoningSpell data={data} />;
+      case 'paywall':       return <SlidePaywall data={data} onUnlock={goNext} />;
+      case 'share':         return <SlideShare data={data} onRestart={onRestart} />;
+      default:              return null;
+    }
+  };
 
-        {/* Progress bars */}
+  return (
+    <div className="fixed inset-0 flex items-center justify-center" style={{ background: '#000' }}>
+      <div className="relative w-full h-full max-w-sm mx-auto overflow-hidden" style={{ maxHeight: '100dvh' }}>
+
         <ProgressBar total={SLIDES.length} current={currentSlide} />
 
-        {/* Slides */}
         <div className="absolute inset-0 pt-10" onClick={handleTapZone}>
           <AnimatePresence mode="wait" custom={direction}>
             <StorySlide key={slideKey} index={currentSlide} direction={direction}>
               <div className="flex-1 flex flex-col h-full overflow-y-auto">
-                {slideKey === 'volume' && <SlideVolume data={data} />}
-                {slideKey === 'chatterbox' && <SlideChatterbox data={data} />}
-                {slideKey === 'vibe' && <SlideVibeCheck data={data} />}
-                {slideKey === 'podium' && <SlideWordPodium data={data} />}
-                {slideKey === 'lol' && <SlideLOLMeter data={data} />}
-                {slideKey === 'ghost' && <SlideGhostInitiator data={data} />}
-                {slideKey === 'emotions' && <SlideEmotions data={data} />}
-                {slideKey === 'trivia' && (
-                  <SlideTrivia data={data} onNext={goNext} />
-                )}
-                {slideKey === 'paywall' && <SlidePaywall data={data} onUnlock={goNext} />}
-                {slideKey === 'share' && <SlideShare data={data} onRestart={onRestart} />}
+                {renderSlide()}
               </div>
             </StorySlide>
           </AnimatePresence>
         </div>
 
-        {/* Tap hints - small arrows */}
         {currentSlide > 0 && (
           <button onClick={(e) => { e.stopPropagation(); goPrev(); }}
             className="absolute left-2 top-1/2 -translate-y-1/2 z-50 w-8 h-16 flex items-center justify-center opacity-30 hover:opacity-60 transition-opacity">
@@ -89,7 +113,6 @@ export default function StoryContainer({ data, onRestart }) {
           </button>
         )}
 
-        {/* Restart */}
         <button onClick={onRestart}
           className="absolute top-6 right-4 z-50 text-white/40 hover:text-white/80 text-xs transition-colors">
           ✕
