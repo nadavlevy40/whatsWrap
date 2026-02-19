@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import LandingScreen from '../components/wrapped/LandingScreen';
 import LoadingScreen from '../components/wrapped/LoadingScreen';
 import StoryContainer from '../components/wrapped/StoryContainer';
+import ModeSelector from '../components/wrapped/ModeSelector';
 import { parseChatFile, generateMockData } from '../components/wrapped/chatParser';
 
 // Load confetti lazily
