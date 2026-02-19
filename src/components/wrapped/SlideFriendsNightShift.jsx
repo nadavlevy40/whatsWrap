@@ -6,8 +6,6 @@ export default function SlideFriendsNightShift({ data }) {
   const winner = sorted[0];
   const max = nightOwlCounts[winner] || 1;
 
-  const HOURS = ['12am', '1am', '2am', '3am', '4am'];
-
   return (
     <div className="flex flex-col h-full px-6 pt-10 pb-6 gap-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -18,13 +16,13 @@ export default function SlideFriendsNightShift({ data }) {
 
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }}
-        className="rounded-3xl p-6 flex flex-col items-center gap-3"
+        className="rounded-3xl p-6 text-center"
         style={{ background: 'rgba(99,102,241,0.15)', border: '1.5px solid rgba(99,102,241,0.4)' }}
       >
-        <div className="text-5xl">🌙</div>
+        <div className="text-5xl mb-3">🌙</div>
         <p className="text-indigo-300 font-black text-2xl">{winner}</p>
-        <p className="text-white/50 text-sm">{nightOwlCounts[winner] || 0} messages past midnight</p>
-        <p className="text-white/30 text-xs italic text-center">"Sleep is for people who don't have group chats"</p>
+        <p className="text-white/50 text-sm mt-1">{nightOwlCounts[winner] || 0} messages after midnight</p>
+        <p className="text-white/30 text-xs mt-2 italic">"Sleep is overrated anyway"</p>
       </motion.div>
 
       <div className="flex flex-col gap-3 flex-1">
