@@ -16,6 +16,7 @@ if (typeof window !== 'undefined' && !window.confetti) {
 export default function Home() {
   const [phase, setPhase] = useState('landing');
   const [chatData, setChatData] = useState(null);
+  const [mode, setMode] = useState('couple');
   const [error, setError] = useState(null);
 
   const handleFileUpload = useCallback((file) => {
@@ -26,9 +27,12 @@ export default function Home() {
       const data = parseChatFile(text);
       if (!data || data.participants.length < 2) {
         setError("Couldn't parse this file. Make sure it's a WhatsApp export (.txt). Using demo data instead.");
-        setChatData(generateMockData());
+        const mock = generateMockData('couple');
+        setChatData(mock);
+        setMode(mock.suggestedMode || 'couple');
       } else {
         setChatData(data);
+        setMode(data.suggestedMode || 'couple');
       }
       setPhase('loading');
     };
@@ -36,11 +40,19 @@ export default function Home() {
   }, []);
 
   const handleMockData = useCallback(() => {
-    setChatData(generateMockData());
+    // Default couple mock; mode selection happens after loading
+    const mock = generateMockData('couple');
+    setChatData(mock);
+    setMode(mock.suggestedMode || 'couple');
     setPhase('loading');
   }, []);
 
   const handleLoadingComplete = useCallback(() => {
+    setPhase('mode-select');
+  }, []);
+
+  const handleModeSelect = useCallback((selectedMode) => {
+    setMode(selectedMode);
     setPhase('story');
   }, []);
 
