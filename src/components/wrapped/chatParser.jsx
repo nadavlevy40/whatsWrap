@@ -291,10 +291,18 @@ function analyzeMessages(messages) {
   };
 }
 
-export function generateMockData() {
+export function generateMockData(mode = 'couple') {
+  if (mode === 'family') return generateFamilyMockData();
+  if (mode === 'friends') return generateFriendsMockData();
+  return generateCoupleMockData();
+}
+
+function generateCoupleMockData() {
   const participants = ['Alex', 'Jordan'];
   return {
     participants,
+    allParticipants: participants,
+    suggestedMode: 'couple',
     totalMessages: 14382,
     msgCounts: { Alex: 7841, Jordan: 6541 },
     hourlyData: Array.from({ length: 24 }, (_, h) => ({
@@ -327,6 +335,10 @@ export function generateMockData() {
     signatureEmojis: { Alex: '😂', Jordan: '❤️' },
     laughCounts: { Alex: 423, Jordan: 189 },
     nightOwlCounts: { Alex: 234, Jordan: 567 },
+    mediaCounts: { Alex: 312, Jordan: 148 },
+    capsLockCounts: { Alex: 89, Jordan: 34 },
+    organizerScore: { Alex: 120, Jordan: 44 },
+    summoningSpells: [],
     replyTimes: { Alex: 7, Jordan: 148 },
     initiatorCounts: { Alex: 312, Jordan: 189 },
     quotes: [
@@ -337,6 +349,121 @@ export function generateMockData() {
       { sender: 'Alex',   content: 'we need to talk about this rn' },
       { sender: 'Jordan', content: 'okay but why does this always happen to us' },
       { sender: 'Alex',   content: 'this is actually so unhinged lmao' },
+    ],
+    isMock: true,
+  };
+}
+
+function generateFamilyMockData() {
+  const participants = ['Mom', 'Dad', 'Sarah', 'Tom', 'Gran'];
+  return {
+    participants,
+    allParticipants: participants,
+    suggestedMode: 'family',
+    totalMessages: 28741,
+    msgCounts: { Mom: 9200, Dad: 4100, Sarah: 7800, Tom: 5900, Gran: 1741 },
+    hourlyData: Array.from({ length: 24 }, (_, h) => ({
+      hour: h,
+      total: Math.floor(Math.random() * 200 + 50),
+      ...Object.fromEntries(participants.map(p => [p, Math.floor(Math.random() * 80 + 5)])),
+    })),
+    dayOfWeekData: [
+      { day: 'Sunday',    count: 4800 },
+      { day: 'Monday',    count: 3200 },
+      { day: 'Tuesday',   count: 2900 },
+      { day: 'Wednesday', count: 3100 },
+      { day: 'Thursday',  count: 3400 },
+      { day: 'Friday',    count: 5200 },
+      { day: 'Saturday',  count: 6141 },
+    ],
+    topWords: [
+      { word: 'dinner', count: 412 },
+      { word: 'tomorrow', count: 320 },
+      { word: 'love', count: 290 },
+      { word: 'coming', count: 245 },
+      { word: 'meeting', count: 200 },
+      { word: 'birthday', count: 178 },
+      { word: 'sunday', count: 154 },
+      { word: 'food', count: 131 },
+      { word: 'beautiful', count: 110 },
+      { word: 'holiday', count: 88 },
+    ],
+    signatureEmojis: { Mom: '❤️', Dad: '👍', Sarah: '😂', Tom: '🔥', Gran: '🌹' },
+    laughCounts: { Mom: 210, Dad: 80, Sarah: 540, Tom: 320, Gran: 45 },
+    nightOwlCounts: { Mom: 12, Dad: 8, Sarah: 290, Tom: 180, Gran: 2 },
+    mediaCounts: { Mom: 1240, Dad: 320, Sarah: 450, Tom: 280, Gran: 88 },
+    capsLockCounts: { Mom: 340, Dad: 510, Sarah: 120, Tom: 200, Gran: 60 },
+    organizerScore: { Mom: 480, Dad: 120, Sarah: 90, Tom: 60, Gran: 20 },
+    summoningSpells: [],
+    replyTimes: { Mom: 3, Dad: 45, Sarah: 8, Tom: 22, Gran: 180 },
+    initiatorCounts: { Mom: 520, Dad: 200, Sarah: 310, Tom: 180, Gran: 40 },
+    quotes: [
+      { sender: 'Mom',  content: 'Who wants dinner Sunday? 🍝' },
+      { sender: 'Dad',  content: 'JUST SAW THE NEWS 😡' },
+      { sender: 'Sarah', content: 'omg i cannot 😂😂😂' },
+      { sender: 'Gran', content: 'Good morning my darlings 🌹' },
+      { sender: 'Tom',  content: 'can we please not discuss this rn' },
+    ],
+    isMock: true,
+  };
+}
+
+function generateFriendsMockData() {
+  const participants = ['Jake', 'Maya', 'Chris', 'Sam', 'Dave'];
+  return {
+    participants,
+    allParticipants: participants,
+    suggestedMode: 'friends',
+    totalMessages: 41280,
+    msgCounts: { Jake: 11200, Maya: 9800, Chris: 10400, Sam: 8700, Dave: 1180 },
+    hourlyData: Array.from({ length: 24 }, (_, h) => ({
+      hour: h,
+      total: Math.floor(Math.random() * 300 + 80),
+      ...Object.fromEntries(participants.map(p => [p, Math.floor(Math.random() * 120 + 10)])),
+    })),
+    dayOfWeekData: [
+      { day: 'Sunday',    count: 4200 },
+      { day: 'Monday',    count: 5100 },
+      { day: 'Tuesday',   count: 4800 },
+      { day: 'Wednesday', count: 6200 },
+      { day: 'Thursday',  count: 6900 },
+      { day: 'Friday',    count: 9100 },
+      { day: 'Saturday',  count: 4980 },
+    ],
+    topWords: [
+      { word: 'bro', count: 890 },
+      { word: 'actually', count: 760 },
+      { word: 'insane', count: 640 },
+      { word: 'fifa', count: 580 },
+      { word: 'bruh', count: 510 },
+      { word: 'gaming', count: 430 },
+      { word: 'lowkey', count: 380 },
+      { word: 'frfr', count: 320 },
+      { word: 'wild', count: 290 },
+      { word: 'snack', count: 240 },
+    ],
+    signatureEmojis: { Jake: '💀', Maya: '😭', Chris: '🔥', Sam: '😭', Dave: '🎮' },
+    laughCounts: { Jake: 820, Maya: 710, Chris: 900, Sam: 650, Dave: 42 },
+    nightOwlCounts: { Jake: 540, Maya: 290, Chris: 680, Sam: 420, Dave: 28 },
+    mediaCounts: { Jake: 620, Maya: 480, Chris: 710, Sam: 390, Dave: 55 },
+    capsLockCounts: { Jake: 340, Maya: 210, Chris: 480, Sam: 310, Dave: 18 },
+    organizerScore: { Jake: 180, Maya: 320, Chris: 140, Sam: 290, Dave: 20 },
+    summoningSpells: [
+      {
+        user: 'Dave',
+        keywords: ['fifa', 'gaming', 'ps5'],
+        activations: 47,
+      },
+    ],
+    replyTimes: { Jake: 4, Maya: 6, Chris: 3, Sam: 9, Dave: 240 },
+    initiatorCounts: { Jake: 480, Maya: 390, Chris: 520, Sam: 310, Dave: 15 },
+    quotes: [
+      { sender: 'Chris', content: 'bro i am DEAD 💀' },
+      { sender: 'Jake',  content: 'this is so unhinged lmao' },
+      { sender: 'Maya',  content: 'why does this always happen to us' },
+      { sender: 'Dave',  content: 'anyone up for FIFA later?' },
+      { sender: 'Sam',   content: 'ok but fr tho 😭' },
+      { sender: 'Jake',  content: 'mention FIFA and Dave wakes up' },
     ],
     isMock: true,
   };
