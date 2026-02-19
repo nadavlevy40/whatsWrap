@@ -19,6 +19,8 @@ const STOP_WORDS = new Set([
 
 const LAUGH_PATTERNS = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|weak)\b|😂|🤣|💀|😭)/gi;
 const EMOJI_REGEX = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
+const MEDIA_PATTERN = /(omitted|image|sticker|gif|video|audio|document)/i;
+const ORGANIZER_WORDS = new Set(['dinner','lunch','breakfast','plan','meet','meeting','time','when','tomorrow','today','tonight','weekend','schedule','come','join','invite','birthday','party','trip','going']);
 
 export function parseChatFile(text) {
   const lines = text.split('\n');
@@ -79,7 +81,8 @@ function analyzeMessages(messages) {
   const senderCounts = {};
   userMessages.forEach(m => { senderCounts[m.sender] = (senderCounts[m.sender] || 0) + 1; });
   const sortedSenders = Object.entries(senderCounts).sort((a, b) => b[1] - a[1]);
-  const participants = sortedSenders.slice(0, 2).map(([name]) => name);
+  // Support up to 10 participants for family/friends
+  const participants = sortedSenders.slice(0, 10).map(([name]) => name);
   const filtered = userMessages.filter(m => participants.includes(m.sender));
 
   const msgCounts = {};
@@ -132,6 +135,30 @@ function analyzeMessages(messages) {
     if (m.hour >= 0 && m.hour < 5 && nightOwlCounts[m.sender] !== undefined) nightOwlCounts[m.sender]++;
   });
 
+  // Media counts
+  const mediaCounts = {};
+  participants.forEach(p => (mediaCounts[p] = 0));
+  filtered.forEach(m => {
+    if (MEDIA_PATTERN.test(m.content) && mediaCounts[m.sender] !== undefined) mediaCounts[m.sender]++;
+  });
+
+  // Caps lock counts (words that are all uppercase, length > 1)
+  const capsLockCounts = {};
+  participants.forEach(p => (capsLockCounts[p] = 0));
+  filtered.forEach(m => {
+    const caps = m.content.split(/\s+/).filter(w => w.length > 1 && w === w.toUpperCase() && /[A-Z]/.test(w));
+    if (capsLockCounts[m.sender] !== undefined) capsLockCounts[m.sender] += caps.length;
+  });
+
+  // Organizer score
+  const organizerScore = {};
+  participants.forEach(p => (organizerScore[p] = 0));
+  filtered.forEach(m => {
+    const words = m.content.toLowerCase().split(/\s+/);
+    const score = words.filter(w => ORGANIZER_WORDS.has(w)).length;
+    if (organizerScore[m.sender] !== undefined) organizerScore[m.sender] += score;
+  });
+
   const quotes = filtered
     .filter(m => m.content.length > 8 && m.content.length < 55 && !m.content.includes('omitted') && !m.content.includes('http') && !m.content.includes('www'))
     .sort(() => Math.random() - 0.5)
@@ -153,7 +180,7 @@ function analyzeMessages(messages) {
         const min = minMatch ? parseInt(minMatch[1]) : 0;
         return new Date(year, mm - 1, dd, h, min).getTime();
       };
-      const delta = (parseTime(curr) - parseTime(prev)) / 60000; // minutes
+      const delta = (parseTime(curr) - parseTime(prev)) / 60000;
       if (delta > 0 && delta < 1440) {
         replyTimes[curr.sender].total += delta;
         replyTimes[curr.sender].count++;
@@ -165,7 +192,7 @@ function analyzeMessages(messages) {
     avgReplyTimes[p] = replyTimes[p].count > 0 ? replyTimes[p].total / replyTimes[p].count : 0;
   });
 
-  // Conversation starters (message after 6h silence)
+  // Conversation starters
   const initiatorCounts = {};
   participants.forEach(p => (initiatorCounts[p] = 0));
   for (let i = 1; i < filtered.length; i++) {
@@ -198,98 +225,54 @@ function analyzeMessages(messages) {
   });
   const dayOfWeekData = DAY_NAMES.map((day, i) => ({ day, count: dayCountsArr[i] }));
 
-  // Media counts (images, stickers, videos, gifs)
-  const mediaCounts = {};
-  participants.forEach(p => (mediaCounts[p] = 0));
-  filtered.forEach(m => {
-    if (m.content.includes('omitted') || /\.(jpg|jpeg|png|gif|mp4|webp)/i.test(m.content)) {
-      if (mediaCounts[m.sender] !== undefined) mediaCounts[m.sender]++;
-    }
-  });
+  // Summoning spell: find the least active user and what keyword triggers their replies
+  const summoningSpell = computeSummoningSpell(filtered, participants, msgCounts);
 
-  // Caps lock counts
-  const capsLockCounts = {};
-  participants.forEach(p => (capsLockCounts[p] = 0));
-  filtered.forEach(m => {
-    const words = m.content.split(/\s+/);
-    words.forEach(w => {
-      if (w.length >= 3 && w === w.toUpperCase() && /[A-Z]/.test(w)) {
-        if (capsLockCounts[m.sender] !== undefined) capsLockCounts[m.sender]++;
-      }
-    });
-  });
-
-  // Organizer score (dinner, time, when, plan, meet, schedule, where, tomorrow, tonight, today)
-  const ORGANIZER_WORDS = new Set(['dinner', 'lunch', 'meeting', 'meet', 'plan', 'plans', 'schedule', 'tomorrow', 'tonight', 'today', 'where', 'when', 'come', 'coming', 'join', 'time', 'date', 'birthday', 'party', 'event']);
-  const organizerScore = {};
-  participants.forEach(p => (organizerScore[p] = 0));
-  filtered.forEach(m => {
-    const words = m.content.toLowerCase().split(/\s+/);
-    words.forEach(w => {
-      if (ORGANIZER_WORDS.has(w) && organizerScore[m.sender] !== undefined) organizerScore[m.sender]++;
-    });
-  });
-
-  // Summoning spells: find low-activity users and what triggers them
-  const allParticipants = sortedSenders.map(([name]) => name);
-  const summoningSpells = [];
-  if (allParticipants.length > 2) {
-    const avgMsg = userMessages.length / allParticipants.length;
-    const lowActivity = allParticipants.filter(p => (senderCounts[p] || 0) < avgMsg * 0.5);
-    
-    lowActivity.slice(0, 2).forEach(targetUser => {
-      const triggerWords = {};
-      const allFiltered = userMessages.filter(m => 
-        !m.content.includes('end-to-end encrypted') && !m.content.includes('Messages and calls')
-      );
-      
-      for (let i = 1; i < allFiltered.length; i++) {
-        if (allFiltered[i].sender === targetUser) {
-          // Look at previous 3 messages
-          for (let j = Math.max(0, i - 3); j < i; j++) {
-            const words = allFiltered[j].content.toLowerCase()
-              .replace(/[^a-z\s]/g, ' ').split(/\s+/)
-              .filter(w => w.length > 3 && !STOP_WORDS.has(w));
-            words.forEach(w => { triggerWords[w] = (triggerWords[w] || 0) + 1; });
-          }
-        }
-      }
-      
-      const topTriggers = Object.entries(triggerWords).sort((a, b) => b[1] - a[1]).slice(0, 3);
-      if (topTriggers.length > 0) {
-        summoningSpells.push({
-          user: targetUser,
-          keywords: topTriggers.map(([w]) => w),
-          activations: topTriggers[0][1],
-        });
-      }
-    });
-  }
-
-  const suggestedMode = allParticipants.length > 2 ? 'friends' : 'couple';
-
-  return { 
-    participants, 
-    allParticipants,
-    totalMessages: filtered.length, 
-    msgCounts, 
-    hourlyData, 
-    dayOfWeekData, 
-    topWords, 
-    signatureEmojis, 
-    laughCounts, 
-    nightOwlCounts, 
-    quotes, 
-    replyTimes: avgReplyTimes, 
-    initiatorCounts, 
+  return {
+    participants,
+    totalMessages: filtered.length,
+    msgCounts,
+    hourlyData,
+    dayOfWeekData,
+    topWords,
+    signatureEmojis,
+    laughCounts,
+    nightOwlCounts,
     mediaCounts,
     capsLockCounts,
     organizerScore,
-    summoningSpells,
-    suggestedMode,
-    isMock: false 
+    quotes,
+    replyTimes: avgReplyTimes,
+    initiatorCounts,
+    summoningSpell,
+    isMock: false,
   };
 }
+
+function computeSummoningSpell(filtered, participants, msgCounts) {
+  if (participants.length < 2) return null;
+  // Find least active participant
+  const leastActive = [...participants].sort((a, b) => (msgCounts[a] || 0) - (msgCounts[b] || 0))[0];
+
+  // Find messages sent by others just before leastActive replies
+  const precedingWords = {};
+  for (let i = 1; i < filtered.length; i++) {
+    const curr = filtered[i];
+    const prev = filtered[i - 1];
+    if (curr.sender === leastActive && prev.sender !== leastActive) {
+      const words = prev.content.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/)
+        .filter(w => w.length > 2 && !STOP_WORDS.has(w));
+      words.forEach(w => { precedingWords[w] = (precedingWords[w] || 0) + 1; });
+    }
+  }
+
+  const sorted = Object.entries(precedingWords).sort((a, b) => b[1] - a[1]);
+  if (sorted.length === 0) return null;
+
+  return { user: leastActive, keyword: sorted[0][0], triggerCount: sorted[0][1] };
+}
+
+// ─── Mock Data ────────────────────────────────────────────────────────────────
 
 export function generateMockData(mode = 'couple') {
   if (mode === 'family') return generateFamilyMockData();
@@ -301,8 +284,7 @@ function generateCoupleMockData() {
   const participants = ['Alex', 'Jordan'];
   return {
     participants,
-    allParticipants: participants,
-    suggestedMode: 'couple',
+    mode: 'couple',
     totalMessages: 14382,
     msgCounts: { Alex: 7841, Jordan: 6541 },
     hourlyData: Array.from({ length: 24 }, (_, h) => ({
@@ -312,158 +294,135 @@ function generateCoupleMockData() {
       Jordan: Math.floor(Math.random() * 140 + 20),
     })),
     dayOfWeekData: [
-      { day: 'Sunday',    count: 1200 },
-      { day: 'Monday',    count: 980 },
-      { day: 'Tuesday',   count: 1450 },
-      { day: 'Wednesday', count: 2100 },
-      { day: 'Thursday',  count: 1870 },
-      { day: 'Friday',    count: 3200 },
-      { day: 'Saturday',  count: 2850 },
+      { day: 'Sunday', count: 1200 }, { day: 'Monday', count: 980 },
+      { day: 'Tuesday', count: 1450 }, { day: 'Wednesday', count: 2100 },
+      { day: 'Thursday', count: 1870 }, { day: 'Friday', count: 3200 },
+      { day: 'Saturday', count: 2850 },
     ],
     topWords: [
-      { word: 'literally', count: 342 },
-      { word: 'obsessed',  count: 287 },
-      { word: 'bruh',      count: 241 },
-      { word: 'actually',  count: 198 },
-      { word: 'insane',    count: 175 },
-      { word: 'lowkey',    count: 143 },
-      { word: 'bestie',    count: 121 },
-      { word: 'vibes',     count: 98 },
-      { word: 'frfr',      count: 87 },
-      { word: 'periodt',   count: 72 },
+      { word: 'literally', count: 342 }, { word: 'obsessed', count: 287 },
+      { word: 'bruh', count: 241 }, { word: 'actually', count: 198 },
+      { word: 'insane', count: 175 }, { word: 'lowkey', count: 143 },
+      { word: 'bestie', count: 121 }, { word: 'vibes', count: 98 },
+      { word: 'frfr', count: 87 }, { word: 'periodt', count: 72 },
     ],
     signatureEmojis: { Alex: '😂', Jordan: '❤️' },
     laughCounts: { Alex: 423, Jordan: 189 },
     nightOwlCounts: { Alex: 234, Jordan: 567 },
-    mediaCounts: { Alex: 312, Jordan: 148 },
+    mediaCounts: { Alex: 312, Jordan: 241 },
     capsLockCounts: { Alex: 89, Jordan: 34 },
-    organizerScore: { Alex: 120, Jordan: 44 },
-    summoningSpells: [],
+    organizerScore: { Alex: 120, Jordan: 85 },
     replyTimes: { Alex: 7, Jordan: 148 },
     initiatorCounts: { Alex: 312, Jordan: 189 },
+    summoningSpell: null,
     quotes: [
-      { sender: 'Alex',   content: 'wait that actually happened??' },
+      { sender: 'Alex', content: 'wait that actually happened??' },
       { sender: 'Jordan', content: 'i literally cannot stop laughing' },
-      { sender: 'Alex',   content: 'bro no way 😭' },
+      { sender: 'Alex', content: 'bro no way 😭' },
       { sender: 'Jordan', content: 'tell me you did not just say that' },
-      { sender: 'Alex',   content: 'we need to talk about this rn' },
+      { sender: 'Alex', content: 'we need to talk about this rn' },
       { sender: 'Jordan', content: 'okay but why does this always happen to us' },
-      { sender: 'Alex',   content: 'this is actually so unhinged lmao' },
+      { sender: 'Alex', content: 'this is actually so unhinged lmao' },
     ],
     isMock: true,
   };
 }
 
 function generateFamilyMockData() {
-  const participants = ['Mom', 'Dad', 'Sarah', 'Tom', 'Gran'];
+  const participants = ['Mom', 'Dad', 'Sarah', 'Jake', 'Grandma'];
   return {
     participants,
-    allParticipants: participants,
-    suggestedMode: 'family',
-    totalMessages: 28741,
-    msgCounts: { Mom: 9200, Dad: 4100, Sarah: 7800, Tom: 5900, Gran: 1741 },
+    mode: 'family',
+    totalMessages: 21840,
+    msgCounts: { Mom: 8200, Dad: 3100, Sarah: 5400, Jake: 3800, Grandma: 1340 },
     hourlyData: Array.from({ length: 24 }, (_, h) => ({
       hour: h,
-      total: Math.floor(Math.random() * 200 + 50),
-      ...Object.fromEntries(participants.map(p => [p, Math.floor(Math.random() * 80 + 5)])),
+      total: Math.floor(Math.random() * 100 + 50),
+      Mom: Math.floor(Math.random() * 50 + 10),
+      Dad: Math.floor(Math.random() * 20 + 5),
+      Sarah: Math.floor(Math.random() * 35 + 8),
+      Jake: Math.floor(Math.random() * 28 + 6),
+      Grandma: Math.floor(Math.random() * 10 + 2),
     })),
     dayOfWeekData: [
-      { day: 'Sunday',    count: 4800 },
-      { day: 'Monday',    count: 3200 },
-      { day: 'Tuesday',   count: 2900 },
-      { day: 'Wednesday', count: 3100 },
-      { day: 'Thursday',  count: 3400 },
-      { day: 'Friday',    count: 5200 },
-      { day: 'Saturday',  count: 6141 },
+      { day: 'Sunday', count: 4200 }, { day: 'Monday', count: 2100 },
+      { day: 'Tuesday', count: 1980 }, { day: 'Wednesday', count: 2300 },
+      { day: 'Thursday', count: 2050 }, { day: 'Friday', count: 3100 },
+      { day: 'Saturday', count: 6110 },
     ],
     topWords: [
-      { word: 'dinner', count: 412 },
-      { word: 'tomorrow', count: 320 },
-      { word: 'love', count: 290 },
-      { word: 'coming', count: 245 },
-      { word: 'meeting', count: 200 },
-      { word: 'birthday', count: 178 },
-      { word: 'sunday', count: 154 },
-      { word: 'food', count: 131 },
-      { word: 'beautiful', count: 110 },
-      { word: 'holiday', count: 88 },
+      { word: 'dinner', count: 412 }, { word: 'tomorrow', count: 310 },
+      { word: 'home', count: 298 }, { word: 'school', count: 245 },
+      { word: 'family', count: 220 }, { word: 'weekend', count: 187 },
+      { word: 'love', count: 165 }, { word: 'meeting', count: 143 },
+      { word: 'birthday', count: 121 }, { word: 'trip', count: 99 },
     ],
-    signatureEmojis: { Mom: '❤️', Dad: '👍', Sarah: '😂', Tom: '🔥', Gran: '🌹' },
-    laughCounts: { Mom: 210, Dad: 80, Sarah: 540, Tom: 320, Gran: 45 },
-    nightOwlCounts: { Mom: 12, Dad: 8, Sarah: 290, Tom: 180, Gran: 2 },
-    mediaCounts: { Mom: 1240, Dad: 320, Sarah: 450, Tom: 280, Gran: 88 },
-    capsLockCounts: { Mom: 340, Dad: 510, Sarah: 120, Tom: 200, Gran: 60 },
-    organizerScore: { Mom: 480, Dad: 120, Sarah: 90, Tom: 60, Gran: 20 },
-    summoningSpells: [],
-    replyTimes: { Mom: 3, Dad: 45, Sarah: 8, Tom: 22, Gran: 180 },
-    initiatorCounts: { Mom: 520, Dad: 200, Sarah: 310, Tom: 180, Gran: 40 },
+    signatureEmojis: { Mom: '❤️', Dad: '👍', Sarah: '😂', Jake: '🔥', Grandma: '🙏' },
+    laughCounts: { Mom: 234, Dad: 45, Sarah: 612, Jake: 389, Grandma: 28 },
+    nightOwlCounts: { Mom: 12, Dad: 8, Sarah: 345, Jake: 287, Grandma: 2 },
+    mediaCounts: { Mom: 1240, Dad: 180, Sarah: 320, Jake: 210, Grandma: 890 },
+    capsLockCounts: { Mom: 421, Dad: 65, Sarah: 89, Jake: 342, Grandma: 312 },
+    organizerScore: { Mom: 520, Dad: 120, Sarah: 98, Jake: 65, Grandma: 40 },
+    replyTimes: { Mom: 5, Dad: 120, Sarah: 8, Jake: 25, Grandma: 480 },
+    initiatorCounts: { Mom: 620, Dad: 110, Sarah: 240, Jake: 180, Grandma: 40 },
+    summoningSpell: null,
     quotes: [
-      { sender: 'Mom',  content: 'Who wants dinner Sunday? 🍝' },
-      { sender: 'Dad',  content: 'JUST SAW THE NEWS 😡' },
-      { sender: 'Sarah', content: 'omg i cannot 😂😂😂' },
-      { sender: 'Gran', content: 'Good morning my darlings 🌹' },
-      { sender: 'Tom',  content: 'can we please not discuss this rn' },
+      { sender: 'Mom', content: 'Dinner at 7, everyone please be on time!' },
+      { sender: 'Dad', content: 'Ok' },
+      { sender: 'Sarah', content: 'omg dad that is literally all you ever say 😂' },
+      { sender: 'Jake', content: 'I CANT BREATHE 💀' },
+      { sender: 'Grandma', content: 'What is LOL? Is someone laughing?' },
+      { sender: 'Mom', content: 'JAKE HAVE YOU EATEN TODAY' },
     ],
     isMock: true,
   };
 }
 
 function generateFriendsMockData() {
-  const participants = ['Jake', 'Maya', 'Chris', 'Sam', 'Dave'];
+  const participants = ['Marcus', 'Priya', 'Dave', 'Zoe', 'Liam'];
   return {
     participants,
-    allParticipants: participants,
-    suggestedMode: 'friends',
-    totalMessages: 41280,
-    msgCounts: { Jake: 11200, Maya: 9800, Chris: 10400, Sam: 8700, Dave: 1180 },
+    mode: 'friends',
+    totalMessages: 32410,
+    msgCounts: { Marcus: 9800, Priya: 8200, Dave: 1940, Zoe: 7600, Liam: 4870 },
     hourlyData: Array.from({ length: 24 }, (_, h) => ({
       hour: h,
-      total: Math.floor(Math.random() * 300 + 80),
-      ...Object.fromEntries(participants.map(p => [p, Math.floor(Math.random() * 120 + 10)])),
+      total: Math.floor(Math.random() * 180 + 80),
+      Marcus: Math.floor(Math.random() * 60 + 20),
+      Priya: Math.floor(Math.random() * 55 + 15),
+      Dave: Math.floor(Math.random() * 15 + 2),
+      Zoe: Math.floor(Math.random() * 50 + 18),
+      Liam: Math.floor(Math.random() * 35 + 10),
     })),
     dayOfWeekData: [
-      { day: 'Sunday',    count: 4200 },
-      { day: 'Monday',    count: 5100 },
-      { day: 'Tuesday',   count: 4800 },
-      { day: 'Wednesday', count: 6200 },
-      { day: 'Thursday',  count: 6900 },
-      { day: 'Friday',    count: 9100 },
-      { day: 'Saturday',  count: 4980 },
+      { day: 'Sunday', count: 2800 }, { day: 'Monday', count: 3200 },
+      { day: 'Tuesday', count: 3900 }, { day: 'Wednesday', count: 4100 },
+      { day: 'Thursday', count: 4800 }, { day: 'Friday', count: 7600 },
+      { day: 'Saturday', count: 6010 },
     ],
     topWords: [
-      { word: 'bro', count: 890 },
-      { word: 'actually', count: 760 },
-      { word: 'insane', count: 640 },
-      { word: 'fifa', count: 580 },
-      { word: 'bruh', count: 510 },
-      { word: 'gaming', count: 430 },
-      { word: 'lowkey', count: 380 },
-      { word: 'frfr', count: 320 },
-      { word: 'wild', count: 290 },
-      { word: 'snack', count: 240 },
+      { word: 'bro', count: 1240 }, { word: 'literally', count: 890 },
+      { word: 'fifa', count: 342 }, { word: 'insane', count: 710 },
+      { word: 'bruh', count: 680 }, { word: 'dead', count: 590 },
+      { word: 'lowkey', count: 450 }, { word: 'facts', count: 380 },
+      { word: 'ngl', count: 310 }, { word: 'goat', count: 270 },
     ],
-    signatureEmojis: { Jake: '💀', Maya: '😭', Chris: '🔥', Sam: '😭', Dave: '🎮' },
-    laughCounts: { Jake: 820, Maya: 710, Chris: 900, Sam: 650, Dave: 42 },
-    nightOwlCounts: { Jake: 540, Maya: 290, Chris: 680, Sam: 420, Dave: 28 },
-    mediaCounts: { Jake: 620, Maya: 480, Chris: 710, Sam: 390, Dave: 55 },
-    capsLockCounts: { Jake: 340, Maya: 210, Chris: 480, Sam: 310, Dave: 18 },
-    organizerScore: { Jake: 180, Maya: 320, Chris: 140, Sam: 290, Dave: 20 },
-    summoningSpells: [
-      {
-        user: 'Dave',
-        keywords: ['fifa', 'gaming', 'ps5'],
-        activations: 47,
-      },
-    ],
-    replyTimes: { Jake: 4, Maya: 6, Chris: 3, Sam: 9, Dave: 240 },
-    initiatorCounts: { Jake: 480, Maya: 390, Chris: 520, Sam: 310, Dave: 15 },
+    signatureEmojis: { Marcus: '💀', Priya: '😭', Dave: '⚽', Zoe: '🔥', Liam: '😂' },
+    laughCounts: { Marcus: 1820, Priya: 1340, Dave: 120, Zoe: 1560, Liam: 980 },
+    nightOwlCounts: { Marcus: 820, Priya: 340, Dave: 45, Zoe: 1240, Liam: 620 },
+    mediaCounts: { Marcus: 640, Priya: 520, Dave: 80, Zoe: 810, Liam: 380 },
+    capsLockCounts: { Marcus: 380, Priya: 210, Dave: 45, Zoe: 520, Liam: 290 },
+    organizerScore: { Marcus: 210, Priya: 380, Dave: 30, Zoe: 290, Liam: 180 },
+    replyTimes: { Marcus: 4, Priya: 6, Dave: 180, Zoe: 5, Liam: 12 },
+    initiatorCounts: { Marcus: 480, Priya: 390, Dave: 20, Zoe: 420, Liam: 250 },
+    summoningSpell: { user: 'Dave', keyword: 'FIFA', triggerCount: 89 },
     quotes: [
-      { sender: 'Chris', content: 'bro i am DEAD 💀' },
-      { sender: 'Jake',  content: 'this is so unhinged lmao' },
-      { sender: 'Maya',  content: 'why does this always happen to us' },
-      { sender: 'Dave',  content: 'anyone up for FIFA later?' },
-      { sender: 'Sam',   content: 'ok but fr tho 😭' },
-      { sender: 'Jake',  content: 'mention FIFA and Dave wakes up' },
+      { sender: 'Marcus', content: 'bro I am actually DEAD 💀' },
+      { sender: 'Priya', content: 'why does this always happen to us lmao' },
+      { sender: 'Zoe', content: 'I cannot with you people 😭' },
+      { sender: 'Liam', content: 'ngl that was kinda unhinged' },
+      { sender: 'Dave', content: 'FIFA anyone? 👀' },
+      { sender: 'Marcus', content: 'Dave appears from the void' },
     ],
     isMock: true,
   };
