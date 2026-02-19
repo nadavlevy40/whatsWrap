@@ -19,6 +19,11 @@ export default function Home() {
   const [mode, setMode] = useState('couple');
   const [error, setError] = useState(null);
 
+  const suggestMode = (data) => {
+    if (!data) return 'couple';
+    return data.participants.length > 2 ? 'friends' : 'couple';
+  };
+
   const handleFileUpload = useCallback((file) => {
     setError(null);
     const reader = new FileReader();
@@ -29,36 +34,42 @@ export default function Home() {
         setError("Couldn't parse this file. Make sure it's a WhatsApp export (.txt). Using demo data instead.");
         const mock = generateMockData('couple');
         setChatData(mock);
-        setMode(mock.suggestedMode || 'couple');
+        setMode('couple');
+        setPhase('select_mode');
       } else {
         setChatData(data);
-        setMode(data.suggestedMode || 'couple');
+        setMode(suggestMode(data));
+        setPhase('select_mode');
       }
-      setPhase('loading');
     };
     reader.readAsText(file);
   }, []);
 
   const handleMockData = useCallback(() => {
-    // Default couple mock; mode selection happens after loading
+    // Default to couple mock for demo
     const mock = generateMockData('couple');
     setChatData(mock);
-    setMode(mock.suggestedMode || 'couple');
-    setPhase('loading');
-  }, []);
-
-  const handleLoadingComplete = useCallback(() => {
-    setPhase('mode-select');
+    setMode('couple');
+    setPhase('select_mode');
   }, []);
 
   const handleModeSelect = useCallback((selectedMode) => {
+    // If mode changes, reload mock data matching the mode (for demo)
+    if (chatData?.isMock) {
+      setChatData(generateMockData(selectedMode));
+    }
     setMode(selectedMode);
+    setPhase('loading');
+  }, [chatData]);
+
+  const handleLoadingComplete = useCallback(() => {
     setPhase('story');
   }, []);
 
   const handleRestart = useCallback(() => {
     setPhase('landing');
     setChatData(null);
+    setMode('couple');
     setError(null);
   }, []);
 
