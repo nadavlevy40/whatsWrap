@@ -99,6 +99,57 @@ export default function LandingSneakPeeks() {
           </motion.div>
         ))}
       </div>
+
+      {/* Gift Card Banner */}
+      <motion.div
+        initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }} transition={{ delay: 0.3, type: 'spring', stiffness: 100, damping: 18 }}
+        className="mt-16 rounded-3xl overflow-hidden relative"
+        style={{ background: 'linear-gradient(135deg, #1a0533 0%, #3b0764 50%, #1a0533 100%)', border: '1.5px solid rgba(192,132,252,0.35)', boxShadow: '0 30px 80px rgba(147,51,234,0.25)' }}>
+
+        {/* Shimmer layer */}
+        <div className="absolute inset-0 pointer-events-none"
+          style={{ background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.04) 50%, transparent 70%)' }} />
+
+        <div className="relative flex flex-col sm:flex-row items-center gap-6 p-7 sm:p-9">
+          {/* Big gift emoji */}
+          <motion.div
+            animate={{ rotate: [-4, 4, -4], scale: [1, 1.08, 1] }}
+            transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
+            className="text-6xl sm:text-7xl flex-shrink-0 select-none">
+            🎁
+          </motion.div>
+
+          {/* Text */}
+          <div className="flex-1 text-center sm:text-left">
+            <div className="flex items-center justify-center sm:justify-start gap-2 mb-2">
+              <span className="text-xs font-bold tracking-widest uppercase px-3 py-1 rounded-full"
+                style={{ background: 'rgba(192,132,252,0.2)', color: '#c084fc', border: '1px solid rgba(192,132,252,0.35)' }}>
+                ✨ The Perfect Gift
+              </span>
+            </div>
+            <h3 className="text-white font-black text-2xl sm:text-3xl leading-tight mb-2">
+              Wrap your chats.<br />
+              <span style={{ background: 'linear-gradient(135deg, #c084fc, #f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                Gift the laughs.
+              </span>
+            </h3>
+            <p className="text-white/50 text-sm leading-relaxed max-w-md">
+              A Spotify Wrapped-style story — but make it personal. Share hilarious receipts, inside jokes, and proof of who texts more. The freshest, most vibe-coded gift of the year. 🔥
+            </p>
+          </div>
+
+          {/* Tags */}
+          <div className="flex flex-col gap-2 flex-shrink-0">
+            {['💀 Brutally Honest', '🔥 Genuinely Funny', '✨ Super Fresh Vibe'].map((tag) => (
+              <div key={tag} className="px-4 py-2 rounded-2xl text-xs font-semibold text-white/80 whitespace-nowrap"
+                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.12)' }}>
+                {tag}
+              </div>
+            ))}
+          </div>
+        </div>
+      </motion.div>
     </section>
   );
 }
