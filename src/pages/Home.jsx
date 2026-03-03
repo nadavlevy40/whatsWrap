@@ -132,7 +132,7 @@ export default function Home() {
         {phase === 'loading' && (
           <motion.div key="loading" className="absolute inset-0"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
-            <LoadingScreen onComplete={handleLoadingComplete} />
+            <LoadingScreen onComplete={handleLoadingComplete} isProcessing={!!rawChatText && !chatData} />
           </motion.div>
         )}
         {phase === 'story' && chatData && (
