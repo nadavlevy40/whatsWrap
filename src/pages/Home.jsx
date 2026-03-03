@@ -60,14 +60,29 @@ export default function Home() {
     setPhase('select_mode');
   }, []);
 
-  const handleModeSelect = useCallback((selectedMode) => {
-    // If mode changes, reload mock data matching the mode (for demo)
-    if (chatData?.isMock) {
-      setChatData(generateMockData(selectedMode));
-    }
+  const handleModeSelect = useCallback(async (selectedMode) => {
     setMode(selectedMode);
     setPhase('loading');
-  }, [chatData]);
+
+    if (rawChatText) {
+      // Real file: analyze with OpenAI
+      try {
+        const response = await base44.functions.invoke('analyzeChat', {
+          chatText: rawChatText,
+          mode: selectedMode,
+        });
+        const data = response.data;
+        if (data.error) throw new Error(data.error);
+        setChatData({ ...data, mode: selectedMode });
+      } catch (err) {
+        setError('AI analysis failed: ' + err.message + '. Using demo data.');
+        setChatData(generateMockData(selectedMode));
+      }
+    } else {
+      // Demo mode
+      setChatData(generateMockData(selectedMode));
+    }
+  }, [rawChatText]);
 
   const handleLoadingComplete = useCallback(() => {
     setPhase('story');
