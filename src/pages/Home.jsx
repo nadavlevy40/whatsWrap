@@ -20,6 +20,7 @@ export default function Home() {
   const [mode, setMode] = useState('couple');
   const [error, setError] = useState(null);
   const [rawChatText, setRawChatText] = useState(null);
+  const [loadingDone, setLoadingDone] = useState(false);
 
   const suggestMode = (data) => {
     if (!data) return 'couple';
