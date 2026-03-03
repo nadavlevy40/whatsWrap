@@ -93,15 +93,10 @@ export default function Home() {
     setLoadingDone(true);
   }, []);
 
-  // Move to story once BOTH loading animation is done AND chatData is ready
-  // Also wait for admin check to resolve (isAdmin starts as false, but may update async)
-  const [adminChecked, setAdminChecked] = useState(false);
-
   useEffect(() => {
     base44.auth.me().then(user => {
       if (user?.role === 'admin') setIsAdmin(true);
     }).catch(() => {}).finally(() => setAdminChecked(true));
-  // eslint-disable-next-line
   }, []);
 
   useEffect(() => {
