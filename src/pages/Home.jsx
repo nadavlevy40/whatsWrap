@@ -19,6 +19,7 @@ export default function Home() {
   const [chatData, setChatData] = useState(null);
   const [mode, setMode] = useState('couple');
   const [error, setError] = useState(null);
+  const [rawChatText, setRawChatText] = useState(null);
 
   const suggestMode = (data) => {
     if (!data) return 'couple';
@@ -30,18 +31,23 @@ export default function Home() {
     const reader = new FileReader();
     reader.onload = (e) => {
       const text = e.target.result;
-      const data = parseChatFile(text);
-      if (!data || data.participants.length < 2) {
-        setError("Couldn't parse this file. Make sure it's a WhatsApp export (.txt). Using demo data instead.");
-        const mock = generateMockData('couple');
-        setChatData(mock);
-        setMode('couple');
-        setPhase('select_mode');
-      } else {
-        setChatData(data);
-        setMode(suggestMode(data));
-        setPhase('select_mode');
+      // Quick validation: check if it looks like a WhatsApp export
+      const hasTimestamps = /\d{1,2}\/\d{1,2}\/\d{2,4}/.test(text.slice(0, 500));
+      if (!hasTimestamps || text.length < 100) {
+        setError("Couldn't recognize this file. Make sure it's a WhatsApp .txt export.");
+        return;
       }
+      setRawChatText(text);
+      // Quick count of participants from first 200 lines to suggest mode
+      const lines = text.split('\n').slice(0, 200);
+      const senders = new Set();
+      lines.forEach(l => {
+        const m = l.match(/- ([^:]+):/);
+        if (m) senders.add(m[1].trim());
+      });
+      const suggested = senders.size > 2 ? 'friends' : 'couple';
+      setMode(suggested);
+      setPhase('select_mode');
     };
     reader.readAsText(file);
   }, []);
