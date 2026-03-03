@@ -86,13 +86,15 @@ export default function Home() {
   }, [rawChatText]);
 
   const handleLoadingComplete = useCallback(() => {
-    // Only go to story if chatData is ready
-    if (chatData) {
+    setLoadingDone(true);
+  }, []);
+
+  // Move to story once BOTH loading animation is done AND chatData is ready
+  useEffect(() => {
+    if (loadingDone && chatData && phase === 'loading') {
       setPhase('story');
     }
-    // If not ready yet (AI still processing), LoadingScreen will keep showing
-    // and we trigger story once chatData is set via useEffect
-  }, [chatData]);
+  }, [loadingDone, chatData, phase]);
 
   const handleRestart = useCallback(() => {
     setPhase('landing');
