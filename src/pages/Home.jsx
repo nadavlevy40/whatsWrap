@@ -102,6 +102,7 @@ export default function Home() {
     setMode('couple');
     setError(null);
     setRawChatText(null);
+    setLoadingDone(false);
   }, []);
 
   if (phase === 'landing') {
