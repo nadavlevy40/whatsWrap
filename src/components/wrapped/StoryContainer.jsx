@@ -27,7 +27,7 @@ const SLIDES_BY_MODE = {
   friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'podium', 'paywall', 'share'],
 };
 
-export default function StoryContainer({ data, mode = 'couple', onRestart }) {
+export default function StoryContainer({ data, mode = 'couple', onRestart, isAdmin = false }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(1);
 
