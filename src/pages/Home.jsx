@@ -33,8 +33,10 @@ export default function Home() {
     reader.onload = (e) => {
       const text = e.target.result;
       // Quick validation: check if it looks like a WhatsApp export
-      const hasTimestamps = /\d{1,2}\/\d{1,2}\/\d{2,4}/.test(text.slice(0, 500));
-      if (!hasTimestamps || text.length < 100) {
+      // Support formats: DD/MM/YY, MM/DD/YYYY, [DD/MM/YY], DD.MM.YY, DD-MM-YY etc.
+      const hasTimestamps = /[\[（]?\d{1,2}[\/\.\-]\d{1,2}[\/\.\-]\d{2,4}/.test(text.slice(0, 1000));
+      const hasMessages = /[\-\]] [^:]+:/.test(text.slice(0, 1000));
+      if ((!hasTimestamps && !hasMessages) || text.length < 50) {
         setError("Couldn't recognize this file. Make sure it's a WhatsApp .txt export.");
         return;
       }
