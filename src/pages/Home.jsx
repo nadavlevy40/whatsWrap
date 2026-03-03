@@ -95,8 +95,9 @@ export default function Home() {
 
   useEffect(() => {
     base44.auth.me().then(user => {
+      console.log('Auth user:', user?.email, 'role:', user?.role);
       if (user?.role === 'admin') setIsAdmin(true);
-    }).catch(() => {}).finally(() => setAdminChecked(true));
+    }).catch((e) => { console.log('Auth error:', e); }).finally(() => setAdminChecked(true));
   }, []);
 
   useEffect(() => {
