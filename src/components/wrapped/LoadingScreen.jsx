@@ -14,7 +14,7 @@ const LOADING_TEXTS = [
   'Almost done cooking... 🔥',
 ];
 
-export default function LoadingScreen({ onComplete }) {
+export default function LoadingScreen({ onComplete, isProcessing = false }) {
   const [textIndex, setTextIndex] = useState(0);
   const [progress, setProgress] = useState(0);
 
@@ -25,17 +25,19 @@ export default function LoadingScreen({ onComplete }) {
 
     const progressInterval = setInterval(() => {
       setProgress(p => {
+        // If still processing AI, slow down and cap at 90%
+        if (isProcessing && p >= 88) return 88 + Math.sin(Date.now() / 1000) * 2;
         if (p >= 100) {
           clearInterval(progressInterval);
           setTimeout(onComplete, 400);
           return 100;
         }
-        return p + 1.2;
+        return p + (isProcessing ? 0.4 : 1.2);
       });
     }, 80);
 
     return () => { clearInterval(textInterval); clearInterval(progressInterval); };
-  }, [onComplete]);
+  }, [onComplete, isProcessing]);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden"
