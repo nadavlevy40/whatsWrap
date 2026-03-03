@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import LandingScreen from '../components/wrapped/LandingScreen';
 import LoadingScreen from '../components/wrapped/LoadingScreen';
