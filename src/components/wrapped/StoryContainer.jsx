@@ -31,9 +31,11 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(1);
 
-  const baseSlides = SLIDES_BY_MODE[mode] || SLIDES_BY_MODE.couple;
-  // Admins bypass paywall — remove 'paywall' slide
-  const SLIDES = isAdmin ? baseSlides.filter(s => s !== 'paywall') : baseSlides;
+  const SLIDES = useMemo(() => {
+    const baseSlides = SLIDES_BY_MODE[mode] || SLIDES_BY_MODE.couple;
+    // Admins bypass paywall — remove 'paywall' slide
+    return isAdmin ? baseSlides.filter(s => s !== 'paywall') : baseSlides;
+  }, [mode, isAdmin]);
 
   const goNext = useCallback(() => {
     if (currentSlide < SLIDES.length - 1) {
