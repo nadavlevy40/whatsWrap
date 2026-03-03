@@ -147,7 +147,7 @@ export default function Home() {
         {phase === 'story' && chatData && (
           <motion.div key="story" className="absolute inset-0"
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.4 }}>
-            <StoryContainer data={chatData} mode={mode} onRestart={handleRestart} />
+            <StoryContainer data={chatData} mode={mode} onRestart={handleRestart} isAdmin={isAdmin} />
           </motion.div>
         )}
       </AnimatePresence>
