@@ -93,6 +93,7 @@ export default function Home() {
     setChatData(null);
     setMode('couple');
     setError(null);
+    setRawChatText(null);
   }, []);
 
   if (phase === 'landing') {
