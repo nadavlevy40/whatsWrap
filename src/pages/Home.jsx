@@ -22,12 +22,7 @@ export default function Home() {
   const [rawChatText, setRawChatText] = useState(null);
   const [loadingDone, setLoadingDone] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    base44.auth.me().then(user => {
-      if (user?.role === 'admin') setIsAdmin(true);
-    }).catch(() => {});
-  }, []);
+  const [adminChecked, setAdminChecked] = useState(false);
 
   const suggestMode = (data) => {
     if (!data) return 'couple';
