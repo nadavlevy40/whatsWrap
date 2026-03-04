@@ -11,7 +11,7 @@ function formatMinutes(mins) {
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
-export default function SlideGhostInitiator({ data }) {
+export default function SlideGhostInitiator({ data, lang = 'en' }) {
   const [p1, p2] = data.participants;
   const replyTimes = data.replyTimes || { [p1]: 8, [p2]: 45 };
   const initiators = data.initiatorCounts || { [p1]: 60, [p2]: 40 };
