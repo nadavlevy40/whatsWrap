@@ -287,6 +287,12 @@ function computeSummoningSpell(filtered, participants, msgCounts, stopWords = ST
   // Find least active participant
   const leastActive = [...participants].sort((a, b) => (msgCounts[a] || 0) - (msgCounts[b] || 0))[0];
 
+  // Build name tokens to exclude
+  const nameTokens = new Set();
+  participants.forEach(name => {
+    name.toLowerCase().split(/\s+/).forEach(token => { if (token.length > 0) nameTokens.add(token); });
+  });
+
   // Find messages sent by others just before leastActive replies
   const precedingWords = {};
   for (let i = 1; i < filtered.length; i++) {
@@ -296,7 +302,7 @@ function computeSummoningSpell(filtered, participants, msgCounts, stopWords = ST
       const cleaned = lang === 'he'
         ? prev.content.toLowerCase().replace(/[^א-תa-z\s]/g, ' ')
         : prev.content.toLowerCase().replace(/[^a-z\s]/g, ' ');
-      const words = cleaned.split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w));
+      const words = cleaned.split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w) && !nameTokens.has(w));
       words.forEach(w => { precedingWords[w] = (precedingWords[w] || 0) + 1; });
     }
   }
