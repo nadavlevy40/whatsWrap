@@ -251,7 +251,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   const dayOfWeekData = DAY_NAMES.map((day, i) => ({ day, count: dayCountsArr[i] }));
 
   // Summoning spell: find the least active user and what keyword triggers their replies
-  const summoningSpell = computeSummoningSpell(filtered, participants, msgCounts);
+  const summoningSpell = computeSummoningSpell(filtered, participants, msgCounts, stopWords, lang);
 
   return {
     participants,
