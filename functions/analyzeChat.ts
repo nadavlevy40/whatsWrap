@@ -30,7 +30,7 @@ Rules:
 - msgCounts: object with participant name keys and message count values
 - hourlyData: array of 24 objects, one per hour 0-23, each with { hour, total, ...participantCounts }
 - dayOfWeekData: array of 7 objects: { day: "Sunday"|"Monday"|..., count: number }
-- topWords: array of up to 10 { word, count } objects (exclude stop words, short words, system messages)
+- topWords: array of up to 10 { word, count } objects — only actual words spoken in messages; EXCLUDE: stop words, short words (<3 chars), system messages, participant names, parts of participant names, and any metadata
 - signatureEmojis: object mapping each participant to their most-used emoji (string), use "✨" if none
 - laughCounts: object mapping each participant to number of laugh expressions (haha, lol, 😂, etc.)
 - nightOwlCounts: object mapping each participant to messages sent between midnight and 5am
