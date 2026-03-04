@@ -39,9 +39,9 @@ export default function SlideFriendsSummoningSpell({ data, lang = 'en' }) {
         </motion.div>
 
         <div>
-          <p className="text-white/40 text-xs uppercase tracking-widest mb-3">The Inactive One</p>
+          <p className="text-white/40 text-xs uppercase tracking-widest mb-3">{t('theInactiveOne', lang)}</p>
           <p className="text-white font-black text-2xl">{user}</p>
-          <p className="text-white/40 text-sm mt-1">Usually MIA in the chat</p>
+          <p className="text-white/40 text-sm mt-1">{t('usuallyMIA', lang)}</p>
         </div>
 
         <div className="w-full h-px bg-white/10" />
