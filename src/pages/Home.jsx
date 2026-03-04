@@ -74,18 +74,30 @@ export default function Home() {
     setPhase('loading');
 
     if (rawChatText) {
-      // Real file: analyze with OpenAI
+      // Parse locally for accurate stats (fast, handles large files)
+      const localData = parseChatFile(rawChatText);
+
+      // Send a small sample to OpenAI just for quotes & signature emojis enrichment
       try {
+        // Sample: first 8k chars + a random middle chunk for variety
+        const mid = Math.floor(rawChatText.length / 2);
+        const sample = rawChatText.slice(0, 5000) + '\n...\n' + rawChatText.slice(mid, mid + 3000);
         const response = await base44.functions.invoke('analyzeChat', {
-          chatText: rawChatText,
+          chatText: sample,
           mode: selectedMode,
         });
-        const data = response.data;
-        if (data.error) throw new Error(data.error);
-        setChatData({ ...data, mode: selectedMode });
+        const aiData = response.data;
+        // Merge: use local stats for everything, AI for quotes & emojis if better
+        const merged = {
+          ...localData,
+          mode: selectedMode,
+          quotes: (aiData?.quotes?.length > (localData?.quotes?.length || 0)) ? aiData.quotes : localData.quotes,
+          signatureEmojis: aiData?.signatureEmojis || localData.signatureEmojis,
+        };
+        setChatData(merged);
       } catch (err) {
-        setError('AI analysis failed: ' + err.message + '. Using demo data.');
-        setChatData(generateMockData(selectedMode));
+        // Fall back to pure local parse
+        setChatData({ ...localData, mode: selectedMode });
       }
     } else {
       // Demo mode
