@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-const SIZES = ['text-5xl', 'text-4xl', 'text-3xl', 'text-2xl', 'text-xl'];
 const ROTATIONS = [-6, 4, -3, 7, -5];
 const COLORS = [
   'linear-gradient(135deg, #c084fc, #f472b6)',
@@ -10,15 +10,15 @@ const COLORS = [
   'linear-gradient(135deg, #fbbf24, #f472b6)',
 ];
 
-export default function SlideVibeCheck({ data }) {
+export default function SlideVibeCheck({ data, lang = 'en' }) {
   const words = data.topWords;
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-2">The Vibe Check</p>
-        <h2 className="text-white text-3xl font-black">Your shared obsessions</h2>
-        <p className="text-white/40 text-sm mt-1">Words that define you two 👀</p>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('theVibeCheck', lang)}</p>
+        <h2 className="text-white text-3xl font-black">{t('sharedObsessions', lang)}</h2>
+        <p className="text-white/40 text-sm mt-1">{t('wordsDefineYou', lang)}</p>
       </motion.div>
 
       {/* Word cloud */}
