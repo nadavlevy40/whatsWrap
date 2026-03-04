@@ -172,7 +172,7 @@ function buildQuestions(data) {
   if (data.nightOwlCounts) {
     const nightOwl = p.reduce((a, b) => (data.nightOwlCounts[b] || 0) > (data.nightOwlCounts[a] || 0) ? b : a, p[0]);
     qs.push({
-      prompt: 'Who's texting at 3am like a gremlin? 🌙',
+      prompt: "Who's texting at 3am like a gremlin? 🌙",
       emoji: '🦉',
       options: p.slice(0, 4),
       correct: nightOwl,
