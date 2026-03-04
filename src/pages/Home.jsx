@@ -153,20 +153,12 @@ export default function Home() {
   if (phase === 'landing') {
     return (
       <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-        <LandingScreen onFileUpload={handleFileUpload} onUseMockData={handleMockData} />
+        <LandingScreen onFileUpload={handleFileUpload} onUseMockData={handleMockData} lang={lang} onLangChange={handleLangChange} />
         {error && (
           <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-red-500/20 border border-red-500/30 text-red-300 px-4 py-2 rounded-xl text-sm max-w-sm text-center">
             {error}
           </div>
         )}
-      </div>
-    );
-  }
-
-  if (phase === 'select_language') {
-    return (
-      <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
-        <LanguageSelector onSelect={handleLanguageSelect} />
       </div>
     );
   }
