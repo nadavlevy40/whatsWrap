@@ -47,9 +47,9 @@ export default function SlideFamilyAwards({ data, lang = 'en' }) {
   return (
     <div className="flex flex-col h-full px-6 pt-10 pb-6 gap-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">Family Wrapped</p>
-        <h2 className="text-white text-3xl font-black leading-tight">Family<br />Awards 🏅</h2>
-        <p className="text-white/40 text-sm mt-2">The results are in.</p>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('familyWrapped', lang)}</p>
+        <h2 className="text-white text-3xl font-black leading-tight">{t('familyAwards', lang)}</h2>
+        <p className="text-white/40 text-sm mt-2">{t('resultsAreIn', lang)}</p>
       </motion.div>
 
       <div className="grid grid-cols-2 gap-3 flex-1">
