@@ -33,8 +33,36 @@ const STOP_WORDS = STOP_WORDS_EN; // default, overridden per call
 const LAUGH_PATTERNS_EN = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|weak)\b|😂|🤣|💀|😭)/gi;
 const LAUGH_PATTERNS_HE = /(ח{2,}|ה{2,}|lol|lmao|😂|🤣|💀|😭)/gi;
 const EMOJI_REGEX = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
-// Matches WhatsApp "media omitted" in all languages/formats
-const MEDIA_PATTERN = /(omitted|image omitted|video omitted|audio omitted|sticker omitted|document omitted|gif omitted|contact card omitted|התמונה הושמטה|הסרטון הושמט|הקובץ הושמט|המדיה הושמטה|הסטיקר הושמט|האודיו הושמט|המסמך הושמט|‎<Media omitted>)/i;
+// WhatsApp omission/system message patterns (English + Hebrew + various formats)
+const OMITTED_PATTERNS = [
+  /^<media omitted>$/i,
+  /^image omitted$/i,
+  /^video omitted$/i,
+  /^audio omitted$/i,
+  /^sticker omitted$/i,
+  /^gif omitted$/i,
+  /^document omitted$/i,
+  /^contact card omitted$/i,
+  /^location:/i,
+  /^התמונה הושמטה$/,
+  /^הסרטון הושמטה$/,
+  /^הסרטון הושמט$/,
+  /^הקובץ הושמט$/,
+  /^הקובץ הושמטה$/,
+  /^מדיה הושמטה$/,
+  /^מדיה הושמט$/,
+  /^הסטיקר הושמט$/,
+  /^האודיו הושמט$/,
+  /^GIF הושמט$/,
+  /הושמט/,       // catch-all for any Hebrew omission variant
+];
+
+function isOmittedMessage(content) {
+  const trimmed = content.trim();
+  return OMITTED_PATTERNS.some(p => p.test(trimmed));
+}
+
+const MEDIA_PATTERN = /(omitted|image|sticker|gif|video|audio|document|הושמט)/i;
 const ORGANIZER_WORDS = new Set(['dinner','lunch','breakfast','plan','meet','meeting','time','when','tomorrow','today','tonight','weekend','schedule','come','join','invite','birthday','party','trip','going']);
 
 export function parseChatFile(text, lang = 'en') {
@@ -94,15 +122,13 @@ function parseHour(timeStr) {
 function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = ORGANIZER_WORDS, lang = 'en') {
   if (messages.length === 0) return null;
 
-  const SYSTEM_PATTERN = /(end-to-end encrypted|created group|Messages and calls|added|removed|left|joined|changed the subject|changed this group|security code changed|הוצפנה מקצה לקצה|נוצרה הקבוצה|הודעות ושיחות|הצטרף|עזב|עזבה|הסיר|הסירה|הוסיף|הוסיפה|שינה|שינתה)/i;
-
   const userMessages = messages.filter(m =>
     m.sender && m.sender.length > 0 &&
-    !SYSTEM_PATTERN.test(m.content)
+    !m.content.includes('end-to-end encrypted') &&
+    !m.content.includes('created group') &&
+    !m.content.includes('Messages and calls') &&
+    !isOmittedMessage(m.content)
   );
-
-  // Separate real-text messages from media-only ones
-  const textMessages = userMessages.filter(m => !MEDIA_PATTERN.test(m.content));
 
   const senderCounts = {};
   userMessages.forEach(m => { senderCounts[m.sender] = (senderCounts[m.sender] || 0) + 1; });
@@ -110,8 +136,6 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   // Support up to 10 participants for family/friends
   const participants = sortedSenders.slice(0, 10).map(([name]) => name);
   const filtered = userMessages.filter(m => participants.includes(m.sender));
-  // Text-only messages (no media placeholders) — used for content analysis
-  const filteredText = textMessages.filter(m => participants.includes(m.sender));
 
   const msgCounts = {};
   participants.forEach(p => (msgCounts[p] = 0));
