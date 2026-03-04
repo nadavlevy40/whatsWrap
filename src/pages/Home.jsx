@@ -110,7 +110,7 @@ export default function Home() {
       }
     } else {
       // Demo mode
-      setChatData(generateMockData(selectedMode));
+      setChatData({ ...generateMockData(selectedMode), lang });
     }
   }, [rawChatText]);
 
