@@ -30,7 +30,8 @@ const ORGANIZER_WORDS_HE = new Set(['ארוחה','צהריים','ערב','בוק
 
 const STOP_WORDS = STOP_WORDS_EN; // default, overridden per call
 
-const LAUGH_PATTERNS = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|weak)\b|😂|🤣|💀|😭)/gi;
+const LAUGH_PATTERNS_EN = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|weak)\b|😂|🤣|💀|😭)/gi;
+const LAUGH_PATTERNS_HE = /(ח{2,}|ה{2,}|lol|lmao|😂|🤣|💀|😭)/gi;
 const EMOJI_REGEX = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
 const MEDIA_PATTERN = /(omitted|image|sticker|gif|video|audio|document)/i;
 const ORGANIZER_WORDS = new Set(['dinner','lunch','breakfast','plan','meet','meeting','time','when','tomorrow','today','tonight','weekend','schedule','come','join','invite','birthday','party','trip','going']);
