@@ -180,7 +180,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   participants.forEach(p => (organizerScore[p] = 0));
   filtered.forEach(m => {
     const words = m.content.toLowerCase().split(/\s+/);
-    const score = words.filter(w => ORGANIZER_WORDS.has(w)).length;
+    const score = words.filter(w => organizerWords.has(w)).length;
     if (organizerScore[m.sender] !== undefined) organizerScore[m.sender] += score;
   });
 
