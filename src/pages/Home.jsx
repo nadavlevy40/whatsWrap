@@ -99,13 +99,14 @@ export default function Home() {
         const merged = {
           ...localData,
           mode: selectedMode,
+          lang,
           quotes: (aiData?.quotes?.length > (localData?.quotes?.length || 0)) ? aiData.quotes : localData.quotes,
           signatureEmojis: aiData?.signatureEmojis || localData.signatureEmojis,
         };
         setChatData(merged);
       } catch (err) {
         // Fall back to pure local parse
-        setChatData({ ...localData, mode: selectedMode });
+        setChatData({ ...localData, mode: selectedMode, lang });
       }
     } else {
       // Demo mode
