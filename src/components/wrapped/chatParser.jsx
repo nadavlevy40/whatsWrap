@@ -148,6 +148,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     signatureEmojis[p] = sorted.length > 0 ? sorted[0][0] : '✨';
   });
 
+  const LAUGH_PATTERNS = lang === 'he' ? LAUGH_PATTERNS_HE : LAUGH_PATTERNS_EN;
   const laughCounts = {};
   participants.forEach(p => (laughCounts[p] = 0));
   filtered.forEach(m => {
