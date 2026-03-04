@@ -28,6 +28,7 @@ const SLIDES_BY_MODE = {
 };
 
 export default function StoryContainer({ data, mode = 'couple', onRestart, isAdmin = false }) {
+  const lang = data.lang || 'en';
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(1);
 
