@@ -77,9 +77,14 @@ export default function Home() {
       // Parse locally for accurate stats (fast, handles large files)
       const localData = parseChatFile(rawChatText);
 
+      if (!localData || !localData.participants || localData.participants.length === 0) {
+        setError("Couldn't parse the chat file. Make sure it's a WhatsApp .txt export.");
+        setPhase('landing');
+        return;
+      }
+
       // Send a small sample to OpenAI just for quotes & signature emojis enrichment
       try {
-        // Sample: first 8k chars + a random middle chunk for variety
         const mid = Math.floor(rawChatText.length / 2);
         const sample = rawChatText.slice(0, 5000) + '\n...\n' + rawChatText.slice(mid, mid + 3000);
         const response = await base44.functions.invoke('analyzeChat', {
@@ -87,7 +92,6 @@ export default function Home() {
           mode: selectedMode,
         });
         const aiData = response.data;
-        // Merge: use local stats for everything, AI for quotes & emojis if better
         const merged = {
           ...localData,
           mode: selectedMode,
