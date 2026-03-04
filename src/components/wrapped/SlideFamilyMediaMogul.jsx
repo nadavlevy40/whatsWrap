@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-export default function SlideFamilyMediaMogul({ data }) {
+export default function SlideFamilyMediaMogul({ data, lang = 'en' }) {
   const { participants, mediaCounts = {} } = data;
   const sorted = [...participants].sort((a, b) => (mediaCounts[b] || 0) - (mediaCounts[a] || 0));
   const winner = sorted[0];
@@ -9,9 +10,9 @@ export default function SlideFamilyMediaMogul({ data }) {
   return (
     <div className="flex flex-col h-full px-6 pt-10 pb-6 gap-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">Family Roles</p>
-        <h2 className="text-white text-3xl font-black leading-tight">The Media<br />Mogul 📸</h2>
-        <p className="text-white/40 text-sm mt-2">Who spams the group with GIFs & images?</p>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('familyRoles', lang)}</p>
+        <h2 className="text-white text-3xl font-black leading-tight">{t('theMediaMogul', lang)}</h2>
+        <p className="text-white/40 text-sm mt-2">{t('whoSpamsGifs', lang)}</p>
       </motion.div>
 
       <motion.div
@@ -21,8 +22,8 @@ export default function SlideFamilyMediaMogul({ data }) {
       >
         <div className="text-5xl mb-3">📱</div>
         <p className="text-yellow-300 font-black text-2xl">{winner}</p>
-        <p className="text-white/40 text-sm mt-1">{mediaCounts[winner] || 0} media messages sent</p>
-        <p className="text-white/30 text-xs mt-2 italic">"Good morning 🌅" energy detected</p>
+        <p className="text-white/40 text-sm mt-1">{t('mediaSent', lang)(mediaCounts[winner] || 0)}</p>
+        <p className="text-white/30 text-xs mt-2 italic">{t('goodMorningEnergy', lang)}</p>
       </motion.div>
 
       <div className="flex flex-col gap-3 flex-1">
