@@ -36,7 +36,7 @@ export default function SlideLOLMeter({ data, lang = 'en' }) {
               <span className="text-3xl">{isComedian ? '🎤' : '👂'}</span>
               <p className="text-white font-bold text-sm">{p}</p>
               <p className="text-white font-black text-3xl">{score.toLocaleString()}</p>
-              <p className="text-white/40 text-xs">laugh events</p>
+              <p className="text-white/40 text-xs">{t('laughEvents', lang)}</p>
               <div className="mt-1 px-3 py-1 rounded-full text-xs font-bold"
                 style={{
                   background: isComedian ? 'rgba(251,191,36,0.2)' : 'rgba(255,255,255,0.06)',
