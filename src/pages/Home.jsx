@@ -144,6 +144,7 @@ export default function Home() {
     setPhase('landing');
     setChatData(null);
     setMode('couple');
+    setLang('en');
     setError(null);
     setRawChatText(null);
     setLoadingDone(false);
