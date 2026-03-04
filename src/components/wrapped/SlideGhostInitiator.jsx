@@ -57,7 +57,7 @@ export default function SlideGhostInitiator({ data, lang = 'en' }) {
                 <p className="text-white font-black text-xl mt-1">{formatMinutes(mins)}</p>
                 <p className="text-xs mt-1 font-semibold"
                   style={{ color: isGhost ? '#818cf8' : '#34d399' }}>
-                  {isGhost ? 'The Ghost 🕯️' : 'Speed Racer ⚡'}
+                  {isGhost ? t('theGhost', lang) : t('speedRacer', lang)}
                 </p>
               </motion.div>
             );
