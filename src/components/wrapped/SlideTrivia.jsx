@@ -113,18 +113,23 @@ function ScoreScreen({ score, total, onContinue }) {
 
 function buildQuestions(data) {
   const qs = [];
+  const p = data.participants;
+  const p0 = p[0];
+  const p1 = p[1] || p[0];
 
   // Q1: Who said this quote?
   if (data.quotes && data.quotes.length > 0) {
-    const quote = data.quotes[Math.floor(Math.random() * Math.min(data.quotes.length, 6))];
-    qs.push({
-      type: 'quote',
-      prompt: `"${quote?.content}"`,
-      emoji: '💬',
-      questionLabel: 'Who said this?',
-      options: data.participants,
-      correct: quote?.sender,
-    });
+    const validQuotes = data.quotes.filter(q => q?.content && q?.sender && p.includes(q.sender));
+    if (validQuotes.length > 0) {
+      const quote = validQuotes[Math.floor(Math.random() * Math.min(validQuotes.length, 6))];
+      qs.push({
+        prompt: `"${quote.content}"`,
+        emoji: '💬',
+        questionLabel: 'Who said this? 👇',
+        options: p.slice(0, 4),
+        correct: quote.sender,
+      });
+    }
   }
 
   // Q2: Most active day of week
@@ -132,54 +137,112 @@ function buildQuestions(data) {
     const topDay = data.dayOfWeekData.reduce((a, b) => b.count > a.count ? b : a, data.dayOfWeekData[0]);
     const wrongDays = DAYS.filter(d => d !== topDay.day).sort(() => Math.random() - 0.5).slice(0, 3);
     qs.push({
-      type: 'day',
-      prompt: 'Which day are you two most active?',
+      prompt: 'Which day do you chat the most?',
       emoji: '📅',
-      options: [topDay.day, ...wrongDays],
+      options: shuffle([topDay.day, ...wrongDays]),
       correct: topDay.day,
     });
   }
 
-  // Q3: Signature emoji for participant 0
-  const p0 = data.participants[0];
+  // Q3: Signature emoji for p0
   if (data.signatureEmojis?.[p0]) {
     const correctEmoji = data.signatureEmojis[p0];
     const wrongEmojis = ALL_EMOJIS.filter(e => e !== correctEmoji).sort(() => Math.random() - 0.5).slice(0, 3);
     qs.push({
-      type: 'emoji',
       prompt: `What's ${p0}'s signature emoji?`,
       emoji: '✨',
-      options: [correctEmoji, ...wrongEmojis],
+      options: shuffle([correctEmoji, ...wrongEmojis]),
       correct: correctEmoji,
     });
   }
 
-  // Q4: Signature emoji for participant 1
-  const p1 = data.participants[1];
-  if (data.signatureEmojis?.[p1]) {
+  // Q4: Signature emoji for p1
+  if (p1 !== p0 && data.signatureEmojis?.[p1]) {
     const correctEmoji = data.signatureEmojis[p1];
     const wrongEmojis = ALL_EMOJIS.filter(e => e !== correctEmoji && e !== data.signatureEmojis[p0]).sort(() => Math.random() - 0.5).slice(0, 3);
     qs.push({
-      type: 'emoji',
       prompt: `What's ${p1}'s signature emoji?`,
       emoji: '🎭',
-      options: [correctEmoji, ...wrongEmojis],
+      options: shuffle([correctEmoji, ...wrongEmojis]),
       correct: correctEmoji,
     });
   }
 
   // Q5: Night Owl
-  const nightOwl = (data.nightOwlCounts[data.participants[0]] || 0) >= (data.nightOwlCounts[data.participants[1]] || 0)
-    ? data.participants[0] : data.participants[1];
-  qs.push({
-    type: 'nightowl',
-    prompt: 'Who is the Night Owl? 🌙',
-    emoji: '🦉',
-    options: data.participants,
-    correct: nightOwl,
-  });
+  if (data.nightOwlCounts) {
+    const nightOwl = p.reduce((a, b) => (data.nightOwlCounts[b] || 0) > (data.nightOwlCounts[a] || 0) ? b : a, p[0]);
+    qs.push({
+      prompt: 'Who's texting at 3am like a gremlin? 🌙',
+      emoji: '🦉',
+      options: p.slice(0, 4),
+      correct: nightOwl,
+    });
+  }
 
-  return qs.slice(0, 5);
+  // Q6: Who laughs more?
+  if (data.laughCounts && p1 !== p0) {
+    const funnier = (data.laughCounts[p0] || 0) >= (data.laughCounts[p1] || 0) ? p0 : p1;
+    qs.push({
+      prompt: 'Who sends more laugh reactions (lol, 😂, haha...)?',
+      emoji: '😂',
+      options: p.slice(0, 4),
+      correct: funnier,
+    });
+  }
+
+  // Q7: Who starts conversations more?
+  if (data.initiatorCounts && p1 !== p0) {
+    const starter = (data.initiatorCounts[p0] || 0) >= (data.initiatorCounts[p1] || 0) ? p0 : p1;
+    qs.push({
+      prompt: 'Who starts the conversation more often?',
+      emoji: '🚀',
+      options: p.slice(0, 4),
+      correct: starter,
+    });
+  }
+
+  // Q8: Who replies faster?
+  if (data.replyTimes && p1 !== p0) {
+    const faster = (data.replyTimes[p0] || 999) <= (data.replyTimes[p1] || 999) ? p0 : p1;
+    qs.push({
+      prompt: 'Who replies faster on average?',
+      emoji: '⚡',
+      options: p.slice(0, 4),
+      correct: faster,
+    });
+  }
+
+  // Q9: Most active hour
+  if (data.hourlyData) {
+    const topHour = data.hourlyData.reduce((a, b) => b.total > a.total ? b : a, data.hourlyData[0]);
+    const formatHour = h => h === 0 ? '12am' : h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h - 12}pm`;
+    const wrongHours = [3, 9, 14, 20, 22].filter(h => h !== topHour.hour).sort(() => Math.random() - 0.5).slice(0, 3);
+    qs.push({
+      prompt: 'What hour is your chat most active?',
+      emoji: '🕐',
+      options: shuffle([formatHour(topHour.hour), ...wrongHours.map(formatHour)]),
+      correct: formatHour(topHour.hour),
+    });
+  }
+
+  // Q10: Second quote if available
+  if (data.quotes && data.quotes.length > 1) {
+    const validQuotes = data.quotes.filter(q => q?.content && q?.sender && p.includes(q.sender));
+    if (validQuotes.length > 1) {
+      const quote = validQuotes[Math.min(validQuotes.length - 1, 3 + Math.floor(Math.random() * 3))];
+      if (quote && !qs.find(q => q.prompt === `"${quote.content}"`)) {
+        qs.push({
+          prompt: `"${quote.content}"`,
+          emoji: '🤔',
+          questionLabel: 'Who said this one? 👇',
+          options: p.slice(0, 4),
+          correct: quote.sender,
+        });
+      }
+    }
+  }
+
+  return qs.slice(0, 10);
 }
 
 export default function SlideTrivia({ data, onNext }) {
