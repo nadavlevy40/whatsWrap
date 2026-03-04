@@ -99,7 +99,7 @@ export default function SlideGhostInitiator({ data, lang = 'en' }) {
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
               className="mt-2 px-3 py-1.5 rounded-xl text-xs font-bold text-center"
               style={{ background: 'rgba(236,72,153,0.15)', color: '#f472b6', border: '1px solid rgba(236,72,153,0.25)' }}>
-              🚀 {bigInitiator} keeps the chat alive!
+              {typeof t('keepsChatAlive', lang) === 'function' ? t('keepsChatAlive', lang)(bigInitiator) : `🚀 ${bigInitiator} keeps the chat alive!`}
             </motion.div>
           </div>
         </div>
