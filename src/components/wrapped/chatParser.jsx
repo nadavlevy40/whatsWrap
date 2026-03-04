@@ -205,7 +205,7 @@ function analyzeMessages(messages) {
     const prev = filtered[i - 1];
     const curr = filtered[i];
     const parseTime2 = (m) => {
-      const parts = m.date.split('/').map(Number);
+      const parts = m.date.split(/[\/\.\-]/).map(Number);
       const [mm, dd, yy] = parts;
       const year = yy < 100 ? 2000 + yy : yy;
       const minMatch = m.time.match(/:(\d{2})/);
