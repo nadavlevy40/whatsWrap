@@ -11,25 +11,25 @@ function computeAwards(data, lang = 'en') {
     const score = (data.organizerScore || {})[p] || 0;
     return (!best || score > (data.organizerScore || {})[best]) ? p : best;
   }, null);
-  if (organizer) awards.push({ emoji: '📋', title: 'The Organizer', desc: 'Always planning dinner, meetups & schedules', winner: organizer });
+  if (organizer) awards.push({ emoji: '📋', title: t('theOrganizer', lang), desc: t('organizerDesc', lang), winner: organizer });
 
   // The Comedian
   const comedian = participants.reduce((best, p) => {
     return (!best || (laughCounts[p] || 0) > (laughCounts[best] || 0)) ? p : best;
   }, null);
-  if (comedian) awards.push({ emoji: '🎭', title: 'The Comedian', desc: 'Keeps everyone laughing', winner: comedian });
+  if (comedian) awards.push({ emoji: '🎭', title: t('theComedianAward', lang), desc: t('comedianDesc', lang), winner: comedian });
 
   // The Night Owl
   const nightOwl = participants.reduce((best, p) => {
     return (!best || (nightOwlCounts[p] || 0) > (nightOwlCounts[best] || 0)) ? p : best;
   }, null);
-  if (nightOwl) awards.push({ emoji: '🦉', title: 'The Night Owl', desc: 'Still texting at 3am', winner: nightOwl });
+  if (nightOwl) awards.push({ emoji: '🦉', title: t('theNightOwlAward', lang), desc: t('nightOwlDesc', lang), winner: nightOwl });
 
   // The Loudest
   const loudest = participants.reduce((best, p) => {
     return (!best || (capsLockCounts[p] || 0) > (capsLockCounts[best] || 0)) ? p : best;
   }, null);
-  if (loudest) awards.push({ emoji: '📣', title: 'The Loudest', desc: 'TYPES LIKE THIS A LOT', winner: loudest });
+  if (loudest) awards.push({ emoji: '📣', title: t('theLoudest', lang), desc: t('loudestDesc', lang), winner: loudest });
 
   return awards.slice(0, 4);
 }
