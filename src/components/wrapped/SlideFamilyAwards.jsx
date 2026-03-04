@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-function computeAwards(data) {
+function computeAwards(data, lang = 'en') {
   const { participants, msgCounts = {}, laughCounts = {}, nightOwlCounts = {}, capsLockCounts = {}, mediaCounts = {} } = data;
 
   const awards = [];
