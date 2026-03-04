@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
+import { t } from './i18n';
 
 function formatMinutes(mins) {
   if (!mins && mins !== 0) return '—';
