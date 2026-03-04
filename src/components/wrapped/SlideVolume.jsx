@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 
 export default function SlideVolume({ data }) {
-  const num = data.totalMessages.toLocaleString();
+  const total = data.totalMessages || Object.values(data.msgCounts || {}).reduce((a, b) => a + b, 0);
+  const num = total.toLocaleString();
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-8 text-center gap-8">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
@@ -31,7 +32,7 @@ export default function SlideVolume({ data }) {
         {data.participants.map((p, i) => (
           <div key={p} className="text-center px-5 py-3 rounded-2xl" style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)' }}>
             <p className="text-white/50 text-xs mb-1">{p}</p>
-            <p className="text-white font-bold text-xl">{data.msgCounts[p].toLocaleString()}</p>
+            <p className="text-white font-bold text-xl">{(data.msgCounts[p] || 0).toLocaleString()}</p>
           </div>
         ))}
       </motion.div>
