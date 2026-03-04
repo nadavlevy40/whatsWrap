@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { BarChart, Bar, XAxis, ResponsiveContainer, Cell } from 'recharts';
+import { t } from './i18n';
 
-export default function SlideChatterbox({ data }) {
+export default function SlideChatterbox({ data, lang = 'en' }) {
   const [p1, p2] = data.participants;
   const c1 = data.msgCounts[p1];
   const c2 = data.msgCounts[p2];
