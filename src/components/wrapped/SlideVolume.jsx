@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-export default function SlideVolume({ data }) {
+export default function SlideVolume({ data, lang = 'en' }) {
   const total = data.totalMessages || Object.values(data.msgCounts || {}).reduce((a, b) => a + b, 0);
   const num = total.toLocaleString();
   return (
