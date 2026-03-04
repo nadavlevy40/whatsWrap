@@ -52,7 +52,7 @@ export default function SlideEmotions({ data, lang = 'en' }) {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
           className="w-full rounded-2xl px-4 py-3 text-center"
           style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.2)' }}>
-          <p className="text-yellow-300 font-bold">😂 {laughWinner} finds everything funnier!</p>
+          <p className="text-yellow-300 font-bold">{typeof t('findsEverythingFunny', lang) === 'function' ? t('findsEverythingFunny', lang)(laughWinner) : `😂 ${laughWinner} finds everything funnier!`}</p>
         </motion.div>
       </div>
     </div>
