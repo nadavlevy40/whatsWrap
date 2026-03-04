@@ -56,7 +56,7 @@ export default function Home() {
       });
       const suggested = senders.size > 2 ? 'friends' : 'couple';
       setMode(suggested);
-      setPhase('select_mode');
+      setPhase('select_language');
     };
     reader.readAsText(file);
   }, []);
