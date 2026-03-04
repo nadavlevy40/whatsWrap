@@ -65,7 +65,7 @@ export default function SlideGhostInitiator({ data, lang = 'en' }) {
         </div>
         <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
           className="text-center text-white/30 text-xs mt-2">
-          {ghost} takes {formatMinutes(Math.abs(t1 - t2))} longer to reply — Playing Hard to Get 😏
+          {typeof t('ghostTakes', lang) === 'function' ? t('ghostTakes', lang)(ghost, formatMinutes(Math.abs(t1 - t2))) : `${ghost} takes ${formatMinutes(Math.abs(t1 - t2))} longer to reply`}
         </motion.p>
       </div>
 
