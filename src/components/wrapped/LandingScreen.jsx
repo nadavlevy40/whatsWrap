@@ -6,10 +6,27 @@ import LandingFeatures from './LandingFeatures';
 import LandingTestimonials from './LandingTestimonials';
 import LandingSneakPeeks from './LandingSneakPeeks';
 
-export default function LandingScreen({ onFileUpload, onUseMockData }) {
+export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en', onLangChange }) {
   const [isDragging, setIsDragging] = useState(false);
   const [showGuide, setShowGuide] = useState(false);
   const fileRef = useRef(null);
+
+  const isHe = lang === 'he';
+
+  const copy = {
+    badge: isHe ? 'וואטסאפ ספונות 2024' : 'WhatsApp Wrapped 2024',
+    headline1: isHe ? 'גלו את' : 'Reveal Your',
+    headline2: isHe ? 'ה-DNA של הצ\'אט' : 'Chat DNA',
+    sub: isHe ? 'השיחה שלכם, מחדש.' : 'Your conversation, reimagined.',
+    dropping: isHe ? '!שחרר כאן 🎯' : 'Drop it! 🎯',
+    dropTitle: isHe ? 'גרור את ייצוא הצ\'אט' : 'Drop your chat export',
+    dropSub: isHe ? 'קובץ WhatsApp .txt · לחץ לדפדוף' : 'WhatsApp .txt file · Tap to browse',
+    or: isHe ? 'או' : 'or',
+    demo: isHe ? 'נסה דמו — ללא קובץ' : 'Try Demo — No File Needed',
+    help: isHe ? 'צריך עזרה בייצוא הצ\'אט?' : "Need help exporting your chat?",
+    helpLink: isHe ? 'צפה במדריך.' : 'View Guide.',
+    privacy: isHe ? '100% מאובטח · עיבוד מקומי · כלום לא יוצא מהמכשיר שלך' : '100% Secure · Offline Processing · Nothing Leaves Your Device',
+  };
 
   const handleDrop = (e) => {
     e.preventDefault();
@@ -24,7 +41,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData }) {
   };
 
   return (
-    <div className="w-full flex flex-col items-center relative"
+    <div className="w-full flex flex-col items-center relative" dir={isHe ? 'rtl' : 'ltr'}
       style={{ background: 'linear-gradient(135deg, #0f0c29 0%, #1a0533 40%, #24074a 100%)' }}>
 
       {/* Ambient orbs */}
