@@ -71,25 +71,25 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
             <StorySlide key={slideKey} index={currentSlide} direction={direction}>
               <div className="flex-1 flex flex-col h-full overflow-y-auto">
                 {/* Couple slides */}
-                {slideKey === 'volume' && <SlideVolume data={data} />}
-                {slideKey === 'chatterbox' && <SlideChatterbox data={data} />}
-                {slideKey === 'podium' && <SlideWordPodium data={data} />}
-                {slideKey === 'lol' && <SlideLOLMeter data={data} />}
-                {slideKey === 'ghost' && <SlideGhostInitiator data={data} />}
-                {slideKey === 'emotions' && <SlideEmotions data={data} />}
-                {slideKey === 'trivia' && <SlideTrivia data={data} onNext={goNext} />}
+                {slideKey === 'volume' && <SlideVolume data={data} lang={lang} />}
+                {slideKey === 'chatterbox' && <SlideChatterbox data={data} lang={lang} />}
+                {slideKey === 'podium' && <SlideWordPodium data={data} lang={lang} />}
+                {slideKey === 'lol' && <SlideLOLMeter data={data} lang={lang} />}
+                {slideKey === 'ghost' && <SlideGhostInitiator data={data} lang={lang} />}
+                {slideKey === 'emotions' && <SlideEmotions data={data} lang={lang} />}
+                {slideKey === 'trivia' && <SlideTrivia data={data} onNext={goNext} lang={lang} />}
                 {/* Family slides */}
-                {slideKey === 'family_media' && <SlideFamilyMediaMogul data={data} />}
-                {slideKey === 'family_ghost' && <SlideFamilyGhost data={data} />}
-                {slideKey === 'family_caps' && <SlideFamilyCapsLock data={data} />}
-                {slideKey === 'family_awards' && <SlideFamilyAwards data={data} />}
+                {slideKey === 'family_media' && <SlideFamilyMediaMogul data={data} lang={lang} />}
+                {slideKey === 'family_ghost' && <SlideFamilyGhost data={data} lang={lang} />}
+                {slideKey === 'family_caps' && <SlideFamilyCapsLock data={data} lang={lang} />}
+                {slideKey === 'family_awards' && <SlideFamilyAwards data={data} lang={lang} />}
                 {/* Friends slides */}
-                {slideKey === 'friends_roast' && <SlideFriendsRoastMaster data={data} />}
-                {slideKey === 'friends_night' && <SlideFriendsNightShift data={data} />}
-                {slideKey === 'friends_summon' && <SlideFriendsSummoningSpell data={data} />}
+                {slideKey === 'friends_roast' && <SlideFriendsRoastMaster data={data} lang={lang} />}
+                {slideKey === 'friends_night' && <SlideFriendsNightShift data={data} lang={lang} />}
+                {slideKey === 'friends_summon' && <SlideFriendsSummoningSpell data={data} lang={lang} />}
                 {/* Shared */}
-                {slideKey === 'paywall' && <SlidePaywall data={data} onUnlock={goNext} />}
-                {slideKey === 'share' && <SlideShare data={data} onRestart={onRestart} />}
+                {slideKey === 'paywall' && <SlidePaywall data={data} onUnlock={goNext} lang={lang} />}
+                {slideKey === 'share' && <SlideShare data={data} onRestart={onRestart} lang={lang} />}
               </div>
             </StorySlide>
           </AnimatePresence>
