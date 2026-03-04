@@ -45,7 +45,7 @@ Rules:
     const userPrompt = `Mode: ${mode}\n\nChat export:\n${truncated}\n\nReturn only the JSON object, no markdown.`;
 
     const completion = await openai.chat.completions.create({
-      model: 'gpt-4o',
+      model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },
