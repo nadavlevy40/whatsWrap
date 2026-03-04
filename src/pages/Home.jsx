@@ -62,10 +62,14 @@ export default function Home() {
   }, []);
 
   const handleMockData = useCallback(() => {
-    // Default to couple mock for demo
     const mock = generateMockData('couple');
     setChatData(mock);
     setMode('couple');
+    setPhase('select_mode');
+  }, []);
+
+  const handleLanguageSelect = useCallback((selectedLang) => {
+    setLang(selectedLang);
     setPhase('select_mode');
   }, []);
 
