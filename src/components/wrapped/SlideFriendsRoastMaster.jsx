@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-export default function SlideFriendsRoastMaster({ data }) {
+export default function SlideFriendsRoastMaster({ data, lang = 'en' }) {
   const { participants, laughCounts = {} } = data;
   const sorted = [...participants].sort((a, b) => (laughCounts[b] || 0) - (laughCounts[a] || 0));
   const winner = sorted[0];
