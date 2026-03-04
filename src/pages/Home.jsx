@@ -163,6 +163,14 @@ export default function Home() {
     );
   }
 
+  if (phase === 'select_language') {
+    return (
+      <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
+        <LanguageSelector onSelect={handleLanguageSelect} />
+      </div>
+    );
+  }
+
   if (phase === 'select_mode') {
     return (
       <div style={{ fontFamily: "'Inter', system-ui, sans-serif" }}>
