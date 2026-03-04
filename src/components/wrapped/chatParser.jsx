@@ -198,8 +198,8 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     if (organizerScore[m.sender] !== undefined) organizerScore[m.sender] += score;
   });
 
-  const quotes = filtered
-    .filter(m => m.content.length > 8 && m.content.length < 55 && !m.content.includes('omitted') && !m.content.includes('http') && !m.content.includes('www'))
+  const quotes = filteredText
+    .filter(m => m.content.length > 8 && m.content.length < 55 && !m.content.includes('http') && !m.content.includes('www'))
     .sort(() => Math.random() - 0.5)
     .slice(0, 10);
 
