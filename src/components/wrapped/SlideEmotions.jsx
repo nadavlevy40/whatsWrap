@@ -34,7 +34,7 @@ export default function SlideEmotions({ data, lang = 'en' }) {
 
       {/* Laugh counter */}
       <div className="w-full space-y-3">
-        <p className="text-white/40 text-xs text-center uppercase tracking-wider">Who laughs more?</p>
+        <p className="text-white/40 text-xs text-center uppercase tracking-wider">{t('whoLaughsMore', lang)}</p>
         <div className="flex gap-3">
           {[p1, p2].map((p, i) => (
             <motion.div key={p}
