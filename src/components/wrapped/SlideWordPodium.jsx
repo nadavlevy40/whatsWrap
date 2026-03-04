@@ -7,7 +7,7 @@ const MEDALS = [
   { label: '🥉', color: '#fb923c', bg: 'rgba(251,146,60,0.12)', border: 'rgba(251,146,60,0.35)', size: 'text-xl' },
 ];
 
-export default function SlideWordPodium({ data }) {
+export default function SlideWordPodium({ data, lang = 'en' }) {
   const words = (data.topWords || []).filter(w => w?.word && w.count > 0);
   const top3 = words.slice(0, 3);
   const rest = words.slice(3, 10);
