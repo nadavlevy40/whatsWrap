@@ -32,8 +32,8 @@ export default function SlideGhostInitiator({ data, lang = 'en' }) {
   return (
     <div className="w-full h-full flex flex-col px-5 pt-6 pb-4 gap-5 overflow-y-auto">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">Conversation Dynamics</p>
-        <h2 className="text-white text-2xl font-black">Ghost & Initiator 👻</h2>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('conversationDynamics', lang)}</p>
+        <h2 className="text-white text-2xl font-black">{t('ghostInitiator', lang)}</h2>
       </motion.div>
 
       {/* Reply times */}
