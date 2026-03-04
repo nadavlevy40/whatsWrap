@@ -106,8 +106,8 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
               <Upload size={28} className="text-purple-300" />
             </motion.div>
             <div className="text-center">
-              <p className="text-white font-semibold text-lg mb-1">{isDragging ? 'Drop it! 🎯' : 'Drop your chat export'}</p>
-              <p className="text-white/40 text-sm">WhatsApp .txt file · Tap to browse</p>
+              <p className="text-white font-semibold text-lg mb-1">{isDragging ? copy.dropping : copy.dropTitle}</p>
+              <p className="text-white/40 text-sm">{copy.dropSub}</p>
             </div>
             <input ref={fileRef} type="file" accept=".txt" className="hidden" onChange={handleFileChange} />
           </div>
