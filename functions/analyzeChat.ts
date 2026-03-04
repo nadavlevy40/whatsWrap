@@ -42,7 +42,8 @@ Rules:
 - summoningSpell: null OR { user: string, keyword: string, triggerCount: number } - the least active user and what keyword in others' messages triggers their reply
 - quotes: array of up to 8 { sender: string, content: string } objects - funny or memorable short messages under 55 chars`;
 
-    const userPrompt = `Mode: ${mode}\n\nChat export:\n${truncated}\n\nReturn only the JSON object, no markdown.`;
+    const participantsNote = `IMPORTANT: The participant names in this chat are the message authors (the text before the colon in each line, e.g. "Alice:", "Bob:"). Do NOT include any participant names or parts of their names as words in topWords, quotes content that references names, or summoningSpell keywords.`;
+    const userPrompt = `Mode: ${mode}\n\n${participantsNote}\n\nChat export:\n${truncated}\n\nReturn only the JSON object, no markdown.`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
