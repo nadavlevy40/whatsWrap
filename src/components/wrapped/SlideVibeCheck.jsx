@@ -41,7 +41,7 @@ export default function SlideVibeCheck({ data, lang = 'en' }) {
 
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.2 }}
         className="text-white/30 text-xs text-center italic">
-        These are your private universe's keywords
+        {t('privateUniverse', lang)}
       </motion.p>
     </div>
   );
