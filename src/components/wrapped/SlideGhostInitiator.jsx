@@ -38,7 +38,7 @@ export default function SlideGhostInitiator({ data, lang = 'en' }) {
 
       {/* Reply times */}
       <div>
-        <p className="text-white/40 text-xs uppercase tracking-wider mb-2 text-center">Average Reply Time</p>
+        <p className="text-white/40 text-xs uppercase tracking-wider mb-2 text-center">{t('avgReplyTime', lang)}</p>
         <div className="flex gap-3">
           {[p1, p2].map((p, i) => {
             const mins = replyTimes[p] || 0;
