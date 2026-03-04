@@ -22,8 +22,8 @@ export default function SlideFriendsNightShift({ data, lang = 'en' }) {
       >
         <div className="text-5xl mb-3">🌙</div>
         <p className="text-indigo-300 font-black text-2xl">{winner}</p>
-        <p className="text-white/50 text-sm mt-1">{nightOwlCounts[winner] || 0} messages after midnight</p>
-        <p className="text-white/30 text-xs mt-2 italic">"Sleep is overrated anyway"</p>
+        <p className="text-white/50 text-sm mt-1">{typeof t('messagesAfterMidnight', lang) === 'function' ? t('messagesAfterMidnight', lang)(nightOwlCounts[winner] || 0) : `${nightOwlCounts[winner] || 0} messages after midnight`}</p>
+        <p className="text-white/30 text-xs mt-2 italic">{t('sleepOverrated', lang)}</p>
       </motion.div>
 
       <div className="flex flex-col gap-3 flex-1">
