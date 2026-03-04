@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-export default function SlideLOLMeter({ data }) {
+export default function SlideLOLMeter({ data, lang = 'en' }) {
   const [p1, p2] = data.participants;
   const s1 = data.laughCounts[p1] || 0;
   const s2 = data.laughCounts[p2] || 0;
