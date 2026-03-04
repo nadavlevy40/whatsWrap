@@ -24,6 +24,10 @@ export default function Home() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminChecked, setAdminChecked] = useState(false);
 
+  // Check URL param for admin bypass
+  const urlParams = new URLSearchParams(window.location.search);
+  const isAdminByUrl = urlParams.get('admin') === 'true';
+
   const suggestMode = (data) => {
     if (!data) return 'couple';
     return data.participants.length > 2 ? 'friends' : 'couple';
