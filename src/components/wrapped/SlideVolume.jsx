@@ -7,7 +7,7 @@ export default function SlideVolume({ data, lang = 'en' }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-8 text-center gap-8">
       <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-        <p className="text-white/50 text-sm font-medium tracking-widest uppercase mb-4">Total Messages</p>
+        <p className="text-white/50 text-sm font-medium tracking-widest uppercase mb-4">{t('totalMessages', lang)}</p>
         <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
