@@ -101,11 +101,12 @@ export default function Home() {
           lang,
           quotes: (aiData?.quotes?.length > (localData?.quotes?.length || 0)) ? aiData.quotes : localData.quotes,
           signatureEmojis: aiData?.signatureEmojis || localData.signatureEmojis,
+          _rawChatText: rawChatText,
         };
         setChatData(merged);
       } catch (err) {
         // Fall back to pure local parse
-        setChatData({ ...localData, mode: selectedMode, lang });
+        setChatData({ ...localData, mode: selectedMode, lang, _rawChatText: rawChatText });
       }
     } else {
       // Demo mode
