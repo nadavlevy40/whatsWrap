@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
 const MEDALS = [
   { label: '🥇', color: '#fbbf24', bg: 'rgba(251,191,36,0.15)', border: 'rgba(251,191,36,0.4)', size: 'text-3xl' },
