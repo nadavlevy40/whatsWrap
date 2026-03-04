@@ -110,6 +110,8 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   // Support up to 10 participants for family/friends
   const participants = sortedSenders.slice(0, 10).map(([name]) => name);
   const filtered = userMessages.filter(m => participants.includes(m.sender));
+  // Text-only messages (no media placeholders) — used for content analysis
+  const filteredText = textMessages.filter(m => participants.includes(m.sender));
 
   const msgCounts = {};
   participants.forEach(p => (msgCounts[p] = 0));
