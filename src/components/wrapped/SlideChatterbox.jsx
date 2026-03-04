@@ -60,7 +60,7 @@ export default function SlideChatterbox({ data, lang = 'en' }) {
         className="w-full rounded-2xl px-6 py-4 text-center"
         style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.3), rgba(219,39,119,0.3))', border: '1px solid rgba(255,255,255,0.1)' }}>
         <p className="text-white font-bold text-lg">
-          🏆 <span style={{ color: '#c084fc' }}>{winner}</span> talks {pct}% more!
+          {typeof t('talksPctMore', lang) === 'function' ? t('talksPctMore', lang)(winner, pct) : `🏆 ${winner} talks ${pct}% more!`}
         </p>
       </motion.div>
     </div>
