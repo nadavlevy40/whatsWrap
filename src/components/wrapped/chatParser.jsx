@@ -74,7 +74,7 @@ export function parseChatFile(text, lang = 'en') {
     }
   }
   if (currentMessage) messages.push(currentMessage);
-  return analyzeMessages(messages);
+  return analyzeMessages(messages, stopWords, organizerWords, lang);
 }
 
 function parseHour(timeStr) {
