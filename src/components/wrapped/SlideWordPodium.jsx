@@ -15,9 +15,9 @@ export default function SlideWordPodium({ data, lang = 'en' }) {
   return (
     <div className="w-full h-full flex flex-col px-5 pt-6 pb-4 gap-5 overflow-y-auto" dir="auto">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-center">
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">Most Used Words</p>
-        <h2 className="text-white text-2xl font-black">The Word Podium 🏆</h2>
-        <p className="text-white/40 text-xs mt-1">Your chat's most iconic vocabulary</p>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('topWords', lang)}</p>
+        <h2 className="text-white text-2xl font-black">{t('wordPodiumTitle', lang)}</h2>
+        <p className="text-white/40 text-xs mt-1">{t('wordPodiumSub', lang)}</p>
       </motion.div>
 
       {/* Top 3 */}
