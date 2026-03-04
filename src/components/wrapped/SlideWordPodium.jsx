@@ -38,7 +38,7 @@ export default function SlideWordPodium({ data, lang = 'en' }) {
       {/* Divider */}
       <div className="flex items-center gap-3">
         <div className="flex-1 h-px bg-white/10" />
-        <span className="text-white/25 text-xs uppercase tracking-widest">Also trending</span>
+        <span className="text-white/25 text-xs uppercase tracking-widest">{t('alsoTrending', lang)}</span>
         <div className="flex-1 h-px bg-white/10" />
       </div>
 
