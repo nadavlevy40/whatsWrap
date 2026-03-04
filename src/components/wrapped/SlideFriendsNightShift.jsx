@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-export default function SlideFriendsNightShift({ data }) {
+export default function SlideFriendsNightShift({ data, lang = 'en' }) {
   const { participants, nightOwlCounts = {} } = data;
   const sorted = [...participants].sort((a, b) => (nightOwlCounts[b] || 0) - (nightOwlCounts[a] || 0));
   const winner = sorted[0];
