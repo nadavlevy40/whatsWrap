@@ -1,13 +1,14 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-export default function SlideFriendsSummoningSpell({ data }) {
+export default function SlideFriendsSummoningSpell({ data, lang = 'en' }) {
   const { summoningSpell } = data;
 
   if (!summoningSpell) {
     return (
       <div className="flex flex-col h-full items-center justify-center px-6 gap-4">
         <div className="text-4xl">🔮</div>
-        <p className="text-white/40 text-center text-sm">Not enough data to find a summoning spell!</p>
+        <p className="text-white/40 text-center text-sm">{t('notEnoughData', lang)}</p>
       </div>
     );
   }
