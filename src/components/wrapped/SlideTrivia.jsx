@@ -204,7 +204,8 @@ export default function SlideTrivia({ data, onNext }) {
           <MultiChoiceQuestion
             questionNum={step + 1}
             totalQuestions={total}
-            prompt={q.questionLabel || q.prompt}
+            label={q.questionLabel}
+            prompt={q.prompt}
             emoji={q.emoji}
             options={q.options}
             correctAnswer={q.correct}
