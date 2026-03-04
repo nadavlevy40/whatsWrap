@@ -18,9 +18,9 @@ export default function SlideFriendsSummoningSpell({ data, lang = 'en' }) {
   return (
     <div className="flex flex-col h-full px-6 pt-10 pb-6 gap-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">Friend Group</p>
-        <h2 className="text-white text-3xl font-black leading-tight">The Summoning<br />Spell 🔮</h2>
-        <p className="text-white/40 text-sm mt-2">Say the magic word and they appear.</p>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('friendGroup', lang)}</p>
+        <h2 className="text-white text-3xl font-black leading-tight">{t('theSummoningSpell', lang)}</h2>
+        <p className="text-white/40 text-sm mt-2">{t('sayMagicWord', lang)}</p>
       </motion.div>
 
       <motion.div
