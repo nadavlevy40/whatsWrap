@@ -4,6 +4,7 @@ import LandingScreen from '../components/wrapped/LandingScreen';
 import LoadingScreen from '../components/wrapped/LoadingScreen';
 import StoryContainer from '../components/wrapped/StoryContainer';
 import ModeSelector from '../components/wrapped/ModeSelector';
+import LanguageSelector from '../components/wrapped/LanguageSelector';
 import { generateMockData, parseChatFile } from '../components/wrapped/chatParser';
 import { base44 } from '@/api/base44Client';
 
