@@ -67,7 +67,7 @@ export default function SlideLOLMeter({ data, lang = 'en' }) {
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }}
         className="w-full rounded-2xl px-4 py-3 text-center"
         style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
-        <p className="text-white/40 text-xs">Detected: haha · lol · lmao · rofl · 😂 · 🤣 · 💀 · 😭</p>
+        <p className="text-white/40 text-xs">{t('detectedPatterns', lang)}</p>
       </motion.div>
     </div>
   );
