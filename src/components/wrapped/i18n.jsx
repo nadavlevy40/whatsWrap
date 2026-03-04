@@ -55,6 +55,7 @@ const translations = {
   wordPodiumTitle:      { en: 'The Word Podium 🏆', he: 'פודיום המילים 🏆' },
   wordPodiumSub:        { en: 'Most used words in your chat', he: 'המילים הנפוצות ביותר בצ\'אט' },
   timesUsed:            { en: (n) => `${n}×`, he: (n) => `${n} פעמים` },
+  alsoTrending:         { en: 'Also trending', he: 'גם בטרנד' },
 
   // Family slides
   familyRoles:          { en: 'Family Roles', he: 'תפקידים משפחתיים' },
