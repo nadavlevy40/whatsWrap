@@ -10,9 +10,9 @@ export default function SlideFriendsNightShift({ data, lang = 'en' }) {
   return (
     <div className="flex flex-col h-full px-6 pt-10 pb-6 gap-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">Friend Group</p>
-        <h2 className="text-white text-3xl font-black leading-tight">The Night<br />Shift 🌙</h2>
-        <p className="text-white/40 text-sm mt-2">Who keeps the group alive after midnight?</p>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('friendGroup', lang)}</p>
+        <h2 className="text-white text-3xl font-black leading-tight">{t('theNightShift', lang)}</h2>
+        <p className="text-white/40 text-sm mt-2">{t('whoKeepsGroupAlive', lang)}</p>
       </motion.div>
 
       <motion.div
