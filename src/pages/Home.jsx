@@ -68,9 +68,8 @@ export default function Home() {
     setPhase('select_mode');
   }, []);
 
-  const handleLanguageSelect = useCallback((selectedLang) => {
+  const handleLangChange = useCallback((selectedLang) => {
     setLang(selectedLang);
-    setPhase('select_mode');
   }, []);
 
   const handleModeSelect = useCallback(async (selectedMode) => {
