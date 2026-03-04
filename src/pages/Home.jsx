@@ -79,7 +79,7 @@ export default function Home() {
 
     if (rawChatText) {
       // Parse locally for accurate stats (fast, handles large files)
-      const localData = parseChatFile(rawChatText);
+      const localData = parseChatFile(rawChatText, lang);
 
       if (!localData || !localData.participants || localData.participants.length === 0) {
         setError("Couldn't parse the chat file. Make sure it's a WhatsApp .txt export.");
