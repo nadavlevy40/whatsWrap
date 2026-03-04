@@ -64,7 +64,7 @@ export default function SlideFriendsSummoningSpell({ data, lang = 'en' }) {
         <div className="w-full rounded-xl p-3 text-center"
           style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
           <p className="text-white/50 text-sm">
-            "When you mention <span className="text-purple-300 font-bold">{keyword}</span>, <span className="text-pink-300 font-bold">{user}</span> wakes up!"
+            {typeof t('whenYouMention', lang) === 'function' ? t('whenYouMention', lang)(keyword, user) : `"When you mention ${keyword}, ${user} wakes up!"`}
           </p>
         </div>
       </motion.div>
