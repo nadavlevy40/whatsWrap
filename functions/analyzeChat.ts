@@ -40,10 +40,12 @@ Rules:
 - replyTimes: object mapping each participant to their average reply time in minutes
 - initiatorCounts: object mapping each participant to number of times they started a new conversation (gap > 6 hours)
 - summoningSpell: null OR { user: string, keyword: string, triggerCount: number } - the least active user and what keyword in others' messages triggers their reply
-- quotes: array of up to 8 { sender: string, content: string } objects - funny or memorable short messages under 55 chars
-IMPORTANT - IGNORE/SKIP completely any messages that are WhatsApp system omission placeholders, including but not limited to: "image omitted", "<Media omitted>", "video omitted", "audio omitted", "sticker omitted", "gif omitted", "document omitted", "התמונה הושמטה", "הסרטון הושמט", "הקובץ הושמט", "מדיה הושמטה", "הסטיקר הושמט", "האודיו הושמט", or any message containing "הושמט" or "omitted". These are not real messages and must be completely excluded from all analysis, counts, quotes, topWords, and any other field.`;
+- quotes: array of up to 8 { sender: string, content: string } objects - funny or memorable short messages under 55 chars`;
 
-    const participantsNote = `IMPORTANT: The participant names in this chat are the message authors (the text before the colon in each line, e.g. "Alice:", "Bob:"). Do NOT include any participant names or parts of their names as words in topWords, quotes content that references names, or summoningSpell keywords.`;
+    const participantsNote = `IMPORTANT: 
+1. Participant names are the message authors (text before the colon, e.g. "Alice:", "Bob:"). Do NOT include any participant names or parts of their names in topWords, quotes, or summoningSpell keywords.
+2. IGNORE and EXCLUDE all media placeholder messages such as: "image omitted", "video omitted", "audio omitted", "sticker omitted", "document omitted", "‎<Media omitted>", "התמונה הושמטה", "הסרטון הושמט", "הקובץ הושמט", "המדיה הושמטה", "הסטיקר הושמט", "האודיו הושמט", "המסמך הושמט" — these are NOT real messages and should NOT be counted or referenced anywhere.
+3. Also ignore WhatsApp system messages like "end-to-end encrypted", "created group", "added", "left", etc.`;
     const userPrompt = `Mode: ${mode}\n\n${participantsNote}\n\nChat export:\n${truncated}\n\nReturn only the JSON object, no markdown.`;
 
     const completion = await openai.chat.completions.create({
