@@ -19,6 +19,7 @@ export default function Home() {
   const [phase, setPhase] = useState('landing');
   const [chatData, setChatData] = useState(null);
   const [mode, setMode] = useState('couple');
+  const [lang, setLang] = useState('en');
   const [error, setError] = useState(null);
   const [rawChatText, setRawChatText] = useState(null);
   const [loadingDone, setLoadingDone] = useState(false);
