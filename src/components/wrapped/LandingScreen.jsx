@@ -58,22 +58,32 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
       </div>
 
       <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center gap-10 min-h-screen justify-center py-16">
+        {/* Lang toggle */}
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
+          className="w-full flex justify-end">
+          <button onClick={() => onLangChange && onLangChange(isHe ? 'en' : 'he')}
+            className="flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 rounded-full px-3 py-1.5 transition-all">
+            <span className="text-lg">{isHe ? '🇺🇸' : '🇮🇱'}</span>
+            <span className="text-white/70 text-xs font-medium">{isHe ? 'English' : 'עברית'}</span>
+          </button>
+        </motion.div>
+
         {/* Badge */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5">
           <Zap size={14} className="text-yellow-400" />
-          <span className="text-white/80 text-xs font-medium tracking-widest uppercase">WhatsApp Wrapped 2024</span>
+          <span className="text-white/80 text-xs font-medium tracking-widest uppercase">{copy.badge}</span>
         </motion.div>
 
         {/* Headline */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-center">
           <h1 className="text-6xl font-black text-white leading-none tracking-tight mb-4">
-            Reveal Your<br />
+            {copy.headline1}<br />
             <span style={{ background: 'linear-gradient(135deg, #c084fc, #f472b6, #fb7185)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Chat DNA
+              {copy.headline2}
             </span>
           </h1>
-          <p className="text-white/50 text-lg font-light">Your conversation, reimagined.</p>
+          <p className="text-white/50 text-lg font-light">{copy.sub}</p>
         </motion.div>
 
         {/* Drop Zone */}
