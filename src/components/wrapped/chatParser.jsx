@@ -285,8 +285,10 @@ function computeSummoningSpell(filtered, participants, msgCounts, stopWords = ST
     const curr = filtered[i];
     const prev = filtered[i - 1];
     if (curr.sender === leastActive && prev.sender !== leastActive) {
-      const words = prev.content.toLowerCase().replace(/[^a-z\s]/g, ' ').split(/\s+/)
-        .filter(w => w.length > 2 && !STOP_WORDS.has(w));
+      const cleaned = lang === 'he'
+        ? prev.content.toLowerCase().replace(/[^א-תa-z\s]/g, ' ')
+        : prev.content.toLowerCase().replace(/[^a-z\s]/g, ' ');
+      const words = cleaned.split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w));
       words.forEach(w => { precedingWords[w] = (precedingWords[w] || 0) + 1; });
     }
   }
