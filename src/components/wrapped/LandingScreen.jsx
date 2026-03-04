@@ -118,13 +118,13 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
           onClick={() => setShowGuide(true)}
           className="flex items-center gap-1.5 text-white/40 hover:text-white/70 transition-colors text-sm">
           <HelpCircle size={14} />
-          <span>Need help exporting your chat? <span className="underline underline-offset-2">View Guide.</span></span>
+          <span>{copy.help} <span className="underline underline-offset-2">{copy.helpLink}</span></span>
         </motion.button>
 
         {/* Divider */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }} className="flex items-center gap-4 w-full">
           <div className="flex-1 h-px bg-white/10" />
-          <span className="text-white/30 text-xs uppercase tracking-widest">or</span>
+          <span className="text-white/30 text-xs uppercase tracking-widest">{copy.or}</span>
           <div className="flex-1 h-px bg-white/10" />
         </motion.div>
 
@@ -134,7 +134,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
           className="w-full py-4 rounded-2xl font-bold text-white flex items-center justify-center gap-3 transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]"
           style={{ background: 'linear-gradient(135deg, #7c3aed, #db2777)' }}>
           <Zap size={18} className="text-yellow-300" />
-          Try Demo — No File Needed
+          {copy.demo}
           <ChevronRight size={18} className="opacity-70" />
         </motion.button>
 
@@ -142,7 +142,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }}
           className="flex items-center gap-2">
           <Shield size={14} className="text-emerald-400" />
-          <span className="text-emerald-400/70 text-xs font-medium">100% Secure · Offline Processing · Nothing Leaves Your Device</span>
+          <span className="text-emerald-400/70 text-xs font-medium">{copy.privacy}</span>
         </motion.div>
       </div>
 
