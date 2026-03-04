@@ -42,7 +42,7 @@ export default function SlideLOLMeter({ data, lang = 'en' }) {
                   background: isComedian ? 'rgba(251,191,36,0.2)' : 'rgba(255,255,255,0.06)',
                   color: isComedian ? '#fbbf24' : 'rgba(255,255,255,0.4)',
                 }}>
-                {isComedian ? '😂 The Comedian' : '👀 The Audience'}
+                {isComedian ? t('theComedian', lang) : t('theAudience', lang)}
               </div>
             </motion.div>
           );
