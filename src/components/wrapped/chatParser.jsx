@@ -178,7 +178,7 @@ function analyzeMessages(messages) {
     const curr = filtered[i];
     if (curr.sender !== prev.sender && participants.includes(curr.sender) && participants.includes(prev.sender)) {
       const parseTime = (m) => {
-        const parts = m.date.split('/').map(Number);
+        const parts = m.date.split(/[\/\.\-]/).map(Number);
         const [mm, dd, yy] = parts;
         const year = yy < 100 ? 2000 + yy : yy;
         const h = m.hour;
