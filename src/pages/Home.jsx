@@ -4,7 +4,7 @@ import LandingScreen from '../components/wrapped/LandingScreen';
 import LoadingScreen from '../components/wrapped/LoadingScreen';
 import StoryContainer from '../components/wrapped/StoryContainer';
 import ModeSelector from '../components/wrapped/ModeSelector';
-import { generateMockData } from '../components/wrapped/chatParser';
+import { generateMockData, parseChatFile } from '../components/wrapped/chatParser';
 import { base44 } from '@/api/base44Client';
 
 // Load confetti lazily

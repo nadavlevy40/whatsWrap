@@ -168,69 +168,64 @@ function buildQuestions(data) {
     });
   }
 
-  // Q5: Night Owl
-  if (data.nightOwlCounts) {
-    const nightOwl = p.reduce((a, b) => (data.nightOwlCounts[b] || 0) > (data.nightOwlCounts[a] || 0) ? b : a, p[0]);
+  // Q5: Total message count — pick closest from 4 options
+  if (data.totalMessages) {
+    const real = data.totalMessages;
+    const decoys = [
+      Math.round(real * 0.4),
+      Math.round(real * 0.65),
+      Math.round(real * 1.5),
+    ].map(n => n.toLocaleString());
     qs.push({
-      prompt: "Who's texting at 3am like a gremlin? 🌙",
-      emoji: '🦉',
+      prompt: 'How many messages have you exchanged in total?',
+      emoji: '📊',
+      options: shuffle([real.toLocaleString(), ...decoys]),
+      correct: real.toLocaleString(),
+    });
+  }
+
+  // Q6: Top word used
+  if (data.topWords && data.topWords.length >= 4) {
+    const correct = data.topWords[0].word;
+    const decoys = data.topWords.slice(2, 5).map(w => w.word);
+    qs.push({
+      prompt: "What's the #1 most used word in your chat?",
+      emoji: '📝',
+      options: shuffle([correct, ...decoys.slice(0, 3)]),
+      correct,
+    });
+  }
+
+  // Q7: Which participant sent the most media?
+  if (data.mediaCounts && p1 !== p0) {
+    const topMedia = p.reduce((a, b) => (data.mediaCounts[b] || 0) > (data.mediaCounts[a] || 0) ? b : a, p[0]);
+    qs.push({
+      prompt: 'Who sent the most photos, videos & GIFs?',
+      emoji: '📸',
       options: p.slice(0, 4),
-      correct: nightOwl,
+      correct: topMedia,
     });
   }
 
-  // Q6: Who laughs more?
-  if (data.laughCounts && p1 !== p0) {
-    const funnier = (data.laughCounts[p0] || 0) >= (data.laughCounts[p1] || 0) ? p0 : p1;
+  // Q8: Most CAPS LOCK abuser
+  if (data.capsLockCounts && p1 !== p0) {
+    const loudest = p.reduce((a, b) => (data.capsLockCounts[b] || 0) > (data.capsLockCounts[a] || 0) ? b : a, p[0]);
     qs.push({
-      prompt: 'Who sends more laugh reactions (lol, 😂, haha...)?',
-      emoji: '😂',
+      prompt: 'WHO TYPES IN ALL CAPS THE MOST?? 📣',
+      emoji: '😤',
       options: p.slice(0, 4),
-      correct: funnier,
+      correct: loudest,
     });
   }
 
-  // Q7: Who starts conversations more?
-  if (data.initiatorCounts && p1 !== p0) {
-    const starter = (data.initiatorCounts[p0] || 0) >= (data.initiatorCounts[p1] || 0) ? p0 : p1;
-    qs.push({
-      prompt: 'Who starts the conversation more often?',
-      emoji: '🚀',
-      options: p.slice(0, 4),
-      correct: starter,
-    });
-  }
-
-  // Q8: Who replies faster?
-  if (data.replyTimes && p1 !== p0) {
-    const faster = (data.replyTimes[p0] || 999) <= (data.replyTimes[p1] || 999) ? p0 : p1;
-    qs.push({
-      prompt: 'Who replies faster on average?',
-      emoji: '⚡',
-      options: p.slice(0, 4),
-      correct: faster,
-    });
-  }
-
-  // Q9: Most active hour
-  if (data.hourlyData) {
-    const topHour = data.hourlyData.reduce((a, b) => b.total > a.total ? b : a, data.hourlyData[0]);
-    const formatHour = h => h === 0 ? '12am' : h < 12 ? `${h}am` : h === 12 ? '12pm' : `${h - 12}pm`;
-    const wrongHours = [3, 9, 14, 20, 22].filter(h => h !== topHour.hour).sort(() => Math.random() - 0.5).slice(0, 3);
-    qs.push({
-      prompt: 'What hour is your chat most active?',
-      emoji: '🕐',
-      options: shuffle([formatHour(topHour.hour), ...wrongHours.map(formatHour)]),
-      correct: formatHour(topHour.hour),
-    });
-  }
-
-  // Q10: Second quote if available
+  // Q9: Second quote
   if (data.quotes && data.quotes.length > 1) {
     const validQuotes = data.quotes.filter(q => q?.content && q?.sender && p.includes(q.sender));
     if (validQuotes.length > 1) {
-      const quote = validQuotes[Math.min(validQuotes.length - 1, 3 + Math.floor(Math.random() * 3))];
-      if (quote && !qs.find(q => q.prompt === `"${quote.content}"`)) {
+      const usedPrompt = qs.find(q => q.questionLabel)?.prompt;
+      const remaining = validQuotes.filter(q => `"${q.content}"` !== usedPrompt);
+      if (remaining.length > 0) {
+        const quote = remaining[Math.floor(Math.random() * remaining.length)];
         qs.push({
           prompt: `"${quote.content}"`,
           emoji: '🤔',
@@ -240,6 +235,17 @@ function buildQuestions(data) {
         });
       }
     }
+  }
+
+  // Q10: Most organizer-like messages
+  if (data.organizerScore && p1 !== p0) {
+    const planner = p.reduce((a, b) => (data.organizerScore[b] || 0) > (data.organizerScore[a] || 0) ? b : a, p[0]);
+    qs.push({
+      prompt: 'Who plans things most in this chat (dinner, trips, meetings...)?',
+      emoji: '📋',
+      options: p.slice(0, 4),
+      correct: planner,
+    });
   }
 
   return qs.slice(0, 10);
