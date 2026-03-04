@@ -57,7 +57,7 @@ export default function SlideFriendsSummoningSpell({ data, lang = 'en' }) {
             <span className="text-white font-black text-3xl tracking-wide">{keyword.toUpperCase()}</span>
           </motion.div>
           <p className="text-white/40 text-sm mt-3">
-            Triggered <span className="text-white font-bold">{triggerCount}x</span> replies from them
+            {typeof t('triggeredReplies', lang) === 'function' ? t('triggeredReplies', lang)(triggerCount) : `Triggered ${triggerCount}x replies from them`}
           </p>
         </div>
 
