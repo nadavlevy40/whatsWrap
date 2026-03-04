@@ -14,9 +14,9 @@ export default function SlideLOLMeter({ data, lang = 'en' }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-5 gap-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">Laughter Analysis</p>
-        <h2 className="text-white text-2xl font-black">The LOL Meter 😂</h2>
-        <p className="text-white/40 text-sm mt-1">Who cracks up more?</p>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('laughterAnalysis', lang)}</p>
+        <h2 className="text-white text-2xl font-black">{t('lolMeter', lang)}</h2>
+        <p className="text-white/40 text-sm mt-1">{t('cracksUpMore', lang)}</p>
       </motion.div>
 
       {/* Score cards */}
