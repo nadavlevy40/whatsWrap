@@ -20,8 +20,8 @@ export default function SlideVolume({ data, lang = 'en' }) {
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.9 }} className="space-y-2">
-        <p className="text-white text-2xl font-bold">messages sent.</p>
-        <p className="text-white/50 text-lg">You two couldn't stop talking. 💬</p>
+        <p className="text-white text-2xl font-bold">{t('messagesSent', lang)}</p>
+        <p className="text-white/50 text-lg">{t('couldntStop', lang)}</p>
       </motion.div>
 
       <motion.div initial={{ scaleX: 0 }} animate={{ scaleX: 1 }} transition={{ delay: 1.1, duration: 0.8 }}
