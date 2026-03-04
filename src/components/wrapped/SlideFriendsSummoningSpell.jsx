@@ -47,7 +47,7 @@ export default function SlideFriendsSummoningSpell({ data, lang = 'en' }) {
         <div className="w-full h-px bg-white/10" />
 
         <div>
-          <p className="text-white/40 text-xs uppercase tracking-widest mb-3">Their Summoning Word</p>
+          <p className="text-white/40 text-xs uppercase tracking-widest mb-3">{t('summoningWord', lang)}</p>
           <motion.div
             initial={{ scale: 0 }} animate={{ scale: 1 }}
             transition={{ delay: 0.7, type: 'spring', stiffness: 200 }}
