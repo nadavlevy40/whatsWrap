@@ -43,7 +43,7 @@ export default function SlideEmotions({ data, lang = 'en' }) {
               className="flex-1 rounded-3xl p-4 text-center"
               style={{ background: 'rgba(255,255,255,0.06)', backdropFilter: 'blur(10px)' }}>
               <p className="text-white font-black text-2xl">{data.laughCounts[p]}</p>
-              <p className="text-white/40 text-xs mt-0.5">ha-ha's</p>
+              <p className="text-white/40 text-xs mt-0.5">{t('hahas', lang)}</p>
               <p className="text-white/60 text-sm mt-1">{p}</p>
             </motion.div>
           ))}
