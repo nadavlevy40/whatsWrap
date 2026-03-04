@@ -14,7 +14,7 @@ function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
-function MultiChoiceQuestion({ questionNum, totalQuestions, prompt, emoji, options, correctAnswer, onAnswer }) {
+function MultiChoiceQuestion({ questionNum, totalQuestions, label, prompt, emoji, options, correctAnswer, onAnswer }) {
   const [answered, setAnswered] = useState(null);
   const [shake, setShake] = useState(false);
 
@@ -30,12 +30,13 @@ function MultiChoiceQuestion({ questionNum, totalQuestions, prompt, emoji, optio
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6">
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6" onClick={e => e.stopPropagation()}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">
           Round {questionNum} of {totalQuestions}
         </p>
         <div className="text-4xl mb-2">{emoji}</div>
+        {label && <p className="text-white/60 text-sm mb-1">{label}</p>}
         <h2 className="text-white text-xl font-black leading-snug">{prompt}</h2>
       </motion.div>
 
