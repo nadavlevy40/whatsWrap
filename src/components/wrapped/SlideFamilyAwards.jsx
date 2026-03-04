@@ -34,8 +34,8 @@ function computeAwards(data, lang = 'en') {
   return awards.slice(0, 4);
 }
 
-export default function SlideFamilyAwards({ data }) {
-  const awards = computeAwards(data);
+export default function SlideFamilyAwards({ data, lang = 'en' }) {
+  const awards = computeAwards(data, lang);
 
   const COLORS = [
     { bg: 'rgba(251,191,36,0.12)', border: 'rgba(251,191,36,0.3)', text: '#fbbf24' },
