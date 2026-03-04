@@ -35,7 +35,9 @@ const EMOJI_REGEX = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
 const MEDIA_PATTERN = /(omitted|image|sticker|gif|video|audio|document)/i;
 const ORGANIZER_WORDS = new Set(['dinner','lunch','breakfast','plan','meet','meeting','time','when','tomorrow','today','tonight','weekend','schedule','come','join','invite','birthday','party','trip','going']);
 
-export function parseChatFile(text) {
+export function parseChatFile(text, lang = 'en') {
+  const stopWords = lang === 'he' ? STOP_WORDS_HE : STOP_WORDS_EN;
+  const organizerWords = lang === 'he' ? ORGANIZER_WORDS_HE : ORGANIZER_WORDS;
   const lines = text.split('\n');
   const messages = [];
 
