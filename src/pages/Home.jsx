@@ -104,9 +104,14 @@ export default function Home() {
       return;
     }
     base44.auth.me().then(user => {
-      console.log('Auth user:', user?.email, 'role:', user?.role);
-      if (user?.role === 'admin') setIsAdmin(true);
-    }).catch((e) => { console.log('Auth error:', e); }).finally(() => setAdminChecked(true));
+      if (!user) {
+        base44.auth.redirectToLogin(window.location.href);
+        return;
+      }
+      if (user.role === 'admin') setIsAdmin(true);
+    }).catch(() => {
+      base44.auth.redirectToLogin(window.location.href);
+    }).finally(() => setAdminChecked(true));
   }, []);
 
   useEffect(() => {
