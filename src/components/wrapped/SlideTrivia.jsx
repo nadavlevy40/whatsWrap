@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { base44 } from '@/api/base44Client';
 
 const ALL_EMOJIS = ['😂', '❤️', '🔥', '😭', '😍', '🙏', '💀', '😅', '🥹', '😤', '🤣', '✨', '💯', '🫶', '🤯', '😩', '🫠', '💅', '👀', '🥺'];
 
@@ -13,7 +14,7 @@ function shuffle(arr) {
   return [...arr].sort(() => Math.random() - 0.5);
 }
 
-function MultiChoiceQuestion({ questionNum, totalQuestions, label, prompt, emoji, options, correctAnswer, onAnswer }) {
+function MultiChoiceQuestion({ questionNum, totalQuestions, label, prompt, emoji, options, correctAnswer, funFact, onAnswer }) {
   const [answered, setAnswered] = useState(null);
   const [shake, setShake] = useState(false);
 
@@ -25,17 +26,19 @@ function MultiChoiceQuestion({ questionNum, totalQuestions, label, prompt, emoji
     setAnswered({ chosen: opt, correct });
     if (correct) launchConfetti();
     else { setShake(true); setTimeout(() => setShake(false), 600); }
-    setTimeout(() => onAnswer(correct), 1600);
+    setTimeout(() => onAnswer(correct), 2000);
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6" onClick={e => e.stopPropagation()}>
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-5" onClick={e => e.stopPropagation()}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">
           Round {questionNum} of {totalQuestions}
         </p>
-        <div className="text-4xl mb-2">{emoji}</div>
-        {label && <p className="text-white/60 text-sm mb-1">{label}</p>}
+        <div className="text-4xl mb-1">{emoji}</div>
+        {label && (
+          <span className="inline-block bg-white/10 text-white/60 text-xs px-3 py-1 rounded-full mb-2">{label}</span>
+        )}
         <h2 className="text-white text-xl font-black leading-snug">{prompt}</h2>
       </motion.div>
 
@@ -57,7 +60,7 @@ function MultiChoiceQuestion({ questionNum, totalQuestions, label, prompt, emoji
               whileTap={!answered ? { scale: 0.96 } : {}}
               onClick={() => handleAnswer(opt)}
               disabled={!!answered}
-              className="py-4 px-2 rounded-2xl font-bold text-white text-base transition-all duration-300 text-center"
+              className="py-4 px-2 rounded-2xl font-bold text-white text-sm transition-all duration-300 text-center"
               style={{
                 background: showCorrect
                   ? 'linear-gradient(135deg, #059669, #10b981)'
@@ -78,10 +81,14 @@ function MultiChoiceQuestion({ questionNum, totalQuestions, label, prompt, emoji
       </motion.div>
 
       {answered && (
-        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          className={`text-center font-semibold text-sm ${answered.correct ? 'text-emerald-400' : 'text-red-400'}`}>
-          {answered.correct ? '🎉 Nailed it!' : `The answer was "${correctAnswer}" 😅`}
-        </motion.p>
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="text-center px-2">
+          <p className={`font-semibold text-sm mb-1 ${answered.correct ? 'text-emerald-400' : 'text-red-400'}`}>
+            {answered.correct ? '🎉 Nailed it!' : `The answer was "${correctAnswer}" 😅`}
+          </p>
+          {funFact && (
+            <p className="text-white/40 text-xs leading-snug">{funFact}</p>
+          )}
+        </motion.div>
       )}
     </div>
   );
@@ -97,7 +104,7 @@ function ScoreScreen({ score, total, onContinue }) {
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">Trivia Results</p>
         <h2 className="text-white font-black text-4xl">{score}/{total} Correct</h2>
         <p className="text-white/50 mt-2">
-          {score === total ? 'You two are literally soulmates.' : score >= total / 2 ? 'Not bad — you know each other pretty well!' : 'Do you even know this person? 😂'}
+          {score === total ? 'You know this chat like the back of your hand 🏆' : score >= total / 2 ? 'Not bad — you know each other pretty well!' : 'Do you even know this person? 😂'}
         </p>
       </motion.div>
       <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
@@ -110,160 +117,163 @@ function ScoreScreen({ score, total, onContinue }) {
   );
 }
 
-function buildQuestions(data) {
+function LoadingTrivia() {
+  const [dot, setDot] = useState(0);
+  useEffect(() => {
+    const t = setInterval(() => setDot(d => (d + 1) % 4), 400);
+    return () => clearInterval(t);
+  }, []);
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6 text-center">
+      <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl">🧠</motion.div>
+      <div>
+        <p className="text-white font-bold text-xl mb-2">Crafting your trivia{'.'.repeat(dot)}</p>
+        <p className="text-white/40 text-sm">Digging through your chat for the juicy moments</p>
+      </div>
+    </div>
+  );
+}
+
+// Fallback local questions (used for mock/demo data)
+function buildLocalQuestions(data) {
   const qs = [];
   const p = data.participants;
   const p0 = p[0];
   const p1 = p[1] || p[0];
 
-  // Q1: Quote attribution (1st)
-  if (data.quotes && data.quotes.length > 0) {
-    const validQuotes = data.quotes.filter(q => q?.content && q?.sender && p.includes(q.sender));
-    if (validQuotes.length > 0) {
-      const quote = validQuotes[Math.floor(Math.random() * Math.min(validQuotes.length, 6))];
-      qs.push({
-        prompt: `"${quote.content}"`,
-        emoji: '💬',
-        questionLabel: 'Who said this? 👇',
-        options: p.slice(0, 4),
-        correct: quote.sender,
-      });
-    }
-  }
-
-  // Q2: Quote attribution (2nd — different quote)
-  if (data.quotes && data.quotes.length > 1) {
-    const validQuotes = data.quotes.filter(q => q?.content && q?.sender && p.includes(q.sender));
-    if (validQuotes.length > 1) {
-      const usedPrompt = qs[0]?.prompt;
-      const remaining = validQuotes.filter(q => `"${q.content}"` !== usedPrompt);
-      if (remaining.length > 0) {
-        const quote = remaining[Math.floor(Math.random() * remaining.length)];
-        qs.push({
-          prompt: `"${quote.content}"`,
-          emoji: '🤔',
-          questionLabel: 'And who said this? 👇',
-          options: p.slice(0, 4),
-          correct: quote.sender,
-        });
-      }
-    }
-  }
-
-  // Q3: Signature emoji for p0
   if (data.signatureEmojis?.[p0]) {
     const correctEmoji = data.signatureEmojis[p0];
     const wrongEmojis = ALL_EMOJIS.filter(e => e !== correctEmoji).sort(() => Math.random() - 0.5).slice(0, 3);
     qs.push({
-      prompt: `What's ${p0}'s most-used emoji?`,
+      prompt: `What's ${p0}'s most-used emoji in this chat?`,
       emoji: '✨',
+      label: 'Emoji Vibes',
       options: shuffle([correctEmoji, ...wrongEmojis]),
       correct: correctEmoji,
+      funFact: `${p0} used this emoji more than any other — it's basically their signature.`,
     });
   }
 
-  // Q4: Signature emoji for p1
   if (p1 !== p0 && data.signatureEmojis?.[p1]) {
     const correctEmoji = data.signatureEmojis[p1];
-    const wrongEmojis = ALL_EMOJIS.filter(e => e !== correctEmoji && e !== data.signatureEmojis[p0]).sort(() => Math.random() - 0.5).slice(0, 3);
+    const wrongEmojis = ALL_EMOJIS.filter(e => e !== correctEmoji).sort(() => Math.random() - 0.5).slice(0, 3);
     qs.push({
-      prompt: `And ${p1}'s most-used emoji?`,
+      prompt: `And what's ${p1}'s go-to emoji?`,
       emoji: '🎭',
+      label: 'Emoji Vibes',
       options: shuffle([correctEmoji, ...wrongEmojis]),
       correct: correctEmoji,
+      funFact: null,
     });
   }
 
-  // Q5: Who replies faster? (avg reply time — lower = faster)
-  if (data.replyTimes && p1 !== p0) {
+  if (data.replyTimes && p1 !== p0 && p.length >= 2) {
     const faster = p.slice(0, 4).reduce((a, b) =>
       (data.replyTimes[a] || 999) <= (data.replyTimes[b] || 999) ? a : b
     );
-    if (p.slice(0, 4).length >= 2) {
-      qs.push({
-        prompt: 'Who replies fastest on average?',
-        emoji: '⚡',
-        options: p.slice(0, 4),
-        correct: faster,
-      });
-    }
-  }
-
-  // Q6: Who starts conversations more often?
-  if (data.initiatorCounts && p1 !== p0) {
-    const starter = p.reduce((a, b) => (data.initiatorCounts[b] || 0) > (data.initiatorCounts[a] || 0) ? b : a, p[0]);
     qs.push({
-      prompt: 'Who breaks the silence and starts conversations more often?',
-      emoji: '🗣️',
+      prompt: 'Who replies the fastest on average?',
+      emoji: '⚡',
+      label: 'Speed Round',
       options: p.slice(0, 4),
-      correct: starter,
+      correct: faster,
+      funFact: `${faster}'s average reply time is ${Math.round(data.replyTimes[faster])} minutes.`,
     });
   }
 
-  // Q7: Top word — 3 decoys from words ranked 4-7
   if (data.topWords && data.topWords.length >= 4) {
     const correct = data.topWords[0].word;
     const decoys = data.topWords.slice(3, 7).map(w => w.word).sort(() => Math.random() - 0.5).slice(0, 3);
     qs.push({
-      prompt: "Guess the word you used the most in this chat",
+      prompt: 'Which word was used the most in this entire chat?',
       emoji: '📝',
+      label: 'Word Nerd',
       options: shuffle([correct, ...decoys]),
       correct,
+      funFact: `It appeared ${data.topWords[0].count} times.`,
     });
   }
 
-  // Q8: Night owl (most messages between midnight and 5am)
   if (data.nightOwlCounts && p1 !== p0) {
     const nightOwl = p.reduce((a, b) => (data.nightOwlCounts[b] || 0) > (data.nightOwlCounts[a] || 0) ? b : a, p[0]);
     qs.push({
-      prompt: 'Who is most likely to be texting at 3am? 🌙',
+      prompt: 'Who was most active between midnight and 5am? 🌙',
       emoji: '🦉',
+      label: 'Night Shift',
       options: p.slice(0, 4),
       correct: nightOwl,
+      funFact: `${nightOwl} sent ${data.nightOwlCounts[nightOwl]} messages in the dead of night.`,
     });
   }
 
-  // Q9: Laugh count — who laughs more?
-  if (data.laughCounts && p1 !== p0) {
-    const funniest = p.reduce((a, b) => (data.laughCounts[b] || 0) > (data.laughCounts[a] || 0) ? b : a, p[0]);
-    qs.push({
-      prompt: 'Who sends more "haha", "lol" and laugh reactions?',
-      emoji: '😂',
-      options: p.slice(0, 4),
-      correct: funniest,
-    });
-  }
-
-  // Q10: Total messages ballpark
   if (data.totalMessages) {
     const real = data.totalMessages;
-    // Generate 3 plausible but wrong ranges
+    const correctRange = `${Math.round(real * 0.9).toLocaleString()} – ${Math.round(real * 1.1).toLocaleString()}`;
     const ranges = [
       `${Math.round(real * 0.3).toLocaleString()} – ${Math.round(real * 0.45).toLocaleString()}`,
       `${Math.round(real * 0.55).toLocaleString()} – ${Math.round(real * 0.7).toLocaleString()}`,
       `${Math.round(real * 1.4).toLocaleString()} – ${Math.round(real * 1.7).toLocaleString()}`,
     ];
-    const correctRange = `${Math.round(real * 0.9).toLocaleString()} – ${Math.round(real * 1.1).toLocaleString()}`;
     qs.push({
-      prompt: 'How many total messages are in this chat?',
+      prompt: 'Roughly how many messages are in this whole chat?',
       emoji: '🔢',
+      label: 'Big Numbers',
       options: shuffle([correctRange, ...ranges]),
       correct: correctRange,
+      funFact: `The actual count is ${real.toLocaleString()} messages — that's a lot of words!`,
     });
   }
 
-  return qs.slice(0, 10);
+  return qs.slice(0, 6);
 }
 
 export default function SlideTrivia({ data, onNext }) {
-  const questions = useMemo(() => buildQuestions(data), [data]);
+  const [questions, setQuestions] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(0);
   const [score, setScore] = useState(0);
+
+  useEffect(() => {
+    // Use AI questions only for real (non-mock) data
+    if (data.isMock || !data._rawChatText) {
+      setQuestions(buildLocalQuestions(data));
+      return;
+    }
+
+    setLoading(true);
+    const statsForAI = {
+      totalMessages: data.totalMessages,
+      msgCounts: data.msgCounts,
+      topWords: data.topWords?.slice(0, 10),
+      laughCounts: data.laughCounts,
+      nightOwlCounts: data.nightOwlCounts,
+      replyTimes: data.replyTimes,
+      initiatorCounts: data.initiatorCounts,
+      signatureEmojis: data.signatureEmojis,
+    };
+
+    base44.functions.invoke('generateTrivia', {
+      chatText: data._rawChatText,
+      participants: data.participants,
+      stats: statsForAI,
+    }).then(res => {
+      const qs = res?.data?.questions;
+      if (qs && qs.length > 0) {
+        setQuestions(qs);
+      } else {
+        setQuestions(buildLocalQuestions(data));
+      }
+    }).catch(() => {
+      setQuestions(buildLocalQuestions(data));
+    }).finally(() => setLoading(false));
+  }, []);
 
   const handleAnswer = useCallback((correct) => {
     if (correct) setScore(s => s + 1);
     setStep(s => s + 1);
   }, []);
+
+  if (loading || !questions) return <LoadingTrivia />;
 
   const total = questions.length;
   const isScore = step >= total;
@@ -277,11 +287,12 @@ export default function SlideTrivia({ data, onNext }) {
           <MultiChoiceQuestion
             questionNum={step + 1}
             totalQuestions={total}
-            label={q.questionLabel}
+            label={q.label}
             prompt={q.prompt}
             emoji={q.emoji}
             options={q.options}
             correctAnswer={q.correct}
+            funFact={q.funFact}
             onAnswer={handleAnswer}
           />
         </motion.div>
