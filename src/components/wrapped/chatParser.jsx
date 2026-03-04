@@ -89,7 +89,7 @@ function parseHour(timeStr) {
   return hour;
 }
 
-function analyzeMessages(messages) {
+function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = ORGANIZER_WORDS, lang = 'en') {
   if (messages.length === 0) return null;
 
   const userMessages = messages.filter(m =>
