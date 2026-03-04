@@ -73,8 +73,8 @@ export default function SlideGhostInitiator({ data, lang = 'en' }) {
 
       {/* Initiator pie */}
       <div>
-        <p className="text-white/40 text-xs uppercase tracking-wider mb-2 text-center">Who Starts Conversations?</p>
-        <p className="text-white/25 text-xs text-center mb-3">(message after 6h+ silence)</p>
+        <p className="text-white/40 text-xs uppercase tracking-wider mb-2 text-center">{t('whoStartsConvos', lang)}</p>
+        <p className="text-white/25 text-xs text-center mb-3">{t('afterSilence', lang)}</p>
         <div className="flex items-center gap-4">
           <div style={{ width: 110, height: 110 }}>
             <ResponsiveContainer width="100%" height="100%">
