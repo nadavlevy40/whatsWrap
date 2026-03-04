@@ -148,7 +148,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
 
   const emojiCounts = {};
   participants.forEach(p => (emojiCounts[p] = {}));
-  filtered.forEach(m => {
+  filteredText.forEach(m => {
     const emojis = m.content.match(EMOJI_REGEX) || [];
     emojis.forEach(e => {
       if (emojiCounts[m.sender]) emojiCounts[m.sender][e] = (emojiCounts[m.sender][e] || 0) + 1;
