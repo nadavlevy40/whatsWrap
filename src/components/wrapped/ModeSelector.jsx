@@ -53,7 +53,7 @@ export default function ModeSelector({ suggestedMode, onSelect }) {
           initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <p className="text-white/30 text-xs tracking-widest uppercase mb-3">Step 2 of 2</p>
+          <p className="text-white/30 text-xs tracking-widest uppercase mb-3">Step 3 of 3</p>
           <h1 className="text-white text-3xl font-black leading-tight mb-2">
             What kind of chat<br />is this?
           </h1>
