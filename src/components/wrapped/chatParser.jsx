@@ -1,5 +1,5 @@
 // WhatsApp chat parser - handles standard export format
-const STOP_WORDS = new Set([
+const STOP_WORDS_EN = new Set([
   'the','and','is','to','a','of','in','it','you','that','was','for','on','are',
   'with','as','i','his','they','be','at','one','have','this','from','or','had',
   'by','not','but','we','an','were','her','she','do','their','if','will','up',
@@ -16,6 +16,19 @@ const STOP_WORDS = new Set([
   'media','omitted','message','deleted','null','missed','voice','call','video','image',
   'gif','sticker','audio','document','contact','location','live'
 ]);
+
+const STOP_WORDS_HE = new Set([
+  'של','את','על','עם','לא','זה','הוא','היא','אני','אתה','אנחנו','הם','הן',
+  'כן','לו','לה','אבל','אם','כי','או','גם','רק','כבר','עוד','היה','הייתה',
+  'יש','אין','מה','איך','למה','מתי','איפה','כל','אחד','אחת','עכשיו','אז',
+  'תודה','בסדר','טוב','יופי','כך','כזה','שם','פה','כלום','שוב','בוא','באה',
+  'אוקיי','אוקי','ממש','מאוד','קצת','הרבה','פחות','יותר','בדיוק','נכון','אמרתי',
+  'deleted','omitted','image','video','audio','sticker','gif','document','media','missed','call'
+]);
+
+const ORGANIZER_WORDS_HE = new Set(['ארוחה','צהריים','ערב','בוקר','תוכנית','פגישה','מתי','מחר','היום','הלילה','סוף שבוע','לוח זמנים','בוא','הצטרף','הזמנה','יום הולדת','מסיבה','טיול','הולכים']);
+
+const STOP_WORDS = STOP_WORDS_EN; // default, overridden per call
 
 const LAUGH_PATTERNS = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|weak)\b|😂|🤣|💀|😭)/gi;
 const EMOJI_REGEX = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
