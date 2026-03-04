@@ -22,8 +22,8 @@ export default function SlideFriendsRoastMaster({ data, lang = 'en' }) {
       >
         <div className="text-5xl mb-3">🔥</div>
         <p className="text-red-400 font-black text-2xl">{winner}</p>
-        <p className="text-white/50 text-sm mt-1">{laughCounts[winner] || 0} laugh reactions</p>
-        <p className="text-white/30 text-xs mt-2 italic">The group chat would be dead without them</p>
+        <p className="text-white/50 text-sm mt-1">{typeof t('laughReactions', lang) === 'function' ? t('laughReactions', lang)(laughCounts[winner] || 0) : `${laughCounts[winner] || 0} laugh reactions`}</p>
+        <p className="text-white/30 text-xs mt-2 italic">{t('groupDeadWithout', lang)}</p>
       </motion.div>
 
       <div className="flex flex-col gap-3 flex-1">
