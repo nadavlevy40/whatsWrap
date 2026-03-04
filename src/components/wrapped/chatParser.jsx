@@ -163,7 +163,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   const LAUGH_PATTERNS = lang === 'he' ? LAUGH_PATTERNS_HE : LAUGH_PATTERNS_EN;
   const laughCounts = {};
   participants.forEach(p => (laughCounts[p] = 0));
-  filtered.forEach(m => {
+  filteredText.forEach(m => {
     const matches = m.content.match(LAUGH_PATTERNS) || [];
     if (laughCounts[m.sender] !== undefined) laughCounts[m.sender] += matches.length;
   });
