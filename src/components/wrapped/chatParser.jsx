@@ -274,7 +274,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   };
 }
 
-function computeSummoningSpell(filtered, participants, msgCounts) {
+function computeSummoningSpell(filtered, participants, msgCounts, stopWords = STOP_WORDS_EN, lang = 'en') {
   if (participants.length < 2) return null;
   // Find least active participant
   const leastActive = [...participants].sort((a, b) => (msgCounts[a] || 0) - (msgCounts[b] || 0))[0];
