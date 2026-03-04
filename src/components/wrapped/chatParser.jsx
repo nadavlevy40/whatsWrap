@@ -184,7 +184,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   // Caps lock counts (words that are all uppercase, length > 1)
   const capsLockCounts = {};
   participants.forEach(p => (capsLockCounts[p] = 0));
-  filtered.forEach(m => {
+  filteredText.forEach(m => {
     const caps = m.content.split(/\s+/).filter(w => w.length > 1 && w === w.toUpperCase() && /[A-Z]/.test(w));
     if (capsLockCounts[m.sender] !== undefined) capsLockCounts[m.sender] += caps.length;
   });
@@ -192,7 +192,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   // Organizer score
   const organizerScore = {};
   participants.forEach(p => (organizerScore[p] = 0));
-  filtered.forEach(m => {
+  filteredText.forEach(m => {
     const words = m.content.toLowerCase().split(/\s+/);
     const score = words.filter(w => organizerWords.has(w)).length;
     if (organizerScore[m.sender] !== undefined) organizerScore[m.sender] += score;
