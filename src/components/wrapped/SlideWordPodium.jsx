@@ -7,7 +7,7 @@ const MEDALS = [
 ];
 
 export default function SlideWordPodium({ data }) {
-  const words = data.topWords || [];
+  const words = (data.topWords || []).filter(w => w?.word && w.count > 0);
   const top3 = words.slice(0, 3);
   const rest = words.slice(3, 10);
 
