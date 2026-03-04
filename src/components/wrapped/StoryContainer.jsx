@@ -62,7 +62,7 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
   const slideKey = SLIDES[currentSlide];
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center" style={{ background: '#000' }}>
+    <div className="fixed inset-0 flex items-center justify-center" style={{ background: '#000' }} dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <div className="relative w-full h-full max-w-sm mx-auto overflow-hidden" style={{ maxHeight: '100dvh' }}>
         <ProgressBar total={SLIDES.length} current={currentSlide} />
 
