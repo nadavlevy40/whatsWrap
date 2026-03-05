@@ -28,9 +28,9 @@ import SlideSwearJar from './SlideSwearJar';
 import SlideAIInsights from './SlideAIInsights';
 
 const SLIDES_BY_MODE = {
-  couple: ['volume', 'chatterbox', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'trivia', 'paywall', 'share'],
-  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'wisdom', 'family_awards', 'paywall', 'share'],
-  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'podium', 'wisdom', 'paywall', 'share'],
+  couple: ['volume', 'chatterbox', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'ai_insights', 'trivia', 'paywall', 'share'],
+  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'wisdom', 'family_awards', 'double_text', 'swear_jar', 'ai_insights', 'paywall', 'share'],
+  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'ai_insights', 'paywall', 'share'],
 };
 
 export default function StoryContainer({ data, mode = 'couple', onRestart, isAdmin = false }) {
