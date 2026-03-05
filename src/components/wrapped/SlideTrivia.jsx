@@ -116,23 +116,6 @@ function ScoreScreen({ score, total, onContinue }) {
   );
 }
 
-function LoadingTrivia() {
-  const [dot, setDot] = useState(0);
-  useEffect(() => {
-    const t = setInterval(() => setDot(d => (d + 1) % 4), 400);
-    return () => clearInterval(t);
-  }, []);
-  return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6 text-center">
-      <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="text-6xl">🧠</motion.div>
-      <div>
-        <p className="text-white font-bold text-xl mb-2">Crafting your trivia{'.'.repeat(dot)}</p>
-        <p className="text-white/40 text-sm">Digging through your chat for the juicy moments</p>
-      </div>
-    </div>
-  );
-}
-
 // Fallback local questions (used for mock/demo data)
 function buildLocalQuestions(data) {
   const qs = [];
