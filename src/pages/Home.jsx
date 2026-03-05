@@ -86,13 +86,17 @@ export default function Home() {
         return;
       }
 
-      // Send a small sample to OpenAI just for quotes & signature emojis enrichment
+      // Send condensed full chat + local stats to AI for enrichment
       try {
-        const mid = Math.floor(rawChatText.length / 2);
-        const sample = rawChatText.slice(0, 5000) + '\n...\n' + rawChatText.slice(mid, mid + 3000);
         const response = await base44.functions.invoke('analyzeChat', {
-          chatText: sample,
+          chatText: rawChatText.slice(0, 2000), // minimal raw fallback for validation
+          condensedChatText: localData.condensedChatText || '',
           mode: selectedMode,
+          localStats: {
+            participants: localData.participants,
+            totalMessages: localData.totalMessages,
+            msgCounts: localData.msgCounts,
+          },
         });
         const aiData = response.data;
         const merged = {
@@ -103,6 +107,7 @@ export default function Home() {
           signatureEmojis: aiData?.signatureEmojis || localData.signatureEmojis,
           wisdomSentences: aiData?.wisdomSentences || [],
           triviaQuestions: aiData?.triviaQuestions || null,
+          aiInsights: aiData?.aiInsights || null,
           _rawChatText: rawChatText,
         };
         setChatData(merged);
