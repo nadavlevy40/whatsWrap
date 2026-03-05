@@ -11,10 +11,6 @@ import SlideGhostInitiator from './SlideGhostInitiator';
 import SlideEmotions from './SlideEmotions';
 import SlideTrivia from './SlideTrivia';
 import SlidePaywall from './SlidePaywall';
-import SlideDoubleText from './SlideDoubleText';
-import SlideYapper from './SlideYapper';
-import SlideSwearJar from './SlideSwearJar';
-import SlideAIInsights from './SlideAIInsights';
 import SlideShare from './SlideShare';
 // Family slides
 import SlideFamilyMediaMogul from './SlideFamilyMediaMogul';
@@ -25,11 +21,16 @@ import SlideFamilyAwards from './SlideFamilyAwards';
 import SlideFriendsRoastMaster from './SlideFriendsRoastMaster';
 import SlideFriendsNightShift from './SlideFriendsNightShift';
 import SlideFriendsSummoningSpell from './SlideFriendsSummoningSpell';
+// New slides
+import SlideDoubleText from './SlideDoubleText';
+import SlideYapper from './SlideYapper';
+import SlideSwearJar from './SlideSwearJar';
+import SlideAIInsights from './SlideAIInsights';
 
 const SLIDES_BY_MODE = {
-  couple: ['volume', 'chatterbox', 'double_text', 'yapper', 'podium', 'wisdom', 'lol', 'swear_jar', 'ghost', 'emotions', 'ai_insights', 'trivia', 'paywall', 'share'],
-  family: ['volume', 'chatterbox', 'double_text', 'family_media', 'family_ghost', 'family_caps', 'wisdom', 'yapper', 'family_awards', 'ai_insights', 'paywall', 'share'],
-  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'ai_insights', 'paywall', 'share'],
+  couple: ['volume', 'chatterbox', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'trivia', 'paywall', 'share'],
+  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'wisdom', 'family_awards', 'paywall', 'share'],
+  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'podium', 'wisdom', 'paywall', 'share'],
 };
 
 export default function StoryContainer({ data, mode = 'couple', onRestart, isAdmin = false }) {
@@ -83,10 +84,6 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
                 {slideKey === 'ghost' && <SlideGhostInitiator data={data} lang={lang} />}
                 {slideKey === 'emotions' && <SlideEmotions data={data} lang={lang} />}
                 {slideKey === 'wisdom' && <SlideWisdom data={data} lang={lang} />}
-                {slideKey === 'double_text' && <SlideDoubleText data={data} lang={lang} />}
-                {slideKey === 'yapper' && <SlideYapper data={data} lang={lang} />}
-                {slideKey === 'swear_jar' && <SlideSwearJar data={data} lang={lang} />}
-                {slideKey === 'ai_insights' && <SlideAIInsights data={data} lang={lang} />}
                 {slideKey === 'trivia' && <SlideTrivia data={data} onNext={goNext} lang={lang} />}
                 {/* Family slides */}
                 {slideKey === 'family_media' && <SlideFamilyMediaMogul data={data} lang={lang} />}
