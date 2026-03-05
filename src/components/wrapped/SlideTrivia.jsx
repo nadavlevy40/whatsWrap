@@ -1,6 +1,5 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { base44 } from '@/api/base44Client';
 
 const ALL_EMOJIS = ['😂', '❤️', '🔥', '😭', '😍', '🙏', '💀', '😅', '🥹', '😤', '🤣', '✨', '💯', '🫶', '🤯', '😩', '🫠', '💅', '👀', '🥺'];
 
