@@ -11,6 +11,10 @@ import SlideGhostInitiator from './SlideGhostInitiator';
 import SlideEmotions from './SlideEmotions';
 import SlideTrivia from './SlideTrivia';
 import SlidePaywall from './SlidePaywall';
+import SlideDoubleText from './SlideDoubleText';
+import SlideYapper from './SlideYapper';
+import SlideSwearJar from './SlideSwearJar';
+import SlideAIInsights from './SlideAIInsights';
 import SlideShare from './SlideShare';
 // Family slides
 import SlideFamilyMediaMogul from './SlideFamilyMediaMogul';
