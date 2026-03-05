@@ -14,7 +14,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
   const isHe = lang === 'he';
 
   const copy = {
-    badge: isHe ? '✨ ספונות 2024' : '✨ Your 2024 Chat Unwrapped',
+    badge: isHe ? '🎁 המתנה הממכרת ביותר לבן/בת הזוג' : '🎁 The Most Addictive Gift for Your Partner',
     headline1: isHe ? '' : '',
     headline2: isHe ? 'וואטסRap' : 'WhatsWrap',
     sub: isHe ? 'השיחה שלכם, מחדש.' : 'Your chats. Unwrapped.',
