@@ -5,6 +5,7 @@ import StorySlide from './StorySlide';
 import SlideVolume from './SlideVolume';
 import SlideChatterbox from './SlideChatterbox';
 import SlideWordPodium from './SlideWordPodium';
+import SlideWisdom from './SlideWisdom';
 import SlideLOLMeter from './SlideLOLMeter';
 import SlideGhostInitiator from './SlideGhostInitiator';
 import SlideEmotions from './SlideEmotions';
