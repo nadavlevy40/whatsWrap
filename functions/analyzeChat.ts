@@ -130,7 +130,7 @@ Rules:
       const triviaUser = `Participants: ${(parsed.participants || []).join(', ')}
 Chat stats: ${statsStr}
 
-IMPORTANT: Lines containing "image omitted", "video omitted", "audio omitted", "sticker omitted", "document omitted", "<Media omitted>", "התמונה הושמטה", "הסרטון הושמט", "הקובץ הושמט", "המדיה הושמטה", "הסטיקר הושמט", "האודיו הושמט", "המסמך הושמט" are system placeholders — NOT real messages. Ignore them completely.
+IMPORTANT: Lines containing "omitted", "הושמט", "הושמטה" are system placeholders — NOT real messages. Ignore them completely.
 
 Chat sample:
 ${triviaSample}
