@@ -228,52 +228,19 @@ function buildLocalQuestions(data) {
 }
 
 export default function SlideTrivia({ data, onNext }) {
-  const [questions, setQuestions] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(0);
   const [score, setScore] = useState(0);
 
-  useEffect(() => {
-    // Use AI questions only for real (non-mock) data
-    if (data.isMock || !data._rawChatText) {
-      setQuestions(buildLocalQuestions(data));
-      return;
-    }
-
-    setLoading(true);
-    const statsForAI = {
-      totalMessages: data.totalMessages,
-      msgCounts: data.msgCounts,
-      topWords: data.topWords?.slice(0, 10),
-      laughCounts: data.laughCounts,
-      nightOwlCounts: data.nightOwlCounts,
-      replyTimes: data.replyTimes,
-      initiatorCounts: data.initiatorCounts,
-      signatureEmojis: data.signatureEmojis,
-    };
-
-    base44.functions.invoke('generateTrivia', {
-      chatText: data._rawChatText,
-      participants: data.participants,
-      stats: statsForAI,
-    }).then(res => {
-      const qs = res?.data?.questions;
-      if (qs && qs.length > 0) {
-        setQuestions(qs);
-      } else {
-        setQuestions(buildLocalQuestions(data));
-      }
-    }).catch(() => {
-      setQuestions(buildLocalQuestions(data));
-    }).finally(() => setLoading(false));
-  }, []);
+  // Use pre-built trivia from analyzeChat, or fall back to local
+  const questions = useMemo(() => {
+    if (data.triviaQuestions?.length > 0) return data.triviaQuestions;
+    return buildLocalQuestions(data);
+  }, [data]);
 
   const handleAnswer = useCallback((correct) => {
     if (correct) setScore(s => s + 1);
     setStep(s => s + 1);
   }, []);
-
-  if (loading || !questions) return <LoadingTrivia />;
 
   const total = questions.length;
   const isScore = step >= total;
