@@ -144,7 +144,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     const cleaned = lang === 'he'
       ? m.content.toLowerCase().replace(/[^א-תa-z\s]/g, ' ')
       : m.content.toLowerCase().replace(/[^a-z\s]/g, ' ');
-    const words = cleaned.split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w) && !nameTokens.has(w));
+    const words = cleaned.split(/\s+/).filter(w => w.length > 1 && !stopWords.has(w) && !nameTokens.has(w) && !MEDIA_STOP_WORDS.has(w));
     words.forEach(w => { wordCounts[w] = (wordCounts[w] || 0) + 1; });
   });
   const topWords = Object.entries(wordCounts).sort((a, b) => b[1] - a[1]).slice(0, 10).map(([word, count]) => ({ word, count }));
