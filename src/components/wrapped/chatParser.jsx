@@ -435,6 +435,12 @@ function generateCoupleMockData() {
     organizerScore: { Alex: 120, Jordan: 85 },
     replyTimes: { Alex: 7, Jordan: 148 },
     initiatorCounts: { Alex: 312, Jordan: 189 },
+    doubleTextCounts: { Alex: 312, Jordan: 189 },
+    avgWordsPerMessage: { Alex: 8.4, Jordan: 3.1 },
+    swearCounts: { Alex: 42, Jordan: 17 },
+    regretCounts: { Alex: 3, Jordan: 8 },
+    fullChatText: '',
+    aiInsights: { couple: { dynamic: 'Chaos Gremlin & Emotional Support', blackCatUser: 'Alex', goldenRetrieverUser: 'Jordan', dynamicRoast: 'Alex sends a meme at 3am and Jordan responds with "omg same" immediately. Truly a love story for the ages.', evolution: 'Started with carefully punctuated sentences. Now just vibes and voice notes.', mostApologetic: 'Jordan' } },
     summoningSpell: null,
     quotes: [
       { sender: 'Alex', content: 'wait that actually happened??' },
