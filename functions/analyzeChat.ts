@@ -40,7 +40,8 @@ Rules:
 - replyTimes: object mapping each participant to their average reply time in minutes
 - initiatorCounts: object mapping each participant to number of times they started a new conversation (gap > 6 hours)
 - summoningSpell: null OR { user: string, keyword: string, triggerCount: number } - the least active user and what keyword in others' messages triggers their reply
-- quotes: array of up to 8 { sender: string, content: string } objects - funny or memorable short messages under 55 chars`;
+- quotes: array of up to 8 { sender: string, content: string } objects - funny or memorable short messages under 55 chars
+- wisdomSentences: array of up to 8 { sender: string, content: string } objects - the most iconic, repeated, or characteristic sentences/phrases used by participants. These should feel like "that's SO something they'd say" — recurring catchphrases, strong opinions, funny observations, or philosophical one-liners. Under 80 chars each, must be actual messages from the chat.`;
 
     const participantsNote = `IMPORTANT: 
 1. Participant names are the message authors (text before the colon, e.g. "Alice:", "Bob:"). Do NOT include any participant names or parts of their names in topWords, quotes, or summoningSpell keywords.
