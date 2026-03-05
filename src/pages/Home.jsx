@@ -86,16 +86,18 @@ export default function Home() {
         return;
       }
 
-      // Send condensed full chat + local stats to AI for enrichment
+      // Send a small sample to OpenAI just for quotes & signature emojis enrichment
       try {
+        const mid = Math.floor(rawChatText.length / 2);
+        const sample = rawChatText.slice(0, 5000) + '\n...\n' + rawChatText.slice(mid, mid + 3000);
         const response = await base44.functions.invoke('analyzeChat', {
-          chatText: rawChatText.slice(0, 2000), // minimal raw fallback for validation
-          condensedChatText: localData.condensedChatText || '',
+          fullChatText: localData.fullChatText,
           mode: selectedMode,
-          localStats: {
-            participants: localData.participants,
-            totalMessages: localData.totalMessages,
-            msgCounts: localData.msgCounts,
+          stats: {
+            doubleTextCounts: localData.doubleTextCounts,
+            avgWordsPerMessage: localData.avgWordsPerMessage,
+            swearCounts: localData.swearCounts,
+            regretCounts: localData.regretCounts,
           },
         });
         const aiData = response.data;
