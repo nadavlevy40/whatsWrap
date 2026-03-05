@@ -101,6 +101,8 @@ export default function Home() {
           lang,
           quotes: (aiData?.quotes?.length > (localData?.quotes?.length || 0)) ? aiData.quotes : localData.quotes,
           signatureEmojis: aiData?.signatureEmojis || localData.signatureEmojis,
+          wisdomSentences: aiData?.wisdomSentences || [],
+          triviaQuestions: aiData?.triviaQuestions || null,
           _rawChatText: rawChatText,
         };
         setChatData(merged);
