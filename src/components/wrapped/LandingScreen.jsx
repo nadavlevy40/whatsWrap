@@ -14,10 +14,10 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
   const isHe = lang === 'he';
 
   const copy = {
-    badge: isHe ? 'וואטסאפ ספונות 2024' : 'WhatsApp Wrapped 2024',
-    headline1: isHe ? 'גלו את' : 'Reveal Your',
-    headline2: isHe ? 'ה-DNA של הצ\'אט' : 'Chat DNA',
-    sub: isHe ? 'השיחה שלכם, מחדש.' : 'Your conversation, reimagined.',
+    badge: isHe ? '✨ ספונות 2024' : '✨ Your 2024 Chat Unwrapped',
+    headline1: isHe ? '' : '',
+    headline2: isHe ? 'וואטסRap' : 'WhatsWrap',
+    sub: isHe ? 'השיחה שלכם, מחדש.' : 'Your chats. Unwrapped.',
     dropping: isHe ? '!שחרר כאן 🎯' : 'Drop it! 🎯',
     dropTitle: isHe ? 'גרור את ייצוא הצ\'אט' : 'Drop your chat export',
     dropSub: isHe ? 'קובץ WhatsApp .txt · לחץ לדפדוף' : 'WhatsApp .txt file · Tap to browse',
