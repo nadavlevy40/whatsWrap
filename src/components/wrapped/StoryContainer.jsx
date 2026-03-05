@@ -94,6 +94,11 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
                 {slideKey === 'friends_roast' && <SlideFriendsRoastMaster data={data} lang={lang} />}
                 {slideKey === 'friends_night' && <SlideFriendsNightShift data={data} lang={lang} />}
                 {slideKey === 'friends_summon' && <SlideFriendsSummoningSpell data={data} lang={lang} />}
+                {/* New slides */}
+                {slideKey === 'double_text' && <SlideDoubleText data={data} />}
+                {slideKey === 'yapper' && <SlideYapper data={data} />}
+                {slideKey === 'swear_jar' && <SlideSwearJar data={data} />}
+                {slideKey === 'ai_insights' && <SlideAIInsights data={data} />}
                 {/* Shared */}
                 {slideKey === 'paywall' && <SlidePaywall data={data} onUnlock={goNext} lang={lang} />}
                 {slideKey === 'share' && <SlideShare data={data} onRestart={onRestart} lang={lang} />}
