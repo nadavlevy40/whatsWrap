@@ -17,7 +17,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
     badge: isHe ? '🎁 המתנה הממכרת ביותר לבן/בת הזוג' : '🎁 The Most Addictive Gift for Your Partner',
     headline1: isHe ? '' : '',
     headline2: isHe ? 'וואטסRap' : 'WhatsWrap',
-    sub: isHe ? 'השיחה שלכם, מחדש.' : 'Your chats. Unwrapped.',
+    sub: isHe ? 'תצחקו, תתביישו, ותגלו דברים שלא ידעתם על עצמכם 🔥' : 'Laugh, cringe & discover things you never knew about your chats 🔥',
     dropping: isHe ? '!שחרר כאן 🎯' : 'Drop it! 🎯',
     dropTitle: isHe ? 'גרור את ייצוא הצ\'אט' : 'Drop your chat export',
     dropSub: isHe ? 'קובץ WhatsApp .txt · לחץ לדפדוף' : 'WhatsApp .txt file · Tap to browse',
