@@ -13,42 +13,55 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { chatText, fullChatText, mode, stats } = await req.json();
+    const { chatText, condensedChatText, mode, localStats } = await req.json();
 
-    const chatInput = fullChatText || chatText;
-    if (!chatInput || chatInput.length < 100) {
+    if (!chatText || chatText.length < 100) {
       return Response.json({ error: 'Invalid chat text provided.' }, { status: 400 });
     }
 
-    // Truncate to ~60k chars to stay within token limits
-    const truncated = chatInput.slice(0, 60000);
+    // Use condensedChatText (pre-stripped by parser) if available, else truncate raw
+    const fullChat = condensedChatText
+      ? condensedChatText.slice(0, 80000)
+      : chatText.slice(0, 60000);
 
-    const systemPrompt = `You are an expert at analyzing WhatsApp chat exports. 
-Extract statistics and insights from the provided chat text and return ONLY valid JSON matching the schema exactly.
+    const systemPrompt = `You are an expert at analyzing WhatsApp chat exports.
+Read the ENTIRE provided chat history to understand deep dynamics, inside jokes, personality shifts, recurring themes, and emotional patterns over time.
+Extract statistics and insights and return ONLY valid JSON matching the schema exactly.
 Rules:
 - participants: array of up to 10 unique sender names (strings)
 - totalMessages: total message count (number)
 - msgCounts: object with participant name keys and message count values
 - hourlyData: array of 24 objects, one per hour 0-23, each with { hour, total, ...participantCounts }
 - dayOfWeekData: array of 7 objects: { day: "Sunday"|"Monday"|..., count: number }
-- topWords: array of up to 10 { word, count } objects — only actual words spoken in messages; EXCLUDE: stop words, short words (<3 chars), system messages, participant names, parts of participant names, and any metadata
-- signatureEmojis: object mapping each participant to their most-used emoji (string), use "✨" if none
-- laughCounts: object mapping each participant to number of laugh expressions (haha, lol, 😂, etc.)
+- topWords: array of up to 10 { word, count } objects — only actual words spoken; EXCLUDE stop words, short words (<3 chars), system messages, participant names, media placeholders
+- signatureEmojis: object mapping each participant to their most-used emoji, use "✨" if none
+- laughCounts: object mapping each participant to number of laugh expressions
 - nightOwlCounts: object mapping each participant to messages sent between midnight and 5am
-- mediaCounts: object mapping each participant to number of media messages sent
-- capsLockCounts: object mapping each participant to number of ALL-CAPS words used
-- organizerScore: object mapping each participant to a score for planning/organizing messages
-- replyTimes: object mapping each participant to their average reply time in minutes
-- initiatorCounts: object mapping each participant to number of times they started a new conversation (gap > 6 hours)
-- summoningSpell: null OR { user: string, keyword: string, triggerCount: number } - the least active user and what keyword in others' messages triggers their reply
-- quotes: array of up to 8 { sender: string, content: string } objects - funny or memorable short messages under 55 chars
-- wisdomSentences: array of up to 8 { sender: string, content: string } objects - the most iconic, repeated, or characteristic sentences/phrases used by participants. These should feel like "that's SO something they'd say" — recurring catchphrases, strong opinions, funny observations, or philosophical one-liners. Under 80 chars each, must be actual messages from the chat.`;
+- mediaCounts: object mapping each participant to number of media messages
+- capsLockCounts: object mapping each participant to ALL-CAPS word count
+- organizerScore: object mapping each participant to planning/organizing message count
+- replyTimes: object mapping each participant to average reply time in minutes
+- initiatorCounts: object mapping each participant to conversation starters (gap > 6 hours)
+- summoningSpell: null OR { user: string, keyword: string, triggerCount: number }
+- quotes: array of up to 8 { sender, content } — funny/memorable messages under 55 chars
+- wisdomSentences: array of up to 8 { sender, content } — iconic catchphrases or recurring lines, under 80 chars
+- aiInsights: object shaped differently per mode (see below)
 
-    const participantsNote = `IMPORTANT: 
-1. Participant names are the message authors (text before the colon, e.g. "Alice:", "Bob:"). Do NOT include any participant names or parts of their names in topWords, quotes, or summoningSpell keywords.
-2. IGNORE and EXCLUDE all media placeholder messages such as: "image omitted", "video omitted", "audio omitted", "sticker omitted", "document omitted", "‎<Media omitted>", "התמונה הושמטה", "הסרטון הושמט", "הקובץ הושמט", "המדיה הושמטה", "הסטיקר הושמט", "האודיו הושמט", "המסמך הושמט" — these are NOT real messages and should NOT be counted or referenced anywhere.
+For mode="couple", aiInsights must be:
+{ "dynamic": string (e.g. "Black Cat & Golden Retriever"), "blackCatUser": string, "goldenRetrieverUser": string, "dynamicRoast": string (funny 2-sentence roast based on the whole chat), "evolution": string (how it started vs how it's going), "mostApologetic": string }
+
+For mode="friends", aiInsights must be:
+{ "unhingedQuote": { "sender": string, "text": string (most bizarre out-of-context quote) }, "delusionalAward": { "user": string, "reason": string }, "therapist": string, "patient": string }
+
+For mode="family", aiInsights must be:
+{ "boomerScores": { [name]: number 0-100 }, "ignoredAward": { "user": string, "roast": string } }`;
+
+    const participantsNote = `IMPORTANT:
+1. Participant names are message authors (text before the colon). Do NOT include names in topWords, quotes, or summoningSpell keywords.
+2. IGNORE all media placeholder messages: "image omitted", "video omitted", "audio omitted", "sticker omitted", "document omitted", "<Media omitted>", "הושמט", "הושמטה" and related Hebrew variants. These are NOT real messages.
 3. Also ignore WhatsApp system messages like "end-to-end encrypted", "created group", "added", "left", etc.`;
-    const userPrompt = `Mode: ${mode}\n\n${participantsNote}\n\nChat export:\n${truncated}\n\nReturn only the JSON object, no markdown.`;
+
+    const userPrompt = `Mode: ${mode}\n\n${participantsNote}\n\nFull chat history:\n${fullChat}\n\nReturn only the JSON object, no markdown.`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
@@ -57,7 +70,7 @@ Rules:
         { role: 'user', content: userPrompt },
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.3,
+      temperature: 0.4,
     });
 
     const raw = completion.choices[0].message.content;
