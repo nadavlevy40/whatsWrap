@@ -28,6 +28,13 @@ const STOP_WORDS_HE = new Set([
 
 const ORGANIZER_WORDS_HE = new Set(['ארוחה','צהריים','ערב','בוקר','תוכנית','פגישה','מתי','מחר','היום','הלילה','סוף שבוע','לוח זמנים','בוא','הצטרף','הזמנה','יום הולדת','מסיבה','טיול','הולכים']);
 
+const SWEAR_WORDS = new Set([
+  'fuck','fucking','fucked','fucker','shit','shitty','bitch','bitchy','ass','asshole','bastard',
+  'damn','dammit','crap','piss','pissed','dick','cock','pussy','cunt','whore','slut',
+  'hell','bloody','bollocks','wanker','twat','arse','douchebag','jackass','motherfucker',
+  'bullshit','horseshit','clusterfuck','holy shit','wtf',
+]);
+
 const STOP_WORDS = STOP_WORDS_EN; // default, overridden per call
 
 const LAUGH_PATTERNS_EN = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|weak)\b|😂|🤣|💀|😭)/gi;
@@ -39,13 +46,6 @@ const MEDIA_PATTERN = /(omitted|<media omitted>|התמונה הושמטה|הסר
 // Individual words that are WhatsApp system placeholders — never count them
 const MEDIA_STOP_WORDS = new Set(['omitted', 'הושמט', 'הושמטה']);
 const ORGANIZER_WORDS = new Set(['dinner','lunch','breakfast','plan','meet','meeting','time','when','tomorrow','today','tonight','weekend','schedule','come','join','invite','birthday','party','trip','going']);
-
-const SWEAR_WORDS = new Set([
-  'fuck','fucking','fucked','fucker','shit','shitting','bullshit','damn','damnit','ass','asshole',
-  'bitch','bitches','bastard','crap','cunt','dick','pussy','cock','piss','hell','wtf','stfu',
-  'motherfucker','motherfucking','jackass','douchebag','idiot','moron','retard','screw','screwed',
-  'fck','fk','sh*t','f*ck','b*tch','a**','s**t'
-]);
 
 export function parseChatFile(text, lang = 'en') {
   const stopWords = lang === 'he' ? STOP_WORDS_HE : STOP_WORDS_EN;
@@ -277,6 +277,65 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   // Summoning spell: find the least active user and what keyword triggers their replies
   const summoningSpell = computeSummoningSpell(filtered, participants, msgCounts, stopWords, lang);
 
+  // Double-text counts: same sender, gap 1–60 min
+  const doubleTextCounts = {};
+  participants.forEach(p => (doubleTextCounts[p] = 0));
+  for (let i = 1; i < filtered.length; i++) {
+    const prev = filtered[i - 1];
+    const curr = filtered[i];
+    if (curr.sender === prev.sender && participants.includes(curr.sender)) {
+      const parseT = (m) => {
+        const parts = m.date.split(/[\/\.\-]/).map(Number);
+        const [mm, dd, yy] = parts;
+        const year = yy < 100 ? 2000 + yy : yy;
+        const minMatch = m.time.match(/:(\d{2})/);
+        const min = minMatch ? parseInt(minMatch[1]) : 0;
+        return new Date(year, mm - 1, dd, m.hour, min).getTime();
+      };
+      const delta = (parseT(curr) - parseT(prev)) / 60000;
+      if (delta >= 1 && delta <= 60) doubleTextCounts[curr.sender]++;
+    }
+  }
+
+  // Average words per message
+  const wordSums = {};
+  const msgWordCounts = {};
+  participants.forEach(p => { wordSums[p] = 0; msgWordCounts[p] = 0; });
+  filteredText.forEach(m => {
+    if (!participants.includes(m.sender)) return;
+    const words = m.content.trim().split(/\s+/).filter(w => w.length > 0);
+    wordSums[m.sender] = (wordSums[m.sender] || 0) + words.length;
+    msgWordCounts[m.sender] = (msgWordCounts[m.sender] || 0) + 1;
+  });
+  const avgWordsPerMessage = {};
+  participants.forEach(p => {
+    avgWordsPerMessage[p] = msgWordCounts[p] > 0 ? wordSums[p] / msgWordCounts[p] : 0;
+  });
+
+  // Swear counts
+  const swearCounts = {};
+  participants.forEach(p => (swearCounts[p] = 0));
+  filteredText.forEach(m => {
+    if (!participants.includes(m.sender)) return;
+    const words = m.content.toLowerCase().split(/\s+/);
+    words.forEach(w => { if (SWEAR_WORDS.has(w.replace(/[^a-z]/g, ''))) swearCounts[m.sender]++; });
+  });
+
+  // Regret index: deleted messages per user
+  const regretIndex = {};
+  participants.forEach(p => (regretIndex[p] = 0));
+  userMessages.forEach(m => {
+    if (/this message was deleted|this message was deleted\./i.test(m.content) && regretIndex[m.sender] !== undefined) {
+      regretIndex[m.sender]++;
+    }
+  });
+
+  // Condensed full chat text for AI (strip dates/times, skip media lines)
+  const condensedChatText = filtered
+    .filter(m => !MEDIA_PATTERN.test(m.content))
+    .map(m => `${m.sender}: ${m.content}`)
+    .join('\n');
+
   return {
     participants,
     totalMessages: filtered.length,
@@ -294,6 +353,11 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     replyTimes: avgReplyTimes,
     initiatorCounts,
     summoningSpell,
+    doubleTextCounts,
+    avgWordsPerMessage,
+    swearCounts,
+    regretIndex,
+    condensedChatText,
     isMock: false,
   };
 }
