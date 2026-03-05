@@ -13,14 +13,15 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { chatText, mode } = await req.json();
+    const { chatText, fullChatText, mode, stats } = await req.json();
 
-    if (!chatText || chatText.length < 100) {
+    const chatInput = fullChatText || chatText;
+    if (!chatInput || chatInput.length < 100) {
       return Response.json({ error: 'Invalid chat text provided.' }, { status: 400 });
     }
 
     // Truncate to ~60k chars to stay within token limits
-    const truncated = chatText.slice(0, 60000);
+    const truncated = chatInput.slice(0, 60000);
 
     const systemPrompt = `You are an expert at analyzing WhatsApp chat exports. 
 Extract statistics and insights from the provided chat text and return ONLY valid JSON matching the schema exactly.
