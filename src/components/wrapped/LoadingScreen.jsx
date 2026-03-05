@@ -26,7 +26,7 @@ export default function LoadingScreen({ onComplete, isProcessing = false }) {
     const progressInterval = setInterval(() => {
       setProgress(p => {
         // If still processing AI, slow down and cap at 90%
-        if (isProcessing && p >= 88) return 88 + Math.sin(Date.now() / 1000) * 2;
+        if (isProcessing && p >= 88) return 88;
         if (p >= 100) {
           clearInterval(progressInterval);
           setTimeout(onComplete, 400);
