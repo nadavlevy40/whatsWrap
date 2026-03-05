@@ -78,6 +78,68 @@ Rules:
     parsed.isMock = false;
     parsed.mode = mode;
 
+    // Pre-build trivia questions so they're ready when the user reaches that slide
+    try {
+      const len = truncated.length;
+      const mid = Math.floor(len / 2);
+      const triviaSample = [
+        truncated.slice(0, 8000),
+        truncated.slice(mid - 4000, mid + 4000),
+        truncated.slice(Math.max(0, len - 6000)),
+      ].join('\n...\n');
+
+      const statsStr = JSON.stringify({
+        totalMessages: parsed.totalMessages,
+        msgCounts: parsed.msgCounts,
+        topWords: parsed.topWords,
+        laughCounts: parsed.laughCounts,
+        nightOwlCounts: parsed.nightOwlCounts,
+        replyTimes: parsed.replyTimes,
+        initiatorCounts: parsed.initiatorCounts,
+        signatureEmojis: parsed.signatureEmojis,
+      });
+
+      const triviaSystem = `You are a creative and witty trivia game designer for a WhatsApp chat "Wrapped" experience.
+Generate 6 surprising, fun, creative trivia questions based on ACTUAL content of the chat.
+Rules:
+- Questions must be based on REAL things found in the chat: specific moments, recurring themes, inside jokes, unusual habits, fun patterns.
+- Be creative and vary question types. Good examples:
+  * "Which topic came up the most in [month]?"
+  * "Who sent the longest message in the whole chat?"
+  * "Fill in the blank: '[partial quote]...'"
+  * "Who was more likely to double-text?"
+- Questions should be surprising — even someone in the chat should have to think.
+- Each question must have exactly 4 answer options, one being correct.
+- Return JSON with key "questions": array of 6 objects:
+  { "prompt": string, "emoji": string, "label": string, "options": [4 strings], "correct": string, "funFact": string }`;
+
+      const triviaUser = `Participants: ${(parsed.participants || []).join(', ')}
+Chat stats: ${statsStr}
+
+Chat sample:
+${triviaSample}
+
+Generate 6 creative trivia questions. Return only JSON.`;
+
+      const triviaCompletion = await openai.chat.completions.create({
+        model: 'gpt-4o-mini',
+        messages: [
+          { role: 'system', content: triviaSystem },
+          { role: 'user', content: triviaUser },
+        ],
+        response_format: { type: 'json_object' },
+        temperature: 0.8,
+      });
+
+      const triviaRaw = triviaCompletion.choices[0].message.content;
+      const triviaParsed = JSON.parse(triviaRaw);
+      if (triviaParsed?.questions?.length > 0) {
+        parsed.triviaQuestions = triviaParsed.questions;
+      }
+    } catch (_e) {
+      // Trivia pre-build failed — SlideTrivia will fall back to local questions
+    }
+
     return Response.json(parsed);
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
