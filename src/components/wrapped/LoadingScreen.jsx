@@ -22,22 +22,37 @@ export default function LoadingScreen({ onComplete, isProcessing = false }) {
     const textInterval = setInterval(() => {
       setTextIndex(i => (i + 1) % LOADING_TEXTS.length);
     }, 800);
+    return () => clearInterval(textInterval);
+  }, []);
 
-    const progressInterval = setInterval(() => {
+  useEffect(() => {
+    const interval = setInterval(() => {
       setProgress(p => {
-        // If still processing AI, slow down and cap at 90%
-        if (isProcessing && p >= 88) return 88;
+        if (p >= 100) return 100;
+        // While AI is processing: slow crawl up to 95%, never stuck
+        if (isProcessing) {
+          const remaining = 95 - p;
+          if (remaining <= 0) return p;
+          // Increment shrinks as we approach 95 — feels natural, never stops
+          return p + Math.max(0.05, remaining * 0.012);
+        }
+        // AI done: rush to 100
         if (p >= 100) {
-          clearInterval(progressInterval);
           setTimeout(onComplete, 400);
           return 100;
         }
-        return p + (isProcessing ? 0.4 : 1.2);
+        return p + 2;
       });
     }, 80);
+    return () => clearInterval(interval);
+  }, [isProcessing, onComplete]);
 
-    return () => { clearInterval(textInterval); clearInterval(progressInterval); };
-  }, [onComplete, isProcessing]);
+  // Trigger completion when progress hits 100 and not processing
+  useEffect(() => {
+    if (!isProcessing && progress >= 100) {
+      setTimeout(onComplete, 400);
+    }
+  }, [progress, isProcessing, onComplete]);
 
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center relative overflow-hidden"
