@@ -83,6 +83,10 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
                 {slideKey === 'ghost' && <SlideGhostInitiator data={data} lang={lang} />}
                 {slideKey === 'emotions' && <SlideEmotions data={data} lang={lang} />}
                 {slideKey === 'wisdom' && <SlideWisdom data={data} lang={lang} />}
+                {slideKey === 'double_text' && <SlideDoubleText data={data} lang={lang} />}
+                {slideKey === 'yapper' && <SlideYapper data={data} lang={lang} />}
+                {slideKey === 'swear_jar' && <SlideSwearJar data={data} lang={lang} />}
+                {slideKey === 'ai_insights' && <SlideAIInsights data={data} lang={lang} />}
                 {slideKey === 'trivia' && <SlideTrivia data={data} onNext={goNext} lang={lang} />}
                 {/* Family slides */}
                 {slideKey === 'family_media' && <SlideFamilyMediaMogul data={data} lang={lang} />}
