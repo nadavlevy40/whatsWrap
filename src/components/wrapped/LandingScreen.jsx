@@ -77,8 +77,7 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
 
         {/* Headline */}
         <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="text-center">
-          <h1 className="text-6xl font-black text-white leading-none tracking-tight mb-4">
-            {copy.headline1}<br />
+          <h1 className="text-7xl font-black leading-none tracking-tight mb-4">
             <span style={{ background: 'linear-gradient(135deg, #c084fc, #f472b6, #fb7185)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               {copy.headline2}
             </span>
