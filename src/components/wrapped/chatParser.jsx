@@ -28,6 +28,13 @@ const STOP_WORDS_HE = new Set([
 
 const ORGANIZER_WORDS_HE = new Set(['ארוחה','צהריים','ערב','בוקר','תוכנית','פגישה','מתי','מחר','היום','הלילה','סוף שבוע','לוח זמנים','בוא','הצטרף','הזמנה','יום הולדת','מסיבה','טיול','הולכים']);
 
+const SWEAR_WORDS = new Set([
+  'fuck','fucking','fucked','fucker','shit','shitty','bitch','bitchy','ass','asshole','bastard',
+  'damn','dammit','crap','piss','pissed','dick','cock','pussy','cunt','whore','slut',
+  'hell','bloody','bollocks','wanker','twat','arse','douchebag','jackass','motherfucker',
+  'bullshit','horseshit','clusterfuck','holy shit','wtf',
+]);
+
 const STOP_WORDS = STOP_WORDS_EN; // default, overridden per call
 
 const LAUGH_PATTERNS_EN = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|weak)\b|😂|🤣|💀|😭)/gi;
