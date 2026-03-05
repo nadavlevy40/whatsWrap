@@ -78,6 +78,7 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
                 {slideKey === 'lol' && <SlideLOLMeter data={data} lang={lang} />}
                 {slideKey === 'ghost' && <SlideGhostInitiator data={data} lang={lang} />}
                 {slideKey === 'emotions' && <SlideEmotions data={data} lang={lang} />}
+                {slideKey === 'wisdom' && <SlideWisdom data={data} lang={lang} />}
                 {slideKey === 'trivia' && <SlideTrivia data={data} onNext={goNext} lang={lang} />}
                 {/* Family slides */}
                 {slideKey === 'family_media' && <SlideFamilyMediaMogul data={data} lang={lang} />}
