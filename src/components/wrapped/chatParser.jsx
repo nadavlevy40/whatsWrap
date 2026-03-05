@@ -548,6 +548,12 @@ function generateFriendsMockData() {
     organizerScore: { Marcus: 210, Priya: 380, Dave: 30, Zoe: 290, Liam: 180 },
     replyTimes: { Marcus: 4, Priya: 6, Dave: 180, Zoe: 5, Liam: 12 },
     initiatorCounts: { Marcus: 480, Priya: 390, Dave: 20, Zoe: 420, Liam: 250 },
+    doubleTextCounts: { Marcus: 640, Priya: 520, Dave: 18, Zoe: 710, Liam: 310 },
+    avgWordsPerMessage: { Marcus: 9.2, Priya: 11.4, Dave: 2.1, Zoe: 8.8, Liam: 7.3 },
+    swearCounts: { Marcus: 189, Priya: 98, Dave: 12, Zoe: 241, Liam: 156 },
+    regretCounts: { Marcus: 8, Priya: 3, Dave: 1, Zoe: 15, Liam: 6 },
+    fullChatText: '',
+    aiInsights: { friends: { unhingedQuote: { sender: 'Zoe', text: 'I literally manifested this parking spot bro fr' }, delusionalAward: { user: 'Marcus', reason: 'Genuinely believes he can predict football outcomes based on vibes. Has been wrong 12 times and counting.' }, therapist: 'Priya', patient: 'Marcus' } },
     summoningSpell: { user: 'Dave', keyword: 'FIFA', triggerCount: 89 },
     quotes: [
       { sender: 'Marcus', content: 'bro I am actually DEAD 💀' },
