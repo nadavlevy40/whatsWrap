@@ -23,9 +23,9 @@ import SlideFriendsNightShift from './SlideFriendsNightShift';
 import SlideFriendsSummoningSpell from './SlideFriendsSummoningSpell';
 
 const SLIDES_BY_MODE = {
-  couple: ['volume', 'chatterbox', 'podium', 'lol', 'ghost', 'emotions', 'trivia', 'paywall', 'share'],
-  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'family_awards', 'paywall', 'share'],
-  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'podium', 'paywall', 'share'],
+  couple: ['volume', 'chatterbox', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'trivia', 'paywall', 'share'],
+  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'wisdom', 'family_awards', 'paywall', 'share'],
+  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'podium', 'wisdom', 'paywall', 'share'],
 };
 
 export default function StoryContainer({ data, mode = 'couple', onRestart, isAdmin = false }) {
