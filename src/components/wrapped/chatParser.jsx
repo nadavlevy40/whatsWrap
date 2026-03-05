@@ -353,6 +353,11 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     replyTimes: avgReplyTimes,
     initiatorCounts,
     summoningSpell,
+    doubleTextCounts,
+    avgWordsPerMessage,
+    swearCounts,
+    regretCounts,
+    fullChatText,
     isMock: false,
   };
 }
