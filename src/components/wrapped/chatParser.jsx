@@ -34,7 +34,10 @@ const LAUGH_PATTERNS_EN = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|wea
 const LAUGH_PATTERNS_HE = /(ח{2,}|ה{2,}|lol|lmao|😂|🤣|💀|😭)/gi;
 const EMOJI_REGEX = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
 // Matches WhatsApp "media omitted" in all languages/formats
-const MEDIA_PATTERN = /(omitted|image omitted|video omitted|audio omitted|sticker omitted|document omitted|gif omitted|contact card omitted|התמונה הושמטה|הסרטון הושמט|הקובץ הושמט|המדיה הושמטה|הסטיקר הושמט|האודיו הושמט|המסמך הושמט|‎<Media omitted>)/i;
+const MEDIA_PATTERN = /(omitted|<media omitted>|התמונה הושמטה|הסרטון הושמט|הקובץ הושמט|המדיה הושמטה|הסטיקר הושמט|האודיו הושמט|המסמך הושמט|הושמט|הושמטה)/i;
+
+// Individual words that are WhatsApp system placeholders — never count them
+const MEDIA_STOP_WORDS = new Set(['omitted', 'הושמט', 'הושמטה']);
 const ORGANIZER_WORDS = new Set(['dinner','lunch','breakfast','plan','meet','meeting','time','when','tomorrow','today','tonight','weekend','schedule','come','join','invite','birthday','party','trip','going']);
 
 export function parseChatFile(text, lang = 'en') {
