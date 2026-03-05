@@ -492,6 +492,12 @@ function generateFamilyMockData() {
     organizerScore: { Mom: 520, Dad: 120, Sarah: 98, Jake: 65, Grandma: 40 },
     replyTimes: { Mom: 5, Dad: 120, Sarah: 8, Jake: 25, Grandma: 480 },
     initiatorCounts: { Mom: 620, Dad: 110, Sarah: 240, Jake: 180, Grandma: 40 },
+    doubleTextCounts: { Mom: 520, Dad: 45, Sarah: 210, Jake: 380, Grandma: 12 },
+    avgWordsPerMessage: { Mom: 12.1, Dad: 1.8, Sarah: 6.3, Jake: 5.0, Grandma: 18.4 },
+    swearCounts: { Mom: 3, Dad: 1, Sarah: 28, Jake: 52, Grandma: 0 },
+    regretCounts: { Mom: 2, Dad: 0, Sarah: 4, Jake: 9, Grandma: 1 },
+    fullChatText: '',
+    aiInsights: { family: { boomerScores: { Mom: 72, Dad: 88, Sarah: 15, Jake: 20, Grandma: 95 }, ignoredAward: { user: 'Dad', roast: 'Sent "Ok" to every plan and never once confirmed attendance.' } } },
     summoningSpell: null,
     quotes: [
       { sender: 'Mom', content: 'Dinner at 7, everyone please be on time!' },
