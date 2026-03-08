@@ -70,6 +70,8 @@ export default function Home() {
 
   const handleLangChange = useCallback((selectedLang) => {
     setLang(selectedLang);
+    document.documentElement.dir = selectedLang === 'he' ? 'rtl' : 'ltr';
+    document.documentElement.lang = selectedLang;
   }, []);
 
   const handleModeSelect = useCallback(async (selectedMode) => {
@@ -93,6 +95,7 @@ export default function Home() {
         const response = await base44.functions.invoke('analyzeChat', {
           fullChatText: localData.fullChatText,
           mode: selectedMode,
+          language: lang,
           stats: {
             doubleTextCounts: localData.doubleTextCounts,
             avgWordsPerMessage: localData.avgWordsPerMessage,
@@ -158,6 +161,8 @@ export default function Home() {
     setError(null);
     setRawChatText(null);
     setLoadingDone(false);
+    document.documentElement.dir = 'ltr';
+    document.documentElement.lang = 'en';
   }, []);
 
   if (phase === 'landing') {
