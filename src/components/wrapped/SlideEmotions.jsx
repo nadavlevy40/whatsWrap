@@ -6,7 +6,7 @@ export default function SlideEmotions({ data, lang = 'en' }) {
   const laughWinner = data.laughCounts[p1] > data.laughCounts[p2] ? p1 : p2;
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6">
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('emotionalIntelligence', lang)}</p>
         <h2 className="text-white text-3xl font-black">{t('vibesAndLols', lang)}</h2>

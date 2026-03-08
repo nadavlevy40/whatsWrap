@@ -12,7 +12,7 @@ export default function SlideSwearJar({ data, lang = 'en' }) {
   const owes = (winnerCount * PRICE_PER_SWEAR).toFixed(2);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8">
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('swearJarTitle', lang)}</p>
         <h2 className="text-white text-3xl font-black leading-tight">{t('swearJarHeader', lang).split('\n').map((l,i) => <span key={i}>{l}{i===0&&<br/>}</span>)}</h2>

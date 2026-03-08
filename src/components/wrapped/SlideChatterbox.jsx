@@ -15,7 +15,7 @@ export default function SlideChatterbox({ data, lang = 'en' }) {
   const chartData = data.participants.map(p => ({ name: p, messages: data.msgCounts[p] }));
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8">
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('theChatterbox', lang)}</p>
         <h2 className="text-white text-3xl font-black">{t('whoTalksMore', lang)}</h2>

@@ -12,7 +12,7 @@ export default function SlideLOLMeter({ data, lang = 'en' }) {
   const audience = s1 >= s2 ? p2 : p1;
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-5 gap-6">
+    <div className="w-full h-full flex flex-col items-center justify-center px-5 gap-6" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('laughterAnalysis', lang)}</p>
         <h2 className="text-white text-2xl font-black">{t('lolMeter', lang)}</h2>

@@ -3,7 +3,7 @@ import { t } from './i18n';
 
 function CoupleDynamic({ ai, lang = 'en' }) {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6">
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('aiRelationshipAnalysis', lang)}</p>
         <h2 className="text-white text-3xl font-black leading-tight">{ai.dynamic || t('coupleArchetype', lang)}</h2>
@@ -53,7 +53,7 @@ function CoupleDynamic({ ai, lang = 'en' }) {
 
 function FriendsInsights({ ai, lang = 'en' }) {
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6">
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('aiGroupAnalysis', lang)}</p>
         <h2 className="text-white text-3xl font-black">{t('theVerdict', lang)}</h2>
@@ -103,7 +103,7 @@ function FamilyInsights({ ai, participants, lang = 'en' }) {
   const boomerEntries = Object.entries(ai.boomerScores || {}).sort((a, b) => b[1] - a[1]);
 
   return (
-    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6">
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('aiFamilyAnalysis', lang)}</p>
         <h2 className="text-white text-3xl font-black">{t('boomerScoreTitle', lang)}</h2>
