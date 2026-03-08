@@ -120,13 +120,13 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
         {currentSlide > 0 && (
           <button onClick={(e) => { e.stopPropagation(); goPrev(); }}
             className="absolute left-2 top-1/2 -translate-y-1/2 z-50 w-8 h-16 flex items-center justify-center opacity-30 hover:opacity-60 transition-opacity">
-            <div className="w-2 h-2 border-l-2 border-t-2 border-white rotate-[-45deg]" />
+            <div className={`w-2 h-2 border-l-2 border-t-2 border-white ${lang === 'he' ? 'rotate-[135deg]' : 'rotate-[-45deg]'}`} />
           </button>
         )}
         {currentSlide < SLIDES.length - 1 && (
           <button onClick={(e) => { e.stopPropagation(); goNext(); }}
             className="absolute right-2 top-1/2 -translate-y-1/2 z-50 w-8 h-16 flex items-center justify-center opacity-30 hover:opacity-60 transition-opacity">
-            <div className="w-2 h-2 border-r-2 border-t-2 border-white rotate-45" />
+            <div className={`w-2 h-2 border-r-2 border-t-2 border-white ${lang === 'he' ? 'rotate-[-135deg]' : 'rotate-45'}`} />
           </button>
         )}
 
