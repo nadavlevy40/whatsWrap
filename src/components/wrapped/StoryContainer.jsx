@@ -22,6 +22,7 @@ import SlideFriendsRoastMaster from './SlideFriendsRoastMaster';
 import SlideFriendsNightShift from './SlideFriendsNightShift';
 import SlideFriendsSummoningSpell from './SlideFriendsSummoningSpell';
 // New slides
+import SlideErrorBoundary from './SlideErrorBoundary';
 import SlideDoubleText from './SlideDoubleText';
 import SlideYapper from './SlideYapper';
 import SlideSwearJar from './SlideSwearJar';
