@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, Check, MessageCircle } from 'lucide-react';
-import { t, isRTL } from './i18n';
+import { t } from './i18n';
 
 function generateShareUrl() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -10,6 +10,7 @@ function generateShareUrl() {
 }
 
 function QRPlaceholder({ url, lang = 'en' }) {
+  // Simple visual QR placeholder — static grid pattern
   const cells = useMemo(() => {
     const seed = url.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
     return Array.from({ length: 25 }, (_, i) => ((seed * (i + 7) * 13) % 17) > 7);
@@ -32,7 +33,6 @@ function QRPlaceholder({ url, lang = 'en' }) {
 export default function SlideShare({ data, onRestart, lang = 'en' }) {
   const shareUrl = useMemo(generateShareUrl, []);
   const [copied, setCopied] = useState(false);
-  const rtl = isRTL(lang);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(`https://${shareUrl}`).catch(() => {});
@@ -41,16 +41,14 @@ export default function SlideShare({ data, onRestart, lang = 'en' }) {
   };
 
   const handleWhatsApp = () => {
-    const text = encodeURIComponent(`🎉 Check out our WhatsApp Wrapped report! https://${shareUrl}`);
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    const msgText = lang === 'he'
+      ? `🎉 תראו את הוואטסראפ שלנו! https://${shareUrl}`
+      : `🎉 Check out our WhatsApp Wrapped report! https://${shareUrl}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msgText)}`, '_blank');
   };
 
   return (
-    <div
-      className="w-full h-full flex flex-col items-center justify-center px-6 gap-6 relative overflow-hidden"
-      dir={rtl ? 'rtl' : 'ltr'}
-      onClick={e => e.stopPropagation()}
-    >
+    <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6 relative overflow-hidden" onClick={e => e.stopPropagation()}>
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full"
@@ -68,9 +66,9 @@ export default function SlideShare({ data, onRestart, lang = 'en' }) {
         </div>
         <p className="text-white/50 text-xs tracking-widest uppercase">{t('reportUnlocked', lang)}</p>
         <h2 className="text-white text-2xl font-black text-center leading-tight">
-          {t('shareTitle', lang)}<br />
+          {t('shareHeadline', lang).split('\n')[0]}<br />
           <span style={{ background: 'linear-gradient(135deg, #c084fc, #f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            {t('yourWrapped', lang)}
+            {t('shareHeadline', lang).split('\n')[1] || t('shareHeadlineAccent', lang)}
           </span>
         </h2>
       </motion.div>
@@ -88,7 +86,6 @@ export default function SlideShare({ data, onRestart, lang = 'en' }) {
             <input
               readOnly
               value={shareUrl}
-              dir="ltr"
               className="flex-1 bg-transparent text-white/80 text-sm px-4 py-3 outline-none min-w-0 font-mono"
             />
             <button onClick={handleCopy}
