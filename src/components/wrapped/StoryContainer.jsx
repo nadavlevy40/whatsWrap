@@ -60,10 +60,17 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
   }, [currentSlide]);
 
   const handleTapZone = (e) => {
+    // Don't navigate if clicking on interactive elements
+    if (e.target.closest('button, input, a')) return;
     const rect = e.currentTarget.getBoundingClientRect();
     const x = e.clientX - rect.left;
-    if (x < rect.width * 0.35) goPrev();
-    else goNext();
+    const isLeft = x < rect.width * 0.35;
+    // In RTL, left = forward, right = back
+    if (lang === 'he') {
+      if (isLeft) goNext(); else goPrev();
+    } else {
+      if (isLeft) goPrev(); else goNext();
+    }
   };
 
   const slideKey = SLIDES[currentSlide];
