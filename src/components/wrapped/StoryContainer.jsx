@@ -105,6 +105,7 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
                 {slideKey === 'paywall' && <SlidePaywall data={data} onUnlock={goNext} lang={lang} />}
                 {slideKey === 'share' && <SlideShare data={data} onRestart={onRestart} lang={lang} />}
               </div>
+              </div>
               </SlideErrorBoundary>
             </StorySlide>
           </AnimatePresence>
