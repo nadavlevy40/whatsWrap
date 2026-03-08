@@ -76,6 +76,7 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
         <div className="absolute inset-0 pt-10" onClick={handleTapZone}>
           <AnimatePresence mode="wait" custom={direction}>
             <StorySlide key={slideKey} index={currentSlide} direction={direction}>
+              <SlideErrorBoundary key={slideKey}>
               <div className="flex-1 flex flex-col h-full overflow-y-auto">
                 {/* Couple slides */}
                 {slideKey === 'volume' && <SlideVolume data={data} lang={lang} />}
