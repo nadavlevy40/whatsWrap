@@ -118,7 +118,12 @@ For mode="family", aiInsights must be:
         signatureEmojis: parsed.signatureEmojis,
       });
 
+      const triviaLangNote = language === 'he'
+        ? 'IMPORTANT: Write ALL question prompts, options, and funFacts in Hebrew using casual Israeli language.'
+        : 'Write all questions in English.';
+
       const triviaSystem = `You are a creative and witty trivia game designer for a WhatsApp chat "Wrapped" experience.
+${triviaLangNote}
 Generate 6 surprising, fun, creative trivia questions based on ACTUAL content of the chat.
 Rules:
 - Questions must be based on REAL things found in the chat: specific moments, recurring themes, inside jokes, unusual habits, fun patterns.
