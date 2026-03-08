@@ -13,7 +13,7 @@ export default function SlideDoubleText({ data, lang = 'en' }) {
     <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('doubleTextCrown', lang)}</p>
-        <h2 className="text-white text-3xl font-black leading-tight">{t('doubleTextHeader', lang).split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}</h2>
+        <h2 className="text-white text-3xl font-black leading-tight">{t('doubleTextHeader', lang).split('\n').map((l,i) => <span key={i}>{l}{i===0&&<br/>}</span>)}</h2>
       </motion.div>
 
       <motion.div initial={{ scale: 0, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ delay: 0.5, type: 'spring', damping: 12 }}

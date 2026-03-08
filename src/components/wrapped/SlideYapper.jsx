@@ -13,7 +13,7 @@ export default function SlideYapper({ data, lang = 'en' }) {
     <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('yapperVsOneWord', lang)}</p>
-        <h2 className="text-white text-3xl font-black leading-tight">{t('yapperHeader', lang).split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}</h2>
+        <h2 className="text-white text-3xl font-black leading-tight">{t('yapperHeader', lang).split('\n').map((l,i) => <span key={i}>{l}{i===0&&<br/>}</span>)}</h2>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}
@@ -42,8 +42,7 @@ export default function SlideYapper({ data, lang = 'en' }) {
         <p className="text-white/70 text-sm">
           {typeof t('yapperWritesMore', lang) === 'function'
             ? t('yapperWritesMore', lang)(yapper, quietAvg > 0 ? (yapperAvg / quietAvg).toFixed(1) : '∞', quiet)
-            : <><span className="text-purple-300 font-bold">{yapper}</span> writes {quietAvg > 0 ? (yapperAvg / quietAvg).toFixed(1) : '∞'}x more words per message than <span className="text-pink-300 font-bold">{quiet}</span></>
-          }
+            : <><span className="text-purple-300 font-bold">{yapper}</span> × <span className="text-pink-300 font-bold">{quiet}</span></>}
         </p>
       </motion.div>
 

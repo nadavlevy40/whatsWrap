@@ -16,7 +16,7 @@ const MOCK_WISDOM = [
   { sender: 'Jordan', content: "okay but why does this always happen" },
 ];
 
-export default function SlideWisdom({ data }) {
+export default function SlideWisdom({ data, lang = 'en' }) {
   const sentences = (data.wisdomSentences?.length > 0 ? data.wisdomSentences : MOCK_WISDOM).slice(0, 6);
 
   return (
@@ -27,8 +27,8 @@ export default function SlideWisdom({ data }) {
         className="text-center mb-6"
       >
         <div className="text-4xl mb-2">💬</div>
-        <h2 className="text-white font-black text-2xl leading-tight">Your Signature Lines</h2>
-        <p className="text-white/40 text-sm mt-1">The phrases that define this chat</p>
+        <h2 className="text-white font-black text-2xl leading-tight">{t('wisdomHeader', lang)}</h2>
+        <p className="text-white/40 text-sm mt-1">{t('wisdomPhrasesSub', lang)}</p>
       </motion.div>
 
       <div className="flex flex-col gap-3">
