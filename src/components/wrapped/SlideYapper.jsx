@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-export default function SlideYapper({ data }) {
+export default function SlideYapper({ data, lang = 'en' }) {
   const avgs = data.avgWordsPerMessage || {};
   const sorted = Object.entries(avgs).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
   if (sorted.length < 2) return null;

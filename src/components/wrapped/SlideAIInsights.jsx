@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-function CoupleDynamic({ ai }) {
+function CoupleDynamic({ ai, lang = 'en' }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-6">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">

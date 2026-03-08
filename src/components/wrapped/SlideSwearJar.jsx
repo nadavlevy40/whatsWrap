@@ -1,8 +1,9 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
 const PRICE_PER_SWEAR = 0.25;
 
-export default function SlideSwearJar({ data }) {
+export default function SlideSwearJar({ data, lang = 'en' }) {
   const counts = data.swearCounts || {};
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   if (sorted.length === 0) return null;

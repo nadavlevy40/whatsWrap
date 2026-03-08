@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
-export default function SlideDoubleText({ data }) {
+export default function SlideDoubleText({ data, lang = 'en' }) {
   const counts = data.doubleTextCounts || {};
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   if (sorted.length === 0) return null;

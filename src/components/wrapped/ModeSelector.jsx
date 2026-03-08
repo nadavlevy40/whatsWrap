@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
 import { Heart, Home, Zap } from 'lucide-react';
+import { t } from './i18n';
 
 const MODES = [
   {
     id: 'couple',
     icon: Heart,
-    label: 'Couple',
-    sub: 'Romantic & Roast',
+    labelKey: 'modeCouple',
+    subKey: 'modeCouplesSub',
     color: '#f472b6',
     bg: 'rgba(244,114,182,0.15)',
     border: 'rgba(244,114,182,0.35)',

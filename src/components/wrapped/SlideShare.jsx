@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, Check, MessageCircle, Share2 } from 'lucide-react';
+import { Copy, Check, MessageCircle } from 'lucide-react';
+import { t } from './i18n';
 
 function generateShareUrl() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';

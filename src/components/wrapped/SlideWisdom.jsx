@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { t } from './i18n';
 
 const COLORS = [
   'from-violet-900/60 to-purple-900/40',
