@@ -16,8 +16,8 @@ const MODES = [
   {
     id: 'family',
     icon: Home,
-    label: 'Family',
-    sub: 'Wholesome & Chaotic',
+    labelKey: 'modeFamily',
+    subKey: 'modeFamilySub',
     color: '#34d399',
     bg: 'rgba(52,211,153,0.12)',
     border: 'rgba(52,211,153,0.3)',
@@ -26,8 +26,8 @@ const MODES = [
   {
     id: 'friends',
     icon: Zap,
-    label: 'Friends',
-    sub: 'Banter & Triggers',
+    labelKey: 'modeFriends',
+    subKey: 'modeFriendsSub',
     color: '#fbbf24',
     bg: 'rgba(251,191,36,0.12)',
     border: 'rgba(251,191,36,0.3)',
@@ -35,7 +35,7 @@ const MODES = [
   },
 ];
 
-export default function ModeSelector({ suggestedMode, onSelect }) {
+export default function ModeSelector({ suggestedMode, onSelect, lang = 'en' }) {
   return (
     <div
       className="fixed inset-0 flex flex-col items-center justify-center px-6"
@@ -54,11 +54,11 @@ export default function ModeSelector({ suggestedMode, onSelect }) {
           initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
           className="text-center"
         >
-          <p className="text-white/30 text-xs tracking-widest uppercase mb-3">Step 3 of 3</p>
+          <p className="text-white/30 text-xs tracking-widest uppercase mb-3">{t('modeSelectorStep', lang)}</p>
           <h1 className="text-white text-3xl font-black leading-tight mb-2">
-            What kind of chat<br />is this?
+            {t('modeSelectorTitle', lang).split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}
           </h1>
-          <p className="text-white/40 text-sm">Pick a mode for your personalized story.</p>
+          <p className="text-white/40 text-sm">{t('modeSelectorSub', lang)}</p>
         </motion.div>
 
         <div className="w-full flex flex-col gap-3">
@@ -87,15 +87,15 @@ export default function ModeSelector({ suggestedMode, onSelect }) {
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-white font-bold text-lg">{mode.label}</span>
+                    <span className="text-white font-bold text-lg">{t(mode.labelKey, lang)}</span>
                     {isSuggested && (
                       <span className="text-[10px] px-2 py-0.5 rounded-full font-semibold"
                         style={{ background: mode.bg, border: `1px solid ${mode.border}`, color: mode.color }}>
-                        Suggested
+                        {t('modeSuggested', lang)}
                       </span>
                     )}
                   </div>
-                  <p className="text-white/40 text-sm">{mode.sub}</p>
+                  <p className="text-white/40 text-sm">{t(mode.subKey, lang)}</p>
                 </div>
                 <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
                   style={{ borderColor: isSuggested ? mode.color : 'rgba(255,255,255,0.2)' }}>
@@ -110,7 +110,7 @@ export default function ModeSelector({ suggestedMode, onSelect }) {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
           className="text-white/20 text-xs text-center"
         >
-          You can always change this later
+          {t('modeSelectorFooter', lang)}
         </motion.p>
       </div>
     </div>
