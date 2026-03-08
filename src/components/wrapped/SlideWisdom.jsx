@@ -20,7 +20,7 @@ export default function SlideWisdom({ data, lang = 'en' }) {
   const sentences = (data.wisdomSentences?.length > 0 ? data.wisdomSentences : MOCK_WISDOM).slice(0, 6);
 
   return (
-    <div className="w-full h-full flex flex-col px-5 py-6 overflow-y-auto">
+    <div className="w-full h-full flex flex-col px-5 py-6 overflow-y-auto" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -35,7 +35,7 @@ export default function SlideWisdom({ data, lang = 'en' }) {
         {sentences.map((s, i) => (
           <motion.div
             key={i}
-            initial={{ opacity: 0, x: i % 2 === 0 ? -30 : 30 }}
+            initial={{ opacity: 0, x: lang === 'he' ? (i % 2 === 0 ? 30 : -30) : (i % 2 === 0 ? -30 : 30) }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.1 + i * 0.1, type: 'spring', damping: 16 }}
             className={`bg-gradient-to-br ${COLORS[i % COLORS.length]} rounded-2xl px-4 py-3 border border-white/10`}

@@ -13,7 +13,7 @@ export default function SlideWordPodium({ data, lang = 'en' }) {
   const rest = words.slice(3, 10);
 
   return (
-    <div className="w-full h-full flex flex-col px-5 pt-6 pb-4 gap-5 overflow-y-auto" dir="auto">
+    <div className="w-full h-full flex flex-col px-5 pt-6 pb-4 gap-5 overflow-y-auto" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-center">
         <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('topWords', lang)}</p>
         <h2 className="text-white text-2xl font-black">{t('wordPodiumTitle', lang)}</h2>
@@ -24,7 +24,7 @@ export default function SlideWordPodium({ data, lang = 'en' }) {
       <div className="flex flex-col gap-2">
         {top3.map((item, i) => (
           <motion.div key={item.word}
-            initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: lang === 'he' ? 30 : -30 }} animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2 + i * 0.12, type: 'spring', damping: 15 }}
             className="flex items-center gap-3 rounded-2xl px-4 py-3"
             style={{ background: MEDALS[i].bg, border: `1px solid ${MEDALS[i].border}` }}>
@@ -46,7 +46,7 @@ export default function SlideWordPodium({ data, lang = 'en' }) {
       <div className="flex flex-col gap-1.5">
         {rest.map((item, i) => (
           <motion.div key={item.word}
-            initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
+            initial={{ opacity: 0, x: lang === 'he' ? 20 : -20 }} animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.55 + i * 0.07 }}
             className="flex items-center gap-3 rounded-xl px-4 py-2.5"
             style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
