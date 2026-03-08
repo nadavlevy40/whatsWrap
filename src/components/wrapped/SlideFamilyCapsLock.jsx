@@ -10,7 +10,7 @@ export default function SlideFamilyCapsLock({ data, lang = 'en' }) {
   const energyLabels = t('energyLabels', lang);
 
   return (
-    <div className="flex flex-col h-full px-6 pt-10 pb-6 gap-6">
+    <div className="flex flex-col h-full px-6 pt-10 pb-6 gap-6" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('familyRoles', lang)}</p>
         <h2 className="text-white text-3xl font-black leading-tight">{t('theLoudestTitle', lang)}</h2>
@@ -35,14 +35,14 @@ export default function SlideFamilyCapsLock({ data, lang = 'en' }) {
           const energy = energyLabels[Math.min(i, energyLabels.length - 1)];
           return (
             <motion.div key={p}
-              initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 + i * 0.1 }}
+              initial={{ opacity: 0, x: lang === 'he' ? 20 : -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.4 + i * 0.1 }}
               className="flex flex-col gap-1"
             >
               <div className="flex justify-between items-center">
                 <span className="text-white/70 text-sm font-medium">{p}</span>
                 <span className="text-white/30 text-xs">{energy}</span>
               </div>
-              <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+              <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden" dir="ltr">
                 <motion.div
                   initial={{ width: 0 }} animate={{ width: `${pct}%` }} transition={{ delay: 0.6 + i * 0.1, duration: 0.8 }}
                   className="h-full rounded-full"

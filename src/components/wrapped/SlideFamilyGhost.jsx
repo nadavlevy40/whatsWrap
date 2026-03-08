@@ -8,7 +8,7 @@ export default function SlideFamilyGhost({ data, lang = 'en' }) {
   const ghostPct = totalMessages > 0 ? Math.round(((msgCounts[ghost] || 0) / totalMessages) * 100) : 0;
 
   return (
-    <div className="flex flex-col h-full px-6 pt-10 pb-6 gap-6">
+    <div className="flex flex-col h-full px-6 pt-10 pb-6 gap-6" dir={lang === 'he' ? 'rtl' : 'ltr'}>
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
         <p className="text-white/40 text-xs tracking-widest uppercase mb-1">{t('familyRoles', lang)}</p>
         <h2 className="text-white text-3xl font-black leading-tight">{t('familyGhostTitle', lang)}</h2>
@@ -25,7 +25,7 @@ export default function SlideFamilyGhost({ data, lang = 'en' }) {
         <p className="text-white/50 text-sm text-center">
           {t('onlyContributed', lang)(ghost, ghostPct)}
         </p>
-        <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden">
+        <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden" dir="ltr">
           <motion.div
             initial={{ width: 0 }} animate={{ width: `${ghostPct}%` }} transition={{ delay: 0.6, duration: 1 }}
             className="h-full rounded-full"
