@@ -12,8 +12,8 @@ export default function SlideYapper({ data, lang = 'en' }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-2">Yapper vs. One-Word Wonder</p>
-        <h2 className="text-white text-3xl font-black leading-tight">Who writes<br />essays?</h2>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('yapperVsOneWord', lang)}</p>
+        <h2 className="text-white text-3xl font-black leading-tight">{t('yapperHeader', lang).split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}</h2>
       </motion.div>
 
       <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }}
@@ -22,17 +22,17 @@ export default function SlideYapper({ data, lang = 'en' }) {
         <div className="flex-1 rounded-3xl p-5 text-center flex flex-col items-center gap-2"
           style={{ background: 'linear-gradient(135deg, rgba(124,58,237,0.5), rgba(219,39,119,0.4))', border: '1px solid rgba(255,255,255,0.12)' }}>
           <div className="text-3xl">🗣️</div>
-          <p className="text-white/50 text-xs uppercase tracking-wide">Yapper</p>
+          <p className="text-white/50 text-xs uppercase tracking-wide">{t('yapperLabel', lang)}</p>
           <p className="text-white font-black text-2xl leading-tight">{yapper}</p>
-          <p className="text-white/70 text-sm">{yapperAvg.toFixed(1)} words/msg</p>
+          <p className="text-white/70 text-sm">{yapperAvg.toFixed(1)} {t('wordsPerMsg', lang)}</p>
         </div>
         {/* One-word wonder */}
         <div className="flex-1 rounded-3xl p-5 text-center flex flex-col items-center gap-2"
           style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,255,255,0.08)' }}>
           <div className="text-3xl">🤐</div>
-          <p className="text-white/50 text-xs uppercase tracking-wide">One-Word Wonder</p>
+          <p className="text-white/50 text-xs uppercase tracking-wide">{t('oneWordLabel', lang)}</p>
           <p className="text-white font-black text-2xl leading-tight">{quiet}</p>
-          <p className="text-white/50 text-sm">{quietAvg.toFixed(1)} words/msg</p>
+          <p className="text-white/50 text-sm">{quietAvg.toFixed(1)} {t('wordsPerMsg', lang)}</p>
         </div>
       </motion.div>
 
@@ -40,7 +40,10 @@ export default function SlideYapper({ data, lang = 'en' }) {
         className="w-full rounded-2xl px-5 py-4 text-center"
         style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
         <p className="text-white/70 text-sm">
-          <span className="text-purple-300 font-bold">{yapper}</span> writes {quietAvg > 0 ? (yapperAvg / quietAvg).toFixed(1) : '∞'}x more words per message than <span className="text-pink-300 font-bold">{quiet}</span>
+          {typeof t('yapperWritesMore', lang) === 'function'
+            ? t('yapperWritesMore', lang)(yapper, quietAvg > 0 ? (yapperAvg / quietAvg).toFixed(1) : '∞', quiet)
+            : <><span className="text-purple-300 font-bold">{yapper}</span> writes {quietAvg > 0 ? (yapperAvg / quietAvg).toFixed(1) : '∞'}x more words per message than <span className="text-pink-300 font-bold">{quiet}</span></>
+          }
         </p>
       </motion.div>
 

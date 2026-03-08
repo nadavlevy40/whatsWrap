@@ -14,8 +14,8 @@ export default function SlideSwearJar({ data, lang = 'en' }) {
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center">
-        <p className="text-white/40 text-xs tracking-widest uppercase mb-2">The Swear Jar 🫙</p>
-        <h2 className="text-white text-3xl font-black leading-tight">Who owes<br />the most?</h2>
+        <p className="text-white/40 text-xs tracking-widest uppercase mb-2">{t('swearJarTitle', lang)}</p>
+        <h2 className="text-white text-3xl font-black leading-tight">{t('swearJarHeader', lang).split('\n').map((line, i) => <span key={i}>{line}{i === 0 && <br />}</span>)}</h2>
       </motion.div>
 
       {/* Jar graphic */}
@@ -34,9 +34,9 @@ export default function SlideSwearJar({ data, lang = 'en' }) {
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }}
         className="w-full rounded-3xl p-6 text-center"
         style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.3), rgba(219,39,119,0.3))', border: '1px solid rgba(255,255,255,0.1)' }}>
-        <p className="text-white/60 text-sm mb-1">Most Potty-Mouthed</p>
+        <p className="text-white/60 text-sm mb-1">{t('mostPottyMouthed', lang)}</p>
         <p className="text-white font-black text-4xl mb-1">{winner}</p>
-        <p className="text-white/50 text-sm">{winnerCount} swear words · owes <span className="text-yellow-400 font-bold">${owes}</span></p>
+        <p className="text-white/50 text-sm">{typeof t('swearOwes', lang) === 'function' ? t('swearOwes', lang)(winnerCount, owes) : `${winnerCount} swear words · owes $${owes}`}</p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }} className="flex gap-3 w-full">
