@@ -51,7 +51,6 @@ export default function SlideShare({ data, onRestart, lang = 'en' }) {
     <div
       className="w-full h-full flex flex-col items-center justify-center px-6 gap-5 relative overflow-hidden"
       dir={rtl ? 'rtl' : 'ltr'}
-      onClick={e => e.stopPropagation()}
     >
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
