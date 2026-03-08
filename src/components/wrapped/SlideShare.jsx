@@ -25,12 +25,12 @@ function QRPlaceholder({ url }) {
           ))}
         </div>
       </div>
-      <p className="text-white/40 text-xs text-center">Scan to open on partner's phone</p>
+      <p className="text-white/40 text-xs text-center">{t('scanToOpen', lang)}</p>
     </div>
   );
 }
 
-export default function SlideShare({ data, onRestart }) {
+export default function SlideShare({ data, onRestart, lang = 'en' }) {
   const shareUrl = useMemo(generateShareUrl, []);
   const [copied, setCopied] = useState(false);
 
@@ -41,8 +41,10 @@ export default function SlideShare({ data, onRestart }) {
   };
 
   const handleWhatsApp = () => {
-    const text = encodeURIComponent(`🎉 Check out our WhatsApp Wrapped report! https://${shareUrl}`);
-    window.open(`https://wa.me/?text=${text}`, '_blank');
+    const msgText = lang === 'he'
+      ? `🎉 תראו את הוואטסראפ שלנו! https://${shareUrl}`
+      : `🎉 Check out our WhatsApp Wrapped report! https://${shareUrl}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msgText)}`, '_blank');
   };
 
   return (
@@ -62,11 +64,11 @@ export default function SlideShare({ data, onRestart }) {
           style={{ background: 'linear-gradient(135deg, #059669, #10b981)' }}>
           ✓
         </div>
-        <p className="text-white/50 text-xs tracking-widest uppercase">Report Unlocked</p>
+        <p className="text-white/50 text-xs tracking-widest uppercase">{t('reportUnlocked', lang)}</p>
         <h2 className="text-white text-2xl font-black text-center leading-tight">
-          Share Your<br />
+          {t('shareHeadline', lang).split('\n')[0]}<br />
           <span style={{ background: 'linear-gradient(135deg, #c084fc, #f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-            Wrapped Report
+            {t('shareHeadline', lang).split('\n')[1] || t('shareHeadlineAccent', lang)}
           </span>
         </h2>
       </motion.div>
@@ -78,7 +80,7 @@ export default function SlideShare({ data, onRestart }) {
 
         {/* Link + Copy */}
         <div>
-          <p className="text-white/40 text-xs uppercase tracking-widest mb-2">Your unique link</p>
+          <p className="text-white/40 text-xs uppercase tracking-widest mb-2">{t('yourUniqueLink', lang)}</p>
           <div className="flex items-center gap-2 rounded-2xl overflow-hidden"
             style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.1)' }}>
             <input
@@ -90,7 +92,7 @@ export default function SlideShare({ data, onRestart }) {
               className="px-4 py-3 flex items-center gap-1.5 text-sm font-semibold transition-all flex-shrink-0"
               style={{ color: copied ? '#10b981' : '#c084fc' }}>
               {copied ? <Check size={15} /> : <Copy size={15} />}
-              {copied ? 'Copied!' : 'Copy'}
+              {copied ? t('copied', lang) : t('copyLink', lang)}
             </button>
           </div>
         </div>
@@ -108,7 +110,7 @@ export default function SlideShare({ data, onRestart }) {
           className="w-full py-4 rounded-2xl font-bold text-white flex items-center justify-center gap-2 text-base"
           style={{ background: 'linear-gradient(135deg, #25d366, #128c7e)' }}>
           <MessageCircle size={18} />
-          Send via WhatsApp
+          {t('shareWhatsApp', lang)}
         </motion.button>
       </motion.div>
 
@@ -116,7 +118,7 @@ export default function SlideShare({ data, onRestart }) {
       <motion.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
         onClick={onRestart}
         className="relative z-10 text-white/30 hover:text-white/60 text-sm transition-colors">
-        ↩ Start over
+        {t('startOver', lang)}
       </motion.button>
     </div>
   );
