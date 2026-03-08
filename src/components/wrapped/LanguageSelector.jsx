@@ -36,7 +36,11 @@ export default function LanguageSelector({ onSelect }) {
               transition={{ delay: i * 0.1 }}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => onSelect(lang.id)}
+              onClick={() => {
+                document.documentElement.dir = lang.id === 'he' ? 'rtl' : 'ltr';
+                document.documentElement.lang = lang.id;
+                onSelect(lang.id);
+              }}
               className="w-full flex items-center gap-4 rounded-2xl p-5 text-left transition-all"
               style={{
                 background: 'rgba(255,255,255,0.06)',

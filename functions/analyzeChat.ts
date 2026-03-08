@@ -13,7 +13,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { chatText, condensedChatText, mode, localStats } = await req.json();
+    const { chatText, condensedChatText, mode, localStats, language = 'en' } = await req.json();
 
     if (!chatText || chatText.length < 100) {
       return Response.json({ error: 'Invalid chat text provided.' }, { status: 400 });
@@ -24,7 +24,12 @@ Deno.serve(async (req) => {
       ? condensedChatText.slice(0, 80000)
       : chatText.slice(0, 60000);
 
+    const langInstruction = language === 'he'
+      ? `CRITICAL: You MUST write ALL insight text fields (dynamicRoast, evolution, ignoredAward.roast, delusionalAward.reason, unhingedQuote.text, dynamic) in Hebrew, using casual Israeli slang. Use words like "אחי", "אמאל'ה", "חיים שלי", "פיק מי", "חי בסרט", "מסנן/ת", "חופר/ת", "ווייבים". Make the roasts funny and relatable for Israeli teenagers and young adults.`
+      : `Write all insight text in English with modern internet slang and humor.`;
+
     const systemPrompt = `You are an expert at analyzing WhatsApp chat exports.
+${langInstruction}
 Read the ENTIRE provided chat history to understand deep dynamics, inside jokes, personality shifts, recurring themes, and emotional patterns over time.
 Extract statistics and insights and return ONLY valid JSON matching the schema exactly.
 Rules:

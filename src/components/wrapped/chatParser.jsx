@@ -41,10 +41,15 @@ const MEDIA_STOP_WORDS = new Set(['omitted', 'הושמט', 'הושמטה']);
 const ORGANIZER_WORDS = new Set(['dinner','lunch','breakfast','plan','meet','meeting','time','when','tomorrow','today','tonight','weekend','schedule','come','join','invite','birthday','party','trip','going']);
 
 const SWEAR_WORDS = new Set([
+  // English
   'fuck','fucking','fucked','fucker','shit','shitting','bullshit','damn','damnit','ass','asshole',
   'bitch','bitches','bastard','crap','cunt','dick','pussy','cock','piss','hell','wtf','stfu',
   'motherfucker','motherfucking','jackass','douchebag','idiot','moron','retard','screw','screwed',
-  'fck','fk','sh*t','f*ck','b*tch','a**','s**t'
+  'fck','fk','sh*t','f*ck','b*tch','a**','s**t',
+  // Hebrew
+  'זין','כוס','תזדיין','תזדייני','מזדיין','מזדיינת','בן זונה','בת זונה','זונה','מנייק','מניאק',
+  'כוסאמק','כוסאמאק','לעזאזל','לך תזדיין','דפוק','דפוקה','מטומטם','מטומטמת','אידיוט','אידיוטית',
+  'שרמוטה','חרא','חאראס','ביצים','תחת','פאק','פאקינג','נזדיין','שיט',
 ]);
 
 export function parseChatFile(text, lang = 'en') {
@@ -54,14 +59,18 @@ export function parseChatFile(text, lang = 'en') {
   const messages = [];
 
   const patterns = [
-    // [DD/MM/YYYY, HH:MM] Sender: content  (iOS with brackets)
+    // [DD/MM/YYYY, HH:MM:SS] Sender: content  (iOS with brackets, Hebrew 24h with seconds)
     /^\[(\d{1,2}[\/\.\-]\d{1,2}[\/\.\-]\d{2,4}),\s*(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)\]\s*([^:]+):\s*(.*)/i,
-    // DD/MM/YYYY, HH:MM - Sender: content  (Android)
+    // DD/MM/YYYY, HH:MM - Sender: content  (Android / Hebrew standard)
     /^(\d{1,2}[\/\.\-]\d{1,2}[\/\.\-]\d{2,4}),\s*(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)\s*-\s*([^:]+):\s*(.*)/i,
     // [DD/MM/YYYY HH:MM] Sender: content  (no comma)
     /^\[(\d{1,2}[\/\.\-]\d{1,2}[\/\.\-]\d{2,4})\s+(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)\]\s*([^:]+):\s*(.*)/i,
     // DD/MM/YYYY HH:MM - Sender: content  (no comma, Android variant)
     /^(\d{1,2}[\/\.\-]\d{1,2}[\/\.\-]\d{2,4})\s+(\d{1,2}:\d{2}(?::\d{2})?(?:\s*[AP]M)?)\s*-\s*([^:]+):\s*(.*)/i,
+    // Hebrew iOS: ‏[DD.MM.YYYY, HH:MM:SS] Sender: content (with RTL mark + dot separators)
+    /^[\u200f\u200e]?\[(\d{1,2}\.\d{1,2}\.\d{2,4}),\s*(\d{1,2}:\d{2}(?::\d{2})?)\]\s*([^:]+):\s*(.*)/,
+    // Hebrew Android: ‏DD.MM.YYYY, HH:MM - Sender: content
+    /^[\u200f\u200e]?(\d{1,2}\.\d{1,2}\.\d{2,4}),\s*(\d{1,2}:\d{2}(?::\d{2})?)\s*-\s*([^:]+):\s*(.*)/,
   ];
 
   let currentMessage = null;
