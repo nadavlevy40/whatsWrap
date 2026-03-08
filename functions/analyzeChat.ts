@@ -121,7 +121,8 @@ For mode="family", aiInsights must be:
       });
 
       const triviaLangNote = language === 'he'
-        ? 'IMPORTANT: Write ALL question prompts, options, and funFacts in Hebrew using casual Israeli language.'
+        ? `IMPORTANT: Write ALL question prompts, options, and funFacts in Hebrew using casual Israeli language.
+CRITICAL GENDER-NEUTRAL RULE: When selecting quotes for "Who said it?" trivia questions, you MUST pick completely gender-neutral phrases. Do NOT pick quotes that contain gendered present-tense verbs (like הולך/הולכת, ישן/ישנה, עייף/עייפה) or gendered adjectives. Instead, pick quotes based on neutral slang, nouns, questions, or first-person past tense that do not reveal the speaker's gender (e.g., 'אין מצב', 'איזה סיוט', 'יאללה מתי יוצאים', 'הלכתי לישון', 'מה קורה פה'). The quote must NOT give away the gender of the speaker.`
         : 'Write all questions in English.';
 
       const triviaSystem = `You are a creative and witty trivia game designer for a WhatsApp chat "Wrapped" experience.
