@@ -55,7 +55,7 @@ export default function SlideLOLMeter({ data, lang = 'en' }) {
           <span>{p1} {p1Pct}%</span>
           <span>{p2Pct}% {p2}</span>
         </div>
-        <div className="w-full h-3 rounded-full overflow-hidden flex" style={{ background: 'rgba(255,255,255,0.08)' }}>
+        <div className="w-full h-3 rounded-full overflow-hidden flex" dir="ltr" style={{ background: 'rgba(255,255,255,0.08)' }}>
           <motion.div initial={{ width: 0 }} animate={{ width: `${p1Pct}%` }} transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}
             className="h-full rounded-l-full" style={{ background: 'linear-gradient(90deg, #7c3aed, #9333ea)' }} />
           <motion.div initial={{ width: 0 }} animate={{ width: `${p2Pct}%` }} transition={{ delay: 0.8, duration: 1, ease: 'easeOut' }}

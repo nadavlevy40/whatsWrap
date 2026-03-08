@@ -88,7 +88,7 @@ export default function SlideGhostInitiator({ data, lang = 'en' }) {
           <div className="flex-1 space-y-2">
             {pieData.map((item, i) => (
               <motion.div key={item.name}
-                initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, x: lang === 'he' ? -20 : 20 }} animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.7 + i * 0.1 }}
                 className="flex items-center gap-2">
                 <div className="w-3 h-3 rounded-full flex-shrink-0" style={{ background: COLORS[i] }} />
