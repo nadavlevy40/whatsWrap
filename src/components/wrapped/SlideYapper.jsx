@@ -39,7 +39,7 @@ export default function SlideYapper({ data }) {
         className="w-full rounded-2xl px-5 py-4 text-center"
         style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
         <p className="text-white/70 text-sm">
-          <span className="text-purple-300 font-bold">{yapper}</span> writes {(yapperAvg / quietAvg).toFixed(1)}x more words per message than <span className="text-pink-300 font-bold">{quiet}</span>
+          <span className="text-purple-300 font-bold">{yapper}</span> writes {quietAvg > 0 ? (yapperAvg / quietAvg).toFixed(1) : '∞'}x more words per message than <span className="text-pink-300 font-bold">{quiet}</span>
         </p>
       </motion.div>
 
