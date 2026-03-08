@@ -2,7 +2,7 @@ import { motion } from 'framer-motion';
 
 export default function SlideYapper({ data }) {
   const avgs = data.avgWordsPerMessage || {};
-  const sorted = Object.entries(avgs).sort((a, b) => b[1] - a[1]);
+  const sorted = Object.entries(avgs).filter(([, v]) => v > 0).sort((a, b) => b[1] - a[1]);
   if (sorted.length < 2) return null;
 
   const [yapper, yapperAvg] = sorted[0];
