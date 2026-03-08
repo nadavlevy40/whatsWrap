@@ -13,7 +13,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { chatText, condensedChatText, mode, localStats, language = 'en' } = await req.json();
+    const body = await req.json();
+    const { condensedChatText, mode, localStats, language = 'en' } = body;
+    const chatText = body.chatText || body.fullChatText || '';
 
     if (!chatText || chatText.length < 100) {
       return Response.json({ error: 'Invalid chat text provided.' }, { status: 400 });
