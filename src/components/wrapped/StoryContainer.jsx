@@ -31,7 +31,7 @@ import SlidePremiumShadowStats from './SlidePremiumShadowStats';
 import SlidePremiumPersonas from './SlidePremiumPersonas';
 import SlidePremiumDeepDive from './SlidePremiumDeepDive';
 import SlidePremiumVault from './SlidePremiumVault';
-import SlideClashReport from './SlideClashReport';
+import SlideClashReport from './SlideClashReport.jsx';
 
 const SLIDES_BY_MODE = {
   couple: ['volume', 'chatterbox', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'ai_insights', 'clash_report', 'trivia', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
