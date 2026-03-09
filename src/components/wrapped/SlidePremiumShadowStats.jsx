@@ -7,81 +7,83 @@ export default function SlidePremiumShadowStats({ data, lang = 'en' }) {
     if (navigator.vibrate) navigator.vibrate(50);
   }, []);
 
-  const { participants = [], doubleDownCounts = {}, lastWordCounts = {}, apologyCountsLocal = {} } = data;
-  const premiumInsights = data.premiumInsights || {};
+  const { participants = [], doubleDownCounts = {}, lastWordCounts = {} } = data;
+  const premiumInsights = data.premiumInsights || data.aiInsights?.premiumInsights || {};
 
-  const topDoubleDown = [...participants].sort((a, b) => (doubleDownCounts[b] || 0) - (doubleDownCounts[a] || 0))[0];
-  const topLastWord = [...participants].sort((a, b) => (lastWordCounts[b] || 0) - (lastWordCounts[a] || 0))[0];
-  const topApology = [...participants].sort((a, b) => (apologyCountsLocal[b] || 0) - (apologyCountsLocal[a] || 0))[0];
+  const doubleDownWinner = [...participants].sort((a, b) => (doubleDownCounts[b] || 0) - (doubleDownCounts[a] || 0))[0];
+  const lastWordWinner = [...participants].sort((a, b) => (lastWordCounts[b] || 0) - (lastWordCounts[a] || 0))[0];
 
   return (
-    <div className="relative flex flex-col h-full px-5 pt-10 pb-6 gap-4" dir={lang === 'he' ? 'rtl' : 'ltr'}>
-      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+    <div
+      className="flex flex-col h-full px-5 pt-10 pb-6 gap-4 relative overflow-hidden"
+      dir={lang === 'he' ? 'rtl' : 'ltr'}
+    >
+      {/* Animated background */}
+      <div className="absolute inset-0 -z-10">
         <motion.div
-          animate={{ scale: [1, 1.3, 1], opacity: [0.5, 0.8, 0.5] }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="absolute -top-20 -left-20 w-72 h-72 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.4), transparent 70%)' }}
+          animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute top-[-20%] left-[-20%] w-[70%] h-[70%] rounded-full"
+          style={{ background: 'radial-gradient(circle, #7c3aed 0%, transparent 70%)' }}
         />
         <motion.div
-          animate={{ scale: [1.2, 1, 1.2], opacity: [0.4, 0.7, 0.4] }}
-          transition={{ duration: 10, repeat: Infinity, delay: 2 }}
-          className="absolute -bottom-20 -right-20 w-72 h-72 rounded-full"
-          style={{ background: 'radial-gradient(circle, rgba(220,38,127,0.4), transparent 70%)' }}
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.6, 0.3] }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+          className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full"
+          style={{ background: 'radial-gradient(circle, #be123c 0%, transparent 70%)' }}
         />
       </div>
 
+      {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-        <p className="text-purple-300/70 text-xs tracking-widest uppercase mb-1">✨ {t('premiumBadge', lang)}</p>
-        <h2 className="text-white text-3xl font-black leading-tight">{t('premiumShadowTitle', lang)}</h2>
-        <p className="text-white/40 text-sm mt-1">{t('premiumShadowSub', lang)}</p>
+        <span className="text-xs font-bold px-2 py-1 rounded-full mb-2 inline-block" style={{ background: 'rgba(124,58,237,0.3)', color: '#c4b5fd' }}>
+          {t('premiumBadge', lang)}
+        </span>
+        <h2 className="text-white text-3xl font-black leading-tight">{t('shadowStatsTitle', lang)}</h2>
+        <p className="text-white/40 text-sm mt-1">{t('shadowStatsSub', lang)}</p>
       </motion.div>
 
+      {/* Bento grid */}
       <div className="grid grid-cols-2 gap-3 flex-1">
-        {/* Double Down */}
+        {/* Double-Down */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2 }}
-          className="col-span-2 rounded-3xl p-5 backdrop-blur-2xl"
-          style={{ background: 'rgba(139,92,246,0.12)', border: '1px solid rgba(139,92,246,0.3)' }}
+          initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.2, type: 'spring' }}
+          className="col-span-2 bg-white/10 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl p-5"
         >
-          <p className="text-purple-300 text-xs uppercase tracking-widest mb-2">🔁 {t('doubleDownAward', lang)}</p>
-          <p className="text-white font-black text-xl">{topDoubleDown}</p>
-          <p className="text-white/50 text-sm mt-1">{doubleDownCounts[topDoubleDown] || 0} {t('doubleDownDesc', lang)}</p>
+          <p className="text-white/50 text-xs mb-1">{t('doubleDownTitle', lang)}</p>
+          <p className="text-white font-black text-2xl">{doubleDownWinner || '—'}</p>
+          <p className="text-white/30 text-xs mt-1">{t('doubleDownDesc', lang)}</p>
+          <div className="flex gap-2 mt-3 flex-wrap">
+            {participants.map(p => (
+              <div key={p} className="flex flex-col items-center gap-1">
+                <div className="text-xs text-white/60 truncate max-w-[60px]">{p}</div>
+                <div className="text-purple-300 font-bold text-sm">{doubleDownCounts[p] || 0}×</div>
+              </div>
+            ))}
+          </div>
         </motion.div>
 
         {/* Last Word */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.3 }}
-          className="rounded-3xl p-4 backdrop-blur-2xl"
-          style={{ background: 'rgba(220,38,127,0.12)', border: '1px solid rgba(220,38,127,0.3)' }}
+          initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.35 }}
+          className="bg-white/10 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl p-4"
         >
-          <p className="text-pink-300 text-xs uppercase tracking-widest mb-2">🏁 {t('lastWordObsession', lang)}</p>
-          <p className="text-white font-black text-lg leading-tight">{topLastWord}</p>
-          <p className="text-white/50 text-xs mt-1">{lastWordCounts[topLastWord] || 0}×</p>
-        </motion.div>
-
-        {/* Apology */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.85 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.4 }}
-          className="rounded-3xl p-4 backdrop-blur-2xl"
-          style={{ background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.25)' }}
-        >
-          <p className="text-yellow-300 text-xs uppercase tracking-widest mb-2">🙏 {t('apologyCounter', lang)}</p>
-          <p className="text-white font-black text-lg leading-tight">{topApology}</p>
-          <p className="text-white/50 text-xs mt-1">{apologyCountsLocal[topApology] || 0}×</p>
+          <p className="text-white/50 text-xs mb-1">{t('lastWordTitle', lang)}</p>
+          <p className="text-white font-black text-lg">{lastWordWinner || '—'}</p>
+          <p className="text-white/30 text-xs mt-1">{lastWordCounts[lastWordWinner] || 0}×</p>
+          <p className="text-white/25 text-xs mt-2 leading-snug">{t('lastWordDesc', lang)}</p>
         </motion.div>
 
         {/* Vibe Shift */}
-        {premiumInsights.vibeShiftTimeline && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
-            className="col-span-2 rounded-3xl p-5 backdrop-blur-2xl"
-            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)' }}
-          >
-            <p className="text-white/40 text-xs uppercase tracking-widest mb-2">📈 {t('vibeShiftTitle', lang)}</p>
-            <p className="text-white/80 text-sm leading-relaxed italic">"{premiumInsights.vibeShiftTimeline}"</p>
-          </motion.div>
-        )}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.45 }}
+          className="bg-white/10 backdrop-blur-2xl border border-white/20 shadow-2xl rounded-3xl p-4"
+        >
+          <p className="text-white/50 text-xs mb-1">{t('vibeShiftTitle', lang)}</p>
+          <p className="text-white/80 text-xs leading-relaxed mt-1">
+            {premiumInsights.vibeShiftTimeline || '...'}
+          </p>
+        </motion.div>
       </div>
     </div>
   );
