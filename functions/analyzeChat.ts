@@ -27,7 +27,7 @@ Deno.serve(async (req) => {
       : chatText.slice(0, 60000);
 
     const langInstruction = language === 'he'
-      ? `CRITICAL: You MUST write ALL insight text fields (dynamicRoast, evolution, ignoredAward.roast, delusionalAward.reason, unhingedQuote.text, dynamic) in Hebrew, using casual Israeli slang. Use words like "אחי", "אמאל'ה", "חיים שלי", "פיק מי", "חי בסרט", "מסנן/ת", "חופר/ת", "ווייבים". Make the roasts funny and relatable for Israeli teenagers and young adults.`
+      ? `CRITICAL: You MUST write ALL insight text fields (dynamicRoast, evolution, ignoredAward.roast, delusionalAward.reason, unhingedQuote.text, dynamic, and ALL premiumInsights text fields: vibeShiftTimeline, firstVsLast, apologyAnalysis, duoName, hallOfFame quotes, mostIgnoredTopic) in Hebrew, using casual Israeli slang. Use words like "אחי", "אמאל'ה", "חיים שלי", "פיק מי", "חי בסרט", "מסנן/ת", "חופר/ת", "ווייבים". Make the roasts funny and relatable for Israeli teenagers and young adults.`
       : `Write all insight text in English with modern internet slang and humor.`;
 
     const systemPrompt = `You are an expert at analyzing WhatsApp chat exports.
@@ -63,27 +63,8 @@ For mode="friends", aiInsights must be:
 For mode="family", aiInsights must be:
 { "boomerScores": { [name]: number 0-100 }, "ignoredAward": { "user": string, "roast": string } }
 
-ADDITIONALLY, always include a top-level "premiumInsights" object:
-{
-  "premiumInsights": {
-    "vibeShiftTimeline": "A 2-sentence summary of exactly which month the chat turned from polite to unhinged.",
-    "personas": {
-      "mainCharacter": "Name of the person who always brings it back to themselves",
-      "therapist": "Name of the person who sends supportive paragraphs",
-      "chaosAgent": "Name of the person who drops wild sentences and leaves",
-      "boomerInTraining": "Name of the person using too many ellipses or 👍"
-    },
-    "relationshipDeepDive": {
-      "firstVsLast": "Compare the vibe of the very first 10 messages ever sent vs the last 10 messages.",
-      "apologyAnalysis": "Why the most apologetic person is usually apologizing.",
-      "duoName": "A funny, embarrassing custom duo/group name based on inside jokes."
-    },
-    "theVault": {
-      "hallOfFame": [{"sender": "Name", "quote": "Bizarre out of context quote"}, {"sender": "Name", "quote": "Quote 2"}, {"sender": "Name", "quote": "Quote 3"}],
-      "mostIgnoredTopic": "The one thing someone kept trying to talk about that everyone ignored."
-    }
-  }
-}`;
+ALWAYS include a top-level "premiumInsights" object with this EXACT schema:
+{ "vibeShiftTimeline": "2-sentence story of exactly which month the chat turned from polite to unhinged", "personas": { "mainCharacter": string, "therapist": string, "chaosAgent": string, "boomerInTraining": string }, "relationshipDeepDive": { "firstVsLast": string, "apologyAnalysis": string, "duoName": string }, "theVault": { "hallOfFame": [{"sender": string, "quote": string}, {"sender": string, "quote": string}], "mostIgnoredTopic": string } }`;
 
     const participantsNote = `IMPORTANT:
 1. Participant names are message authors (text before the colon). Do NOT include names in topWords, quotes, or summoningSpell keywords.

@@ -32,12 +32,10 @@ import SlidePremiumPersonas from './SlidePremiumPersonas';
 import SlidePremiumDeepDive from './SlidePremiumDeepDive';
 import SlidePremiumVault from './SlidePremiumVault';
 
-const PREMIUM_SLIDES = ['premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault'];
-
 const SLIDES_BY_MODE = {
-  couple: ['volume', 'chatterbox', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'ai_insights', 'trivia', 'paywall', ...PREMIUM_SLIDES, 'share'],
-  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'wisdom', 'family_awards', 'double_text', 'swear_jar', 'ai_insights', 'paywall', ...PREMIUM_SLIDES, 'share'],
-  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'ai_insights', 'paywall', ...PREMIUM_SLIDES, 'share'],
+  couple: ['volume', 'chatterbox', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'ai_insights', 'trivia', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
+  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'wisdom', 'family_awards', 'double_text', 'swear_jar', 'ai_insights', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
+  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'ai_insights', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
 };
 
 export default function StoryContainer({ data, mode = 'couple', onRestart, isAdmin = false }) {
@@ -114,12 +112,13 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
                 {slideKey === 'yapper' && <SlideYapper data={data} lang={lang} />}
                 {slideKey === 'swear_jar' && <SlideSwearJar data={data} lang={lang} />}
                 {slideKey === 'ai_insights' && <SlideAIInsights data={data} lang={lang} />}
-                {/* Shared */}
-                {slideKey === 'paywall' && <SlidePaywall data={data} onUnlock={goNext} lang={lang} />}
+                {/* Premium slides */}
                 {slideKey === 'premium_shadow' && <SlidePremiumShadowStats data={data} lang={lang} />}
                 {slideKey === 'premium_personas' && <SlidePremiumPersonas data={data} lang={lang} />}
                 {slideKey === 'premium_deepdive' && <SlidePremiumDeepDive data={data} lang={lang} />}
                 {slideKey === 'premium_vault' && <SlidePremiumVault data={data} lang={lang} />}
+                {/* Shared */}
+                {slideKey === 'paywall' && <SlidePaywall data={data} onUnlock={goNext} lang={lang} />}
                 {slideKey === 'share' && <SlideShare data={data} onRestart={onRestart} lang={lang} />}
               </div>
               </SlideErrorBoundary>

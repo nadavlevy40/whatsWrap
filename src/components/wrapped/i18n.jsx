@@ -202,43 +202,30 @@ const translations = {
   unlockPremium:        { en: 'Unlock Premium', he: 'פתח פרמיום' },
   unlockBtn:            { en: 'Unlock Full Wrapped ✨', he: 'פתח את הוואטסראפ המלא ✨' },
 
-  // Premium slides shared
-  premiumBadge:         { en: '✨ Premium', he: '✨ פרמיום' },
-  premiumOnly:          { en: 'Deep Dive', he: 'צלילה עמוקה' },
-
-  // SlidePremiumShadowStats
-  shadowStatsTitle:     { en: 'Shadow Stats 🕶️', he: 'נתוני הצל 🕶️' },
-  shadowStatsSub:       { en: 'The data they hoped you would never see.', he: 'הנתונים שקיוו שלא תראו.' },
-  doubleDownTitle:      { en: 'Double-Down Award 🏆', he: 'פרס הפאנץ\' 🏆' },
-  doubleDownDesc:       { en: '5+ messages in a row before anyone replied', he: '5+ הודעות ברצף לפני שמישהו ענה' },
-  lastWordTitle:        { en: 'Last Word Obsession 🔇', he: 'אובססיית המילה האחרונה 🔇' },
-  lastWordDesc:         { en: 'Always has to have the last word before silence', he: 'תמיד חייב/ת את המילה האחרונה לפני שקט' },
-  vibeShiftTitle:       { en: 'Vibe Shift Timeline 📅', he: 'ציר הזמן של הווייב 📅' },
-
-  // SlidePremiumPersonas
-  personasTitle:        { en: 'Your Chat Personas 🎭', he: 'הפרסונות של הצ\'אט 🎭' },
-  personasSub:          { en: 'AI assigned you roles. No take-backs.', he: 'ה-AI חילק תפקידים. אין ערעורים.' },
-  personaMainChar:      { en: '🌟 Main Character', he: '🌟 הדמות הראשית' },
-  personaTherapist:     { en: '🧠 The Therapist', he: '🧠 המטפל/ת' },
-  personaChaosAgent:    { en: '💥 Chaos Agent', he: '💥 סוכן/ת הכאוס' },
-  personaBoomer:        { en: '👍 Boomer-in-Training', he: '👍 בוגר/ת בהכשרה' },
-  personaMainDesc:      { en: 'Always brings it back to themselves', he: 'תמיד מחזיר/ה את זה לעצמם' },
-  personaTherapistDesc: { en: 'Sends supportive paragraphs', he: 'שולח/ת פסקאות תמיכה' },
-  personaChaosDesc:     { en: 'Drops wild takes and disappears', he: 'זורק/ת משפטים מטורפים ונעלם/ת' },
-  personaBoomerDesc:    { en: 'Uses too many ellipses and 👍', he: 'משתמש/ת יותר מדי ב... ו-👍' },
-
-  // SlidePremiumDeepDive
-  deepDiveTitle:        { en: 'The Deep Dive 🔍', he: 'הצלילה העמוקה 🔍' },
-  deepDiveSub:          { en: 'AI read your entire chat. Here\'s the verdict.', he: 'ה-AI קרא את כל הצ\'אט. הנה הפסיקה.' },
-  duoNameLabel:         { en: '🏷️ Your Official Duo Name', he: '🏷️ שם הצמד הרשמי שלכם' },
-  firstVsLastLabel:     { en: '📖 Then vs Now', he: '📖 אז לעומת עכשיו' },
-  apologyAnalysisLabel: { en: '🙏 The Apology Report', he: '🙏 דוח הסליחות' },
-
-  // SlidePremiumVault
-  vaultTitle:           { en: 'The Vault 🔐', he: 'הכספת 🔐' },
-  vaultSub:             { en: 'Quotes so unhinged they deserve a shrine.', he: 'ציטוטים כל כך לא נורמליים שמגיעה להם מצבה.' },
-  hallOfFameLabel:      { en: '🏛️ Hall of Fame', he: '🏛️ אולם התהילה' },
-  mostIgnoredLabel:     { en: '🦗 Most Ignored Topic', he: '🦗 הנושא הכי מסונן' },
+  // Premium slides
+  premiumBadge:           { en: 'Premium Exclusive', he: 'בלעדי לפרמיום' },
+  premiumShadowTitle:     { en: 'Shadow Stats 🕵️', he: 'סטטיסטיקות מוסתרות 🕵️' },
+  premiumShadowSub:       { en: "The data they don't want you to see", he: 'הנתונים שלא ידעתם שקיימים' },
+  doubleDownAward:        { en: 'Double Down Award', he: 'פרס ה-5 ברצף' },
+  doubleDownDesc:         { en: '5+ message streaks', he: 'פרצי 5+ הודעות ברצף' },
+  lastWordObsession:      { en: 'Last Word', he: 'חייב/ת את המילה האחרונה' },
+  apologyCounter:         { en: 'Apology Counter', he: 'מונה הסליחות' },
+  vibeShiftTitle:         { en: 'The Vibe Shift', he: 'מתי הכל השתגע' },
+  premiumPersonasTitle:   { en: 'Chat Personas 🎭', he: "הפרסונות של הצ'אט 🎭" },
+  premiumPersonasSub:     { en: 'AI assigned everyone a role', he: 'ה-AI חילק תפקידים — מכירים?' },
+  mainCharacterLabel:     { en: 'Main Character', he: 'הגיבור/ה הראשי' },
+  therapistPersonaLabel:  { en: 'The Therapist', he: 'הפסיכולוג/ית' },
+  chaosAgentLabel:        { en: 'Chaos Agent', he: 'סוכן/ת הכאוס' },
+  boomerInTrainingLabel:  { en: 'Boomer in Training', he: 'דוד/ה בהכשרה' },
+  premiumDeepDiveTitle:   { en: 'The Deep Dive 🔬', he: 'ניתוח עומק 🔬' },
+  premiumDeepDiveSub:     { en: 'Reading between the lines', he: 'קוראים בין השורות' },
+  duoNameLabel:           { en: 'Your Official Name', he: 'השם הרשמי שלכם' },
+  firstVsLastLabel:       { en: 'First vs. Last', he: 'אז מול עכשיו' },
+  apologyAnalysisLabel:   { en: 'Apology Report', he: 'דוח הסליחות' },
+  premiumVaultTitle:      { en: 'The Vault 🔐', he: 'הכספת 🔐' },
+  premiumVaultSub:        { en: 'Quotes & legends from the archives', he: 'ציטוטים ואגדות מהארכיון' },
+  hallOfFameLabel:        { en: 'Hall of Fame', he: 'היכל התהילה' },
+  mostIgnoredLabel:       { en: 'Most Ignored Topic', he: 'הנושא שכולם התעלמו ממנו' },
 };
 
 export function t(key, lang = 'en') {

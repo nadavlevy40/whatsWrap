@@ -261,57 +261,6 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     words.forEach(w => { if (SWEAR_WORDS.has(w.replace(/[^a-z*]/g, ''))) swearCounts[m.sender]++; });
   });
 
-  // Double-Down Award: who sends 5+ consecutive messages before anyone replies
-  const doubleDownCounts = {};
-  participants.forEach(p => (doubleDownCounts[p] = 0));
-  let streakSender = null;
-  let streakCount = 0;
-  for (const m of filtered) {
-    if (!participants.includes(m.sender)) continue;
-    if (m.sender === streakSender) {
-      streakCount++;
-      if (streakCount === 5) doubleDownCounts[m.sender]++;
-    } else {
-      streakSender = m.sender;
-      streakCount = 1;
-    }
-  }
-
-  // Last Word Obsession: who most often sends the final message before 4h+ silence
-  const lastWordCounts = {};
-  participants.forEach(p => (lastWordCounts[p] = 0));
-  const parseTimeMs = (m) => {
-    const parts = m.date.split(/[\/\.\-]/).map(Number);
-    const [mm, dd, yy] = parts;
-    const year = yy < 100 ? 2000 + yy : yy;
-    const minMatch = m.time.match(/:(\d{2})/);
-    const min = minMatch ? parseInt(minMatch[1]) : 0;
-    return new Date(year, mm - 1, dd, m.hour, min).getTime();
-  };
-  for (let i = 0; i < filtered.length - 1; i++) {
-    const curr = filtered[i];
-    const next = filtered[i + 1];
-    if (!participants.includes(curr.sender)) continue;
-    const delta = (parseTimeMs(next) - parseTimeMs(curr)) / 60000;
-    if (delta >= 240) lastWordCounts[curr.sender]++;
-  }
-  // Also count the very last message
-  if (filtered.length > 0 && participants.includes(filtered[filtered.length - 1].sender)) {
-    lastWordCounts[filtered[filtered.length - 1].sender]++;
-  }
-
-  // Apology Counter
-  const APOLOGY_WORDS = new Set(['sorry', 'my bad', 'apologies', 'apology', 'forgive', 'סליחה', 'מצטער', 'מצטערת', 'סלח', 'סלחי']);
-  const apologyCounts = {};
-  participants.forEach(p => (apologyCounts[p] = 0));
-  filteredText.forEach(m => {
-    if (!participants.includes(m.sender)) return;
-    const lower = m.content.toLowerCase();
-    for (const word of APOLOGY_WORDS) {
-      if (lower.includes(word)) { apologyCounts[m.sender]++; break; }
-    }
-  });
-
   // Regret index (deleted messages)
   const regretCounts = {};
   participants.forEach(p => (regretCounts[p] = 0));
@@ -319,6 +268,49 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     if (participants.includes(m.sender) && /this message was deleted/i.test(m.content)) {
       regretCounts[m.sender]++;
     }
+  });
+
+  // Double-Down Award: count times someone sends 5+ messages in a row before anyone else replies
+  const doubleDownCounts = {};
+  participants.forEach(p => (doubleDownCounts[p] = 0));
+  let ddStreak = 1;
+  let ddSender = filtered.length > 0 ? filtered[0].sender : null;
+  for (let i = 1; i < filtered.length; i++) {
+    if (filtered[i].sender === ddSender) {
+      ddStreak++;
+      if (ddStreak === 5 && participants.includes(ddSender)) doubleDownCounts[ddSender]++;
+    } else {
+      ddStreak = 1;
+      ddSender = filtered[i].sender;
+    }
+  }
+
+  // Last Word Obsession: who sends the final message before a 4+ hour silence
+  const lastWordCounts = {};
+  participants.forEach(p => (lastWordCounts[p] = 0));
+  const parseTimeForGap = (m) => {
+    const parts = m.date.split(/[\/\.\-]/).map(Number);
+    const [fm, fd, fy] = parts;
+    const year = fy < 100 ? 2000 + fy : fy;
+    const minMatch = m.time.match(/:(\d{2})/);
+    const min = minMatch ? parseInt(minMatch[1]) : 0;
+    return new Date(year, fm - 1, fd, m.hour, min).getTime();
+  };
+  for (let i = 0; i < filtered.length - 1; i++) {
+    const deltaMin = (parseTimeForGap(filtered[i + 1]) - parseTimeForGap(filtered[i])) / 60000;
+    if (deltaMin > 240 && participants.includes(filtered[i].sender)) {
+      lastWordCounts[filtered[i].sender]++;
+    }
+  }
+
+  // Apology Counter
+  const APOLOGY_WORDS_SET = ['sorry', 'my bad', 'apologies', 'apology', 'sry', 'מצטער', 'מצטערת', 'סליחה', 'מתנצל', 'מתנצלת'];
+  const apologyCountsLocal = {};
+  participants.forEach(p => (apologyCountsLocal[p] = 0));
+  filteredText.forEach(m => {
+    if (!participants.includes(m.sender)) return;
+    const lower = m.content.toLowerCase();
+    APOLOGY_WORDS_SET.forEach(word => { if (lower.includes(word)) apologyCountsLocal[m.sender]++; });
   });
 
   // Build full condensed chat text for AI (skip media-only messages)
@@ -417,10 +409,10 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     avgWordsPerMessage,
     swearCounts,
     regretCounts,
+    fullChatText,
     doubleDownCounts,
     lastWordCounts,
-    apologyCounts,
-    fullChatText,
+    apologyCountsLocal,
     isMock: false,
   };
 }
@@ -502,6 +494,9 @@ function generateCoupleMockData() {
     avgWordsPerMessage: { Alex: 8.4, Jordan: 3.1 },
     swearCounts: { Alex: 42, Jordan: 17 },
     regretCounts: { Alex: 3, Jordan: 8 },
+    doubleDownCounts: { Alex: 12, Jordan: 4 },
+    lastWordCounts: { Alex: 89, Jordan: 112 },
+    apologyCountsLocal: { Alex: 8, Jordan: 23 },
     fullChatText: '',
     aiInsights: { couple: { dynamic: 'Chaos Gremlin & Emotional Support', blackCatUser: 'Alex', goldenRetrieverUser: 'Jordan', dynamicRoast: 'Alex sends a meme at 3am and Jordan responds with "omg same" immediately. Truly a love story for the ages.', evolution: 'Started with carefully punctuated sentences. Now just vibes and voice notes.', mostApologetic: 'Jordan' } },
     summoningSpell: null,
@@ -514,6 +509,22 @@ function generateCoupleMockData() {
       { sender: 'Jordan', content: 'okay but why does this always happen to us' },
       { sender: 'Alex', content: 'this is actually so unhinged lmao' },
     ],
+    premiumInsights: {
+      vibeShiftTimeline: "The chat started formally in March with full sentences and proper punctuation. By June it devolved into single-word replies, reaction emojis, and voice notes at 2am — and nobody complained.",
+      personas: { mainCharacter: 'Alex', therapist: 'Jordan', chaosAgent: 'Alex', boomerInTraining: 'Jordan' },
+      relationshipDeepDive: {
+        firstVsLast: "First 10 messages: nervous energy, full sentences, 'haha' every other line. Last 10: unfiltered chaos — typos, voice notes, and a screenshot sent with zero context.",
+        apologyAnalysis: "Jordan apologizes mostly for slow replies and for 'being a lot' — classic anxious texter behavior.",
+        duoName: "The Obsessed & The Stressed Power Couple™",
+      },
+      theVault: {
+        hallOfFame: [
+          { sender: 'Alex', quote: 'wait that actually happened??' },
+          { sender: 'Jordan', quote: 'I literally cannot stop laughing at nothing' },
+        ],
+        mostIgnoredTopic: "Alex's plan to 'finally start going to the gym' — mentioned 14 times, zero follow-up.",
+      },
+    },
     isMock: true,
   };
 }
@@ -559,6 +570,9 @@ function generateFamilyMockData() {
     avgWordsPerMessage: { Mom: 12.1, Dad: 1.8, Sarah: 6.3, Jake: 5.0, Grandma: 18.4 },
     swearCounts: { Mom: 3, Dad: 1, Sarah: 28, Jake: 52, Grandma: 0 },
     regretCounts: { Mom: 2, Dad: 0, Sarah: 4, Jake: 9, Grandma: 1 },
+    doubleDownCounts: { Mom: 42, Dad: 3, Sarah: 18, Jake: 31, Grandma: 2 },
+    lastWordCounts: { Mom: 210, Dad: 38, Sarah: 95, Jake: 72, Grandma: 15 },
+    apologyCountsLocal: { Mom: 14, Dad: 2, Sarah: 6, Jake: 3, Grandma: 8 },
     fullChatText: '',
     aiInsights: { family: { boomerScores: { Mom: 72, Dad: 88, Sarah: 15, Jake: 20, Grandma: 95 }, ignoredAward: { user: 'Dad', roast: 'Sent "Ok" to every plan and never once confirmed attendance.' } } },
     summoningSpell: null,
@@ -570,6 +584,22 @@ function generateFamilyMockData() {
       { sender: 'Grandma', content: 'What is LOL? Is someone laughing?' },
       { sender: 'Mom', content: 'JAKE HAVE YOU EATEN TODAY' },
     ],
+    premiumInsights: {
+      vibeShiftTimeline: "The first few months were wholesome check-ins and dinner planning. Then Jake got a phone and by autumn the group became completely unhinged — 3am memes and arguments about nothing.",
+      personas: { mainCharacter: 'Mom', therapist: 'Mom', chaosAgent: 'Jake', boomerInTraining: 'Dad' },
+      relationshipDeepDive: {
+        firstVsLast: "First 10 messages were dinner invitations and 'be home by 8'. Last 10 messages include a GIF war, someone saying 'Ok', and Grandma asking what 'lol' means again.",
+        apologyAnalysis: "Mom apologizes for nagging (then immediately nags again). The apology cycle repeats every 3 weeks like clockwork.",
+        duoName: "The Family Group That Was Supposed To Be For Emergencies Only™",
+      },
+      theVault: {
+        hallOfFame: [
+          { sender: 'Dad', quote: 'Ok' },
+          { sender: 'Grandma', quote: 'What is LOL? Is someone laughing?' },
+        ],
+        mostIgnoredTopic: "Dad's repeated suggestion to 'have a family meeting' — proposed 7 times, never actually scheduled.",
+      },
+    },
     isMock: true,
   };
 }
@@ -615,6 +645,9 @@ function generateFriendsMockData() {
     avgWordsPerMessage: { Marcus: 9.2, Priya: 11.4, Dave: 2.1, Zoe: 8.8, Liam: 7.3 },
     swearCounts: { Marcus: 189, Priya: 98, Dave: 12, Zoe: 241, Liam: 156 },
     regretCounts: { Marcus: 8, Priya: 3, Dave: 1, Zoe: 15, Liam: 6 },
+    doubleDownCounts: { Marcus: 58, Priya: 31, Dave: 2, Zoe: 74, Liam: 22 },
+    lastWordCounts: { Marcus: 310, Priya: 240, Dave: 18, Zoe: 420, Liam: 190 },
+    apologyCountsLocal: { Marcus: 12, Priya: 28, Dave: 3, Zoe: 7, Liam: 9 },
     fullChatText: '',
     aiInsights: { friends: { unhingedQuote: { sender: 'Zoe', text: 'I literally manifested this parking spot bro fr' }, delusionalAward: { user: 'Marcus', reason: 'Genuinely believes he can predict football outcomes based on vibes. Has been wrong 12 times and counting.' }, therapist: 'Priya', patient: 'Marcus' } },
     summoningSpell: { user: 'Dave', keyword: 'FIFA', triggerCount: 89 },
@@ -626,6 +659,22 @@ function generateFriendsMockData() {
       { sender: 'Dave', content: 'FIFA anyone? 👀' },
       { sender: 'Marcus', content: 'Dave appears from the void' },
     ],
+    premiumInsights: {
+      vibeShiftTimeline: "The chat opened with actual plans and logistics. Somewhere around March it became a place where unhinged opinions are dropped at midnight with zero context and everyone pretends it's normal.",
+      personas: { mainCharacter: 'Marcus', therapist: 'Priya', chaosAgent: 'Zoe', boomerInTraining: 'Liam' },
+      relationshipDeepDive: {
+        firstVsLast: "First 10 messages: 'where are we meeting?' and 'I'm 5 mins away'. Last 10: a manifesting parking spot, someone quoting a podcast, and Dave saying 'FIFA anyone?' out of nowhere.",
+        apologyAnalysis: "Priya apologizes for 'being real' immediately after being real — she knows what she's doing but can't help herself.",
+        duoName: "The Group That Planned One Trip And Never Actually Went™",
+      },
+      theVault: {
+        hallOfFame: [
+          { sender: 'Zoe', quote: 'I literally manifested this parking spot bro fr' },
+          { sender: 'Marcus', quote: 'bro I am actually DEAD 💀' },
+        ],
+        mostIgnoredTopic: "Liam's ongoing attempts to explain cryptocurrency — brought up 9 times, always immediately buried.",
+      },
+    },
     isMock: true,
   };
 }
