@@ -31,9 +31,10 @@ import SlidePremiumShadowStats from './SlidePremiumShadowStats';
 import SlidePremiumPersonas from './SlidePremiumPersonas';
 import SlidePremiumDeepDive from './SlidePremiumDeepDive';
 import SlidePremiumVault from './SlidePremiumVault';
+import SlideClashReport from './SlideClashReport';
 
 const SLIDES_BY_MODE = {
-  couple: ['volume', 'chatterbox', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'ai_insights', 'trivia', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
+  couple: ['volume', 'chatterbox', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'ai_insights', 'clash_report', 'trivia', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
   family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'wisdom', 'family_awards', 'double_text', 'swear_jar', 'ai_insights', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
   friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'ai_insights', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
 };
@@ -112,6 +113,7 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
                 {slideKey === 'yapper' && <SlideYapper data={data} lang={lang} />}
                 {slideKey === 'swear_jar' && <SlideSwearJar data={data} lang={lang} />}
                 {slideKey === 'ai_insights' && <SlideAIInsights data={data} lang={lang} />}
+                {slideKey === 'clash_report' && <SlideClashReport data={data} lang={lang} />}
                 {/* Premium slides */}
                 {slideKey === 'premium_shadow' && <SlidePremiumShadowStats data={data} lang={lang} />}
                 {slideKey === 'premium_personas' && <SlidePremiumPersonas data={data} lang={lang} />}

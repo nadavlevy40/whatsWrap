@@ -304,13 +304,23 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   }
 
   // Apology Counter
-  const APOLOGY_WORDS_SET = ['sorry', 'my bad', 'apologies', 'apology', 'sry', 'מצטער', 'מצטערת', 'סליחה', 'מתנצל', 'מתנצלת'];
+  const APOLOGY_WORDS_SET = ['sorry', 'my bad', 'apologies', 'apology', 'sry', 'סורי', 'מצטער', 'מצטערת', 'סליחה', 'מתנצל', 'מתנצלת'];
   const apologyCountsLocal = {};
   participants.forEach(p => (apologyCountsLocal[p] = 0));
   filteredText.forEach(m => {
     if (!participants.includes(m.sender)) return;
     const lower = m.content.toLowerCase();
     APOLOGY_WORDS_SET.forEach(word => { if (lower.includes(word)) apologyCountsLocal[m.sender]++; });
+  });
+
+  // Tension / passive-aggressive words
+  const TENSION_WORDS_SET = ['fine', 'whatever', 'always', 'never', 'forget it', 'dont worry', "don't worry", 'sure', 'great', 'טוב', 'סבבה', 'תמיד', 'אף פעם', 'שכח', 'בסדר גמור', 'לא משנה'];
+  const tensionCounts = {};
+  participants.forEach(p => (tensionCounts[p] = 0));
+  filteredText.forEach(m => {
+    if (!participants.includes(m.sender)) return;
+    const lower = m.content.toLowerCase();
+    TENSION_WORDS_SET.forEach(word => { if (lower.includes(word)) tensionCounts[m.sender]++; });
   });
 
   // Build full condensed chat text for AI (skip media-only messages)
@@ -413,6 +423,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     doubleDownCounts,
     lastWordCounts,
     apologyCountsLocal,
+    tensionCounts,
     isMock: false,
   };
 }
@@ -497,8 +508,9 @@ function generateCoupleMockData() {
     doubleDownCounts: { Alex: 12, Jordan: 4 },
     lastWordCounts: { Alex: 89, Jordan: 112 },
     apologyCountsLocal: { Alex: 8, Jordan: 23 },
+    tensionCounts: { Alex: 31, Jordan: 14 },
     fullChatText: '',
-    aiInsights: { couple: { dynamic: 'Chaos Gremlin & Emotional Support', blackCatUser: 'Alex', goldenRetrieverUser: 'Jordan', dynamicRoast: 'Alex sends a meme at 3am and Jordan responds with "omg same" immediately. Truly a love story for the ages.', evolution: 'Started with carefully punctuated sentences. Now just vibes and voice notes.', mostApologetic: 'Jordan' } },
+    aiInsights: { couple: { clashAnalysis: { mostCommonArgument: 'Who takes longer to reply when they\'re \'not mad\'', thePeacemaker: 'Jordan', theStubbornOne: 'Alex', resolutionStyle: 'Alex goes silent for exactly 47 minutes, then sends a meme as a peace offering and pretends nothing happened.' }, dynamic: 'Chaos Gremlin & Emotional Support', blackCatUser: 'Alex', goldenRetrieverUser: 'Jordan', dynamicRoast: 'Alex sends a meme at 3am and Jordan responds with "omg same" immediately. Truly a love story for the ages.', evolution: 'Started with carefully punctuated sentences. Now just vibes and voice notes.', mostApologetic: 'Jordan' } },
     summoningSpell: null,
     quotes: [
       { sender: 'Alex', content: 'wait that actually happened??' },
@@ -573,6 +585,7 @@ function generateFamilyMockData() {
     doubleDownCounts: { Mom: 42, Dad: 3, Sarah: 18, Jake: 31, Grandma: 2 },
     lastWordCounts: { Mom: 210, Dad: 38, Sarah: 95, Jake: 72, Grandma: 15 },
     apologyCountsLocal: { Mom: 14, Dad: 2, Sarah: 6, Jake: 3, Grandma: 8 },
+    tensionCounts: { Mom: 48, Dad: 12, Sarah: 19, Jake: 27, Grandma: 4 },
     fullChatText: '',
     aiInsights: { family: { boomerScores: { Mom: 72, Dad: 88, Sarah: 15, Jake: 20, Grandma: 95 }, ignoredAward: { user: 'Dad', roast: 'Sent "Ok" to every plan and never once confirmed attendance.' } } },
     summoningSpell: null,
@@ -648,6 +661,7 @@ function generateFriendsMockData() {
     doubleDownCounts: { Marcus: 58, Priya: 31, Dave: 2, Zoe: 74, Liam: 22 },
     lastWordCounts: { Marcus: 310, Priya: 240, Dave: 18, Zoe: 420, Liam: 190 },
     apologyCountsLocal: { Marcus: 12, Priya: 28, Dave: 3, Zoe: 7, Liam: 9 },
+    tensionCounts: { Marcus: 22, Priya: 8, Dave: 4, Zoe: 35, Liam: 17 },
     fullChatText: '',
     aiInsights: { friends: { unhingedQuote: { sender: 'Zoe', text: 'I literally manifested this parking spot bro fr' }, delusionalAward: { user: 'Marcus', reason: 'Genuinely believes he can predict football outcomes based on vibes. Has been wrong 12 times and counting.' }, therapist: 'Priya', patient: 'Marcus' } },
     summoningSpell: { user: 'Dave', keyword: 'FIFA', triggerCount: 89 },

@@ -55,7 +55,7 @@ Rules:
 - aiInsights: object shaped differently per mode (see below)
 
 For mode="couple", aiInsights must be:
-{ "dynamic": string (e.g. "Black Cat & Golden Retriever"), "blackCatUser": string, "goldenRetrieverUser": string, "dynamicRoast": string (funny 2-sentence roast based on the whole chat), "evolution": string (how it started vs how it's going), "mostApologetic": string }
+{ "dynamic": string (e.g. "Black Cat & Golden Retriever"), "blackCatUser": string, "goldenRetrieverUser": string, "dynamicRoast": string (funny 2-sentence roast based on the whole chat), "evolution": string (how it started vs how it's going), "mostApologetic": string, "clashAnalysis": { "mostCommonArgument": string (what they fight/bicker about most based on the text), "thePeacemaker": string (name of the person who usually apologizes or diffuses tension first), "theStubbornOne": string (name of the person who holds a grudge or stays mad longer), "resolutionStyle": string (funny 1-sentence summary of how arguments usually end) } }
 
 For mode="friends", aiInsights must be:
 { "unhingedQuote": { "sender": string, "text": string (most bizarre out-of-context quote) }, "delusionalAward": { "user": string, "reason": string }, "therapist": string, "patient": string }

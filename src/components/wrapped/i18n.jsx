@@ -202,6 +202,18 @@ const translations = {
   unlockPremium:        { en: 'Unlock Premium', he: 'פתח פרמיום' },
   unlockBtn:            { en: 'Unlock Full Wrapped ✨', he: 'פתח את הוואטסראפ המלא ✨' },
 
+  // SlideClashReport
+  clashReportBadge:       { en: 'Couples Mode', he: 'מצב זוגיות' },
+  clashReportTitle:       { en: 'Clashes &\nApologies ⚔️', he: 'ריבים\nוסליחות ⚔️' },
+  clashReportSub:         { en: 'Who starts it. Who ends it.', he: 'מי מתחיל/ה. מי מסיים/ת.' },
+  clashVS:                { en: 'VS', he: 'נגד' },
+  clashApologies:         { en: 'Apologies', he: 'סליחות' },
+  clashTension:           { en: 'Passive-Aggressive Hits', he: 'פאסיב-אגרסיב' },
+  clashPeacemaker:        { en: '🕊️ The Peacemaker', he: '🕊️ שומר/ת השלום' },
+  clashStubbornOne:       { en: '😤 Holds a Grudge', he: '😤 נושא/ת טינה' },
+  clashMostCommon:        { en: '🔥 Their Main Topic', he: '🔥 הריב הכי נפוץ' },
+  clashResolution:        { en: '🤝 How It Usually Ends', he: '🤝 איך זה מסתיים' },
+
   // Premium slides
   premiumBadge:           { en: 'Premium Exclusive', he: 'בלעדי לפרמיום' },
   premiumShadowTitle:     { en: 'Shadow Stats 🕵️', he: 'סטטיסטיקות מוסתרות 🕵️' },
