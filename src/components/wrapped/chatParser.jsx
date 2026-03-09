@@ -261,6 +261,57 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     words.forEach(w => { if (SWEAR_WORDS.has(w.replace(/[^a-z*]/g, ''))) swearCounts[m.sender]++; });
   });
 
+  // Double-Down Award: who sends 5+ consecutive messages before anyone replies
+  const doubleDownCounts = {};
+  participants.forEach(p => (doubleDownCounts[p] = 0));
+  let streakSender = null;
+  let streakCount = 0;
+  for (const m of filtered) {
+    if (!participants.includes(m.sender)) continue;
+    if (m.sender === streakSender) {
+      streakCount++;
+      if (streakCount === 5) doubleDownCounts[m.sender]++;
+    } else {
+      streakSender = m.sender;
+      streakCount = 1;
+    }
+  }
+
+  // Last Word Obsession: who most often sends the final message before 4h+ silence
+  const lastWordCounts = {};
+  participants.forEach(p => (lastWordCounts[p] = 0));
+  const parseTimeMs = (m) => {
+    const parts = m.date.split(/[\/\.\-]/).map(Number);
+    const [mm, dd, yy] = parts;
+    const year = yy < 100 ? 2000 + yy : yy;
+    const minMatch = m.time.match(/:(\d{2})/);
+    const min = minMatch ? parseInt(minMatch[1]) : 0;
+    return new Date(year, mm - 1, dd, m.hour, min).getTime();
+  };
+  for (let i = 0; i < filtered.length - 1; i++) {
+    const curr = filtered[i];
+    const next = filtered[i + 1];
+    if (!participants.includes(curr.sender)) continue;
+    const delta = (parseTimeMs(next) - parseTimeMs(curr)) / 60000;
+    if (delta >= 240) lastWordCounts[curr.sender]++;
+  }
+  // Also count the very last message
+  if (filtered.length > 0 && participants.includes(filtered[filtered.length - 1].sender)) {
+    lastWordCounts[filtered[filtered.length - 1].sender]++;
+  }
+
+  // Apology Counter
+  const APOLOGY_WORDS = new Set(['sorry', 'my bad', 'apologies', 'apology', 'forgive', 'סליחה', 'מצטער', 'מצטערת', 'סלח', 'סלחי']);
+  const apologyCounts = {};
+  participants.forEach(p => (apologyCounts[p] = 0));
+  filteredText.forEach(m => {
+    if (!participants.includes(m.sender)) return;
+    const lower = m.content.toLowerCase();
+    for (const word of APOLOGY_WORDS) {
+      if (lower.includes(word)) { apologyCounts[m.sender]++; break; }
+    }
+  });
+
   // Regret index (deleted messages)
   const regretCounts = {};
   participants.forEach(p => (regretCounts[p] = 0));
@@ -366,6 +417,9 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     avgWordsPerMessage,
     swearCounts,
     regretCounts,
+    doubleDownCounts,
+    lastWordCounts,
+    apologyCounts,
     fullChatText,
     isMock: false,
   };

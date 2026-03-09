@@ -201,6 +201,44 @@ const translations = {
   // SlidePaywall
   unlockPremium:        { en: 'Unlock Premium', he: 'פתח פרמיום' },
   unlockBtn:            { en: 'Unlock Full Wrapped ✨', he: 'פתח את הוואטסראפ המלא ✨' },
+
+  // Premium slides shared
+  premiumBadge:         { en: '✨ Premium', he: '✨ פרמיום' },
+  premiumOnly:          { en: 'Deep Dive', he: 'צלילה עמוקה' },
+
+  // SlidePremiumShadowStats
+  shadowStatsTitle:     { en: 'Shadow Stats 🕶️', he: 'נתוני הצל 🕶️' },
+  shadowStatsSub:       { en: 'The data they hoped you would never see.', he: 'הנתונים שקיוו שלא תראו.' },
+  doubleDownTitle:      { en: 'Double-Down Award 🏆', he: 'פרס הפאנץ\' 🏆' },
+  doubleDownDesc:       { en: '5+ messages in a row before anyone replied', he: '5+ הודעות ברצף לפני שמישהו ענה' },
+  lastWordTitle:        { en: 'Last Word Obsession 🔇', he: 'אובססיית המילה האחרונה 🔇' },
+  lastWordDesc:         { en: 'Always has to have the last word before silence', he: 'תמיד חייב/ת את המילה האחרונה לפני שקט' },
+  vibeShiftTitle:       { en: 'Vibe Shift Timeline 📅', he: 'ציר הזמן של הווייב 📅' },
+
+  // SlidePremiumPersonas
+  personasTitle:        { en: 'Your Chat Personas 🎭', he: 'הפרסונות של הצ\'אט 🎭' },
+  personasSub:          { en: 'AI assigned you roles. No take-backs.', he: 'ה-AI חילק תפקידים. אין ערעורים.' },
+  personaMainChar:      { en: '🌟 Main Character', he: '🌟 הדמות הראשית' },
+  personaTherapist:     { en: '🧠 The Therapist', he: '🧠 המטפל/ת' },
+  personaChaosAgent:    { en: '💥 Chaos Agent', he: '💥 סוכן/ת הכאוס' },
+  personaBoomer:        { en: '👍 Boomer-in-Training', he: '👍 בוגר/ת בהכשרה' },
+  personaMainDesc:      { en: 'Always brings it back to themselves', he: 'תמיד מחזיר/ה את זה לעצמם' },
+  personaTherapistDesc: { en: 'Sends supportive paragraphs', he: 'שולח/ת פסקאות תמיכה' },
+  personaChaosDesc:     { en: 'Drops wild takes and disappears', he: 'זורק/ת משפטים מטורפים ונעלם/ת' },
+  personaBoomerDesc:    { en: 'Uses too many ellipses and 👍', he: 'משתמש/ת יותר מדי ב... ו-👍' },
+
+  // SlidePremiumDeepDive
+  deepDiveTitle:        { en: 'The Deep Dive 🔍', he: 'הצלילה העמוקה 🔍' },
+  deepDiveSub:          { en: 'AI read your entire chat. Here\'s the verdict.', he: 'ה-AI קרא את כל הצ\'אט. הנה הפסיקה.' },
+  duoNameLabel:         { en: '🏷️ Your Official Duo Name', he: '🏷️ שם הצמד הרשמי שלכם' },
+  firstVsLastLabel:     { en: '📖 Then vs Now', he: '📖 אז לעומת עכשיו' },
+  apologyAnalysisLabel: { en: '🙏 The Apology Report', he: '🙏 דוח הסליחות' },
+
+  // SlidePremiumVault
+  vaultTitle:           { en: 'The Vault 🔐', he: 'הכספת 🔐' },
+  vaultSub:             { en: 'Quotes so unhinged they deserve a shrine.', he: 'ציטוטים כל כך לא נורמליים שמגיעה להם מצבה.' },
+  hallOfFameLabel:      { en: '🏛️ Hall of Fame', he: '🏛️ אולם התהילה' },
+  mostIgnoredLabel:     { en: '🦗 Most Ignored Topic', he: '🦗 הנושא הכי מסונן' },
 };
 
 export function t(key, lang = 'en') {

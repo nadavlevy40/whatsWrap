@@ -61,7 +61,29 @@ For mode="friends", aiInsights must be:
 { "unhingedQuote": { "sender": string, "text": string (most bizarre out-of-context quote) }, "delusionalAward": { "user": string, "reason": string }, "therapist": string, "patient": string }
 
 For mode="family", aiInsights must be:
-{ "boomerScores": { [name]: number 0-100 }, "ignoredAward": { "user": string, "roast": string } }`;
+{ "boomerScores": { [name]: number 0-100 }, "ignoredAward": { "user": string, "roast": string } }
+
+ADDITIONALLY, always include a top-level "premiumInsights" object:
+{
+  "premiumInsights": {
+    "vibeShiftTimeline": "A 2-sentence summary of exactly which month the chat turned from polite to unhinged.",
+    "personas": {
+      "mainCharacter": "Name of the person who always brings it back to themselves",
+      "therapist": "Name of the person who sends supportive paragraphs",
+      "chaosAgent": "Name of the person who drops wild sentences and leaves",
+      "boomerInTraining": "Name of the person using too many ellipses or 👍"
+    },
+    "relationshipDeepDive": {
+      "firstVsLast": "Compare the vibe of the very first 10 messages ever sent vs the last 10 messages.",
+      "apologyAnalysis": "Why the most apologetic person is usually apologizing.",
+      "duoName": "A funny, embarrassing custom duo/group name based on inside jokes."
+    },
+    "theVault": {
+      "hallOfFame": [{"sender": "Name", "quote": "Bizarre out of context quote"}, {"sender": "Name", "quote": "Quote 2"}, {"sender": "Name", "quote": "Quote 3"}],
+      "mostIgnoredTopic": "The one thing someone kept trying to talk about that everyone ignored."
+    }
+  }
+}`;
 
     const participantsNote = `IMPORTANT:
 1. Participant names are message authors (text before the colon). Do NOT include names in topWords, quotes, or summoningSpell keywords.
