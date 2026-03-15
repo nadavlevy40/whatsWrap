@@ -120,7 +120,6 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
                 {slideKey === 'premium_deepdive' && <SlidePremiumDeepDive data={data} lang={lang} />}
                 {slideKey === 'premium_vault' && <SlidePremiumVault data={data} lang={lang} />}
                 {/* Shared */}
-                {slideKey === 'paywall' && <SlidePaywall data={data} onUnlock={() => { setUnlocked(true); goNext(); }} lang={lang} />}
                 {slideKey === 'share' && <SlideShare data={data} onRestart={onRestart} lang={lang} />}
               </div>
               </SlideErrorBoundary>
