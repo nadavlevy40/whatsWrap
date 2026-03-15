@@ -268,15 +268,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     const prev = filtered[i - 1];
     const curr = filtered[i];
     if (curr.sender === prev.sender && participants.includes(curr.sender)) {
-      const parseMs = (m) => {
-        const parts = m.date.split(/[\/\.\-]/).map(Number);
-        const [mm, dd, yy] = parts;
-        const year = yy < 100 ? 2000 + yy : yy;
-        const minMatch = m.time.match(/:(\d{2})/);
-        const min = minMatch ? parseInt(minMatch[1]) : 0;
-        return new Date(year, mm - 1, dd, m.hour, min).getTime();
-      };
-      const delta = (parseMs(curr) - parseMs(prev)) / 60000;
+      const delta = (parseDate(curr) - parseDate(prev)) / 60000;
       if (delta >= 1 && delta <= 60) doubleTextCounts[curr.sender]++;
     }
   }
