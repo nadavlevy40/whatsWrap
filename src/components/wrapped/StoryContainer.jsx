@@ -34,9 +34,9 @@ import SlidePremiumVault from './SlidePremiumVault';
 import SlideClashReport from './SlideClashReport.jsx';
 
 const SLIDES_BY_MODE = {
-  couple: ['volume', 'chatterbox', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'lol', 'ghost', 'emotions', 'ai_insights', 'clash_report', 'trivia', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
-  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'wisdom', 'family_awards', 'double_text', 'swear_jar', 'ai_insights', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
-  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'double_text', 'yapper', 'swear_jar', 'podium', 'wisdom', 'ai_insights', 'paywall', 'premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault', 'share'],
+  couple: ['volume', 'chatterbox', 'podium', 'lol', 'ghost', 'share'],
+  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'family_awards', 'share'],
+  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'podium', 'share'],
 };
 
 const PREMIUM_SLIDES = new Set(['premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault']);
