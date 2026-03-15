@@ -135,6 +135,23 @@ function parseHour(timeStr) {
 function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = ORGANIZER_WORDS, lang = 'en') {
   if (messages.length === 0) return null;
 
+  // Detect date format: if first part > 12 it must be DD/MM (Hebrew / most of the world)
+  const sampleDate = messages.find(m => m.date)?.date || '';
+  const firstPart = parseInt((sampleDate.split(/[\/\.\-]/)[0]) || '0');
+  const isDMY = firstPart > 12 || lang === 'he';
+
+  // Shared reliable date parser used everywhere below
+  const parseDate = (m) => {
+    const parts = m.date.split(/[\/\.\-]/).map(Number);
+    let [a, b, c] = parts;
+    const [day, month] = isDMY ? [a, b] : [b, a];
+    const year = c < 100 ? 2000 + c : c;
+    const minMatch = m.time.match(/:(\d{2})/);
+    const min = minMatch ? parseInt(minMatch[1]) : 0;
+    const ts = new Date(year, month - 1, day, m.hour, min).getTime();
+    return isNaN(ts) ? 0 : ts;
+  };
+
   const SYSTEM_PATTERN = /(end-to-end encrypted|created group|Messages and calls|added|removed|left|joined|changed the subject|changed this group|security code changed|הוצפנה מקצה לקצה|נוצרה הקבוצה|הודעות ושיחות|הצטרף|עזב|עזבה|הסיר|הסירה|הוסיף|הוסיפה|שינה|שינתה)/i;
 
   const userMessages = messages.filter(m =>
