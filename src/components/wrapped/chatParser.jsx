@@ -324,16 +324,8 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   // Last Word Obsession: who sends the final message before a 4+ hour silence
   const lastWordCounts = {};
   participants.forEach(p => (lastWordCounts[p] = 0));
-  const parseTimeForGap = (m) => {
-    const parts = m.date.split(/[\/\.\-]/).map(Number);
-    const [fm, fd, fy] = parts;
-    const year = fy < 100 ? 2000 + fy : fy;
-    const minMatch = m.time.match(/:(\d{2})/);
-    const min = minMatch ? parseInt(minMatch[1]) : 0;
-    return new Date(year, fm - 1, fd, m.hour, min).getTime();
-  };
   for (let i = 0; i < filtered.length - 1; i++) {
-    const deltaMin = (parseTimeForGap(filtered[i + 1]) - parseTimeForGap(filtered[i])) / 60000;
+    const deltaMin = (parseDate(filtered[i + 1]) - parseDate(filtered[i])) / 60000;
     if (deltaMin > 240 && participants.includes(filtered[i].sender)) {
       lastWordCounts[filtered[i].sender]++;
     }
