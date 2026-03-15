@@ -123,19 +123,6 @@ export default function StoryContainer({ data, mode = 'couple', onRestart, isAdm
                 {slideKey === 'share' && <SlideShare data={data} onRestart={onRestart} lang={lang} />}
               </div>
               </SlideErrorBoundary>
-              {/* Blur overlay for locked premium slides */}
-              {PREMIUM_SLIDES.has(slideKey) && !unlocked && (
-                <div className="absolute inset-0 z-40 flex flex-col items-center justify-center gap-3"
-                  style={{ backdropFilter: 'blur(18px)', WebkitBackdropFilter: 'blur(18px)', background: 'rgba(0,0,0,0.4)' }}>
-                  <span className="text-4xl">🔒</span>
-                  <p className="text-white font-black text-lg text-center px-6">
-                    {lang === 'he' ? 'תוכן פרמיום' : 'Premium Content'}
-                  </p>
-                  <p className="text-white/50 text-sm text-center px-8">
-                    {lang === 'he' ? 'חזרו אחורה ופתחו פרמיום' : 'Go back and unlock premium'}
-                  </p>
-                </div>
-              )}
             </StorySlide>
           </AnimatePresence>
         </div>
