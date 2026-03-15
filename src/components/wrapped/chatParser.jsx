@@ -205,6 +205,11 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   const laughCounts = {};
   participants.forEach(p => (laughCounts[p] = 0));
   filteredText.forEach(m => {
+    // For Hebrew, skip laugh-detection on long messages (>8 words) containing מת
+    // to avoid false positives like "סבא שלי מת" (my grandpa died)
+    const wordCount = m.content.trim().split(/\s+/).length;
+    const isFalsePositiveRisk = lang === 'he' && wordCount > 8 && /מת/.test(m.content);
+    if (isFalsePositiveRisk) return;
     const matches = m.content.match(LAUGH_PATTERNS) || [];
     if (laughCounts[m.sender] !== undefined) laughCounts[m.sender] += matches.length;
   });

@@ -58,16 +58,6 @@ export default function LandingScreen({ onFileUpload, onUseMockData, lang = 'en'
       </div>
 
       <div className="relative z-10 w-full max-w-md px-6 flex flex-col items-center gap-10 min-h-screen justify-center py-16">
-        {/* Lang toggle */}
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.1 }}
-          className="w-full flex justify-end">
-          <button onClick={() => onLangChange && onLangChange(isHe ? 'en' : 'he')}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/15 border border-white/20 rounded-full px-3 py-1.5 transition-all">
-            <span className="text-lg">{isHe ? '🇺🇸' : '🇮🇱'}</span>
-            <span className="text-white/70 text-xs font-medium">{isHe ? 'English' : 'עברית'}</span>
-          </button>
-        </motion.div>
-
         {/* Badge */}
         <motion.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
           className="flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-1.5">
