@@ -37,7 +37,7 @@ const translations = {
   laughEvents:      { en: 'laugh events', he: 'פרצי צחוק' },
   theComedian:      { en: '😂 The Comedian', he: '😂 הקומיקאי/ת' },
   theAudience:      { en: '👀 The Audience', he: '👀 הקהל' },
-  detectedPatterns: { en: 'Detected: haha · lol · lmao · rofl · 😂 · 🤣 · 💀 · 😭', he: 'זוהו: חחח · לול · lmao · מת/ה · 😂 · 🤣 · 💀 · 😭' },
+  detectedPatterns: { en: 'Detected: haha · lol · lmao · rofl · 😂 · 🤣 · 💀 · 😭', he: 'זוהו: חחח · פחח · מת/מתה · אני מת · פיפי · בוכה · ענקקקק · חלש · 😂 · 🤣 · 💀 · 😭' },
 
   // SlideGhostInitiator
   conversationDynamics: { en: 'Conversation Dynamics', he: 'דינמיקת הצ\'אט' },
