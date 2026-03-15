@@ -369,16 +369,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     const prev = filtered[i - 1];
     const curr = filtered[i];
     if (curr.sender !== prev.sender && participants.includes(curr.sender) && participants.includes(prev.sender)) {
-      const parseTime = (m) => {
-        const parts = m.date.split(/[\/\.\-]/).map(Number);
-        const [mm, dd, yy] = parts;
-        const year = yy < 100 ? 2000 + yy : yy;
-        const h = m.hour;
-        const minMatch = m.time.match(/:(\d{2})/);
-        const min = minMatch ? parseInt(minMatch[1]) : 0;
-        return new Date(year, mm - 1, dd, h, min).getTime();
-      };
-      const delta = (parseTime(curr) - parseTime(prev)) / 60000;
+      const delta = (parseDate(curr) - parseDate(prev)) / 60000;
       if (delta > 0 && delta < 1440) {
         replyTimes[curr.sender].total += delta;
         replyTimes[curr.sender].count++;
