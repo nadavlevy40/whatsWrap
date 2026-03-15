@@ -39,13 +39,10 @@ const SLIDES_BY_MODE = {
   friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'podium', 'share'],
 };
 
-const PREMIUM_SLIDES = new Set(['premium_shadow', 'premium_personas', 'premium_deepdive', 'premium_vault']);
-
 export default function StoryContainer({ data, mode = 'couple', onRestart, isAdmin = false }) {
   const lang = data.lang || 'en';
   const [currentSlide, setCurrentSlide] = useState(0);
   const [direction, setDirection] = useState(1);
-  const [unlocked, setUnlocked] = useState(isAdmin);
 
   const SLIDES = useMemo(() => {
     const baseSlides = SLIDES_BY_MODE[mode] || SLIDES_BY_MODE.couple;
