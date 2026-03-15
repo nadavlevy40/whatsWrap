@@ -31,7 +31,21 @@ const ORGANIZER_WORDS_HE = new Set(['ארוחה','צהריים','ערב','בוק
 const STOP_WORDS = STOP_WORDS_EN; // default, overridden per call
 
 const LAUGH_PATTERNS_EN = /(\b(haha+|hah|hehe+|hhh+|lol|lmao|lmfao|rofl|dead|weak)\b|😂|🤣|💀|😭)/gi;
-const LAUGH_PATTERNS_HE = /(ח{2,}|ה{2,}|lol|lmao|😂|🤣|💀|😭)/gi;
+// Hebrew laugh/slang patterns — handles letter repetition (dragged-out slang)
+const LAUGH_PATTERNS_HE = new RegExp(
+  [
+    'פ?ח{2,}',                        // חח, חחחח, פחח etc.
+    '(?:אני\\s+)?מת{1,}(?:ה{1,})?',  // מת, מתת, מתה, מתהההה, אני מת
+    'פיפי+',                           // פיפי, פיפיייי
+    'בוכה+',                           // בוכה, בוכהההה
+    'ענק{2,}',                         // ענקקק
+    'גדול{2,}',                        // גדולללל
+    '\\bחלש\\b',                       // חלש (weak = hilarious)
+    'lol', 'lmao',
+    '😂', '🤣', '💀', '😭',
+  ].join('|'),
+  'gi'
+);
 const EMOJI_REGEX = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
 // Matches WhatsApp "media omitted" in all languages/formats
 const MEDIA_PATTERN = /(omitted|<media omitted>|התמונה הושמטה|הסרטון הושמט|הקובץ הושמט|המדיה הושמטה|הסטיקר הושמט|האודיו הושמט|המסמך הושמט|הושמט|הושמטה)/i;
@@ -52,7 +66,15 @@ const SWEAR_WORDS = new Set([
   'שרמוטה','חרא','חאראס','ביצים','תחת','פאק','פאקינג','נזדיין','שיט',
 ]);
 
-export function parseChatFile(text, lang = 'en') {
+function detectLang(text) {
+  // Count Hebrew characters in a sample — if significant, treat as Hebrew
+  const sample = text.slice(0, 5000);
+  const hebrewChars = (sample.match(/[\u05D0-\u05EA]/g) || []).length;
+  return hebrewChars > 50 ? 'he' : 'en';
+}
+
+export function parseChatFile(text, _langHint = 'en') {
+  const lang = detectLang(text); // always auto-detect, ignore UI hint
   const stopWords = lang === 'he' ? STOP_WORDS_HE : STOP_WORDS_EN;
   const organizerWords = lang === 'he' ? ORGANIZER_WORDS_HE : ORGANIZER_WORDS;
   const lines = text.split('\n');
