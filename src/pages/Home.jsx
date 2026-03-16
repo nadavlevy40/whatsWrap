@@ -99,7 +99,12 @@ export default function Home() {
           stats: {
             doubleTextCounts: localData.doubleTextCounts,
             avgWordsPerMessage: localData.avgWordsPerMessage,
+            avgCharsPerMessage: localData.avgCharsPerMessage,
             swearCounts: localData.swearCounts,
+            topSwearWord: localData.topSwearWord,
+            voiceNoteCounts: localData.voiceNoteCounts,
+            linkCounts: localData.linkCounts,
+            ignoredCounts: localData.ignoredCounts,
             regretCounts: localData.regretCounts,
           },
         });
