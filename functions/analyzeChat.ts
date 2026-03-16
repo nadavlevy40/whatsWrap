@@ -14,8 +14,10 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
-    const { condensedChatText, mode, localStats, language = 'en' } = body;
+    const { condensedChatText, mode, localStats, language = 'en', stats = {} } = body;
     const chatText = body.chatText || body.fullChatText || '';
+    // New viral metrics passed from parser
+    const { swearCounts = {}, topSwearWord = {}, voiceNoteCounts = {}, linkCounts = {}, avgCharsPerMessage = {}, ignoredCounts = {} } = stats;
 
     if (!chatText || chatText.length < 100) {
       return Response.json({ error: 'Invalid chat text provided.' }, { status: 400 });
@@ -27,13 +29,35 @@ Deno.serve(async (req) => {
       : chatText.slice(0, 60000);
 
     const langInstruction = language === 'he'
-      ? `CRITICAL: You MUST write ALL insight text fields (dynamicRoast, evolution, ignoredAward.roast, delusionalAward.reason, unhingedQuote.text, dynamic, and ALL premiumInsights text fields: vibeShiftTimeline, firstVsLast, apologyAnalysis, duoName, hallOfFame quotes, mostIgnoredTopic) in Hebrew, using casual Israeli slang. Use words like "אחי", "אמאל'ה", "חיים שלי", "פיק מי", "חי בסרט", "מסנן/ת", "חופר/ת", "ווייבים". Make the roasts funny and relatable for Israeli teenagers and young adults.`
-      : `Write all insight text in English with modern internet slang and humor.`;
+      ? `CRITICAL: You MUST write ALL insight text fields in Hebrew, using heavily slang-infused, casual Israeli Hebrew. Use words like "אחי", "אמאל'ה", "חיים שלי", "פיק מי", "חי בסרט", "מסנן/ת", "חופר/ת", "מגזים", "ווייבים", "ביסים". Make the roasts funny and relatable for Israeli teenagers and young adults. Every award description MUST be in this tone.`
+      : `Write all insight text in English with modern internet slang and humor (e.g. "literally", "unhinged", "the audacity", "rent-free in your head").</p>`;
+    
+    // Build superlatives context from parser-computed metrics
+    const maxBy = (obj) => Object.entries(obj).sort((a, b) => b[1] - a[1])[0]?.[0] ?? null;
+    const minBy = (obj) => Object.entries(obj).filter(([,v]) => v > 0).sort((a, b) => a[1] - b[1])[0]?.[0] ?? null;
+    const topGhost = maxBy(ignoredCounts);
+    const topSwearer = maxBy(swearCounts);
+    const topSwear = topSwearer ? (topSwearWord[topSwearer] || null) : null;
+    const topPodcastHost = maxBy(voiceNoteCounts);
+    const topLinker = maxBy(linkCounts);
+    // Yapper = most chars/msg. Enter-Key Abuser = fewest chars/msg (but still active)
+    const topYapper = maxBy(avgCharsPerMessage);
+    const topEnterAbuser = minBy(avgCharsPerMessage);
+    const superlativesContext = `
+LOCAL STATS (pre-computed, very accurate — use these for the superlatives):
+- ignoredCounts (msg sent last before 12h+ gap, next sender different): ${JSON.stringify(ignoredCounts)}
+- swearCounts: ${JSON.stringify(swearCounts)}
+- topSwearWord per user: ${JSON.stringify(topSwearWord)}
+- voiceNoteCounts: ${JSON.stringify(voiceNoteCounts)}
+- linkCounts: ${JSON.stringify(linkCounts)}
+- avgCharsPerMessage: ${JSON.stringify(avgCharsPerMessage)}
+Derived winners: ghost=${topGhost}, swearer=${topSwearer}(top word: ${topSwear}), podcastHost=${topPodcastHost}, tikToker=${topLinker}, yapper=${topYapper}, enterAbuser=${topEnterAbuser}`;
 
     const systemPrompt = `You are an expert at analyzing WhatsApp chat exports.
 ${langInstruction}
 Read the ENTIRE provided chat history to understand deep dynamics, inside jokes, personality shifts, recurring themes, and emotional patterns over time.
 Extract statistics and insights and return ONLY valid JSON matching the schema exactly.
+IMPORTANT: You MUST include a top-level "superlatives" object using the LOCAL STATS provided in the user prompt — do not re-calculate these from the chat, trust the numbers given.
 Rules:
 - participants: array of up to 10 unique sender names (strings)
 - totalMessages: total message count (number)
@@ -71,7 +95,7 @@ ALWAYS include a top-level "premiumInsights" object with this EXACT schema:
 2. IGNORE all media placeholder messages: "image omitted", "video omitted", "audio omitted", "sticker omitted", "document omitted", "<Media omitted>", "הושמט", "הושמטה" and related Hebrew variants. These are NOT real messages.
 3. Also ignore WhatsApp system messages like "end-to-end encrypted", "created group", "added", "left", etc.`;
 
-    const userPrompt = `Mode: ${mode}\n\n${participantsNote}\n\nFull chat history:\n${fullChat}\n\nReturn only the JSON object, no markdown.`;
+    const userPrompt = `Mode: ${mode}\n\n${participantsNote}\n\n${superlativesContext}\n\nFull chat history:\n${fullChat}\n\nReturn only the JSON object, no markdown.`;
 
     const completion = await openai.chat.completions.create({
       model: 'gpt-4o-mini',
