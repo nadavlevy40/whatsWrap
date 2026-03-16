@@ -1,7 +1,9 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, Check, MessageCircle } from 'lucide-react';
 import { t, isRTL } from './i18n';
+import Confetti from 'react-confetti';
+import { useWindowSize } from 'react-use';
 
 function generateShareUrl() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
@@ -34,6 +36,15 @@ export default function SlideShare({ data, onRestart, lang = 'en' }) {
   const [copied, setCopied] = useState(false);
   const rtl = isRTL(lang);
 
+  // Confetti logic
+  const { width, height } = useWindowSize();
+  const [showConfetti, setShowConfetti] = useState(true);
+  useEffect(() => {
+    setShowConfetti(true);
+    const timeout = setTimeout(() => setShowConfetti(false), 4000);
+    return () => clearTimeout(timeout);
+  }, []);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(`https://${shareUrl}`).catch(() => {});
     setCopied(true);
@@ -52,6 +63,16 @@ export default function SlideShare({ data, onRestart, lang = 'en' }) {
       className="w-full h-full flex flex-col items-center justify-center px-6 gap-5 relative overflow-hidden"
       dir={rtl ? 'rtl' : 'ltr'}
     >
+      {/* Drops confetti for 4 seconds then stops */}
+      {showConfetti && (
+        <Confetti
+          width={width}
+          height={height}
+          recycle={false}
+          numberOfPieces={400}
+          gravity={0.15}
+        />
+      )}
       {/* Background glow */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[400px] h-[400px] rounded-full"

@@ -34,9 +34,9 @@ import SlidePremiumVault from './SlidePremiumVault';
 import SlideClashReport from './SlideClashReport.jsx';
 
 const SLIDES_BY_MODE = {
-  couple: ['volume', 'chatterbox', 'podium', 'lol', 'ghost', 'share'],
-  family: ['volume', 'chatterbox', 'family_media', 'family_ghost', 'family_caps', 'family_awards', 'share'],
-  friends: ['volume', 'chatterbox', 'friends_roast', 'friends_night', 'friends_summon', 'podium', 'share'],
+  couple: ['volume', 'chatterbox', 'podium', 'swear_jar', 'yapper', 'lol', 'ghost', 'trivia', 'ai_insights', 'share'],
+  family: ['volume', 'chatterbox', 'family_media', 'swear_jar', 'family_caps', 'family_ghost', 'trivia', 'family_awards', 'share'],
+  friends: ['volume', 'chatterbox', 'friends_night', 'swear_jar', 'friends_roast', 'friends_summon', 'podium', 'trivia', 'ai_insights', 'share'],
 };
 
 export default function StoryContainer({ data, mode = 'couple', onRestart, isAdmin = false }) {
