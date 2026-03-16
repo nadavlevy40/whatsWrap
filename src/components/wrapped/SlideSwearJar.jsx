@@ -5,11 +5,13 @@ const PRICE_PER_SWEAR = 0.25;
 
 export default function SlideSwearJar({ data, lang = 'en' }) {
   const counts = data.swearCounts || {};
+  const topWords = data.topSwearWord || {};
   const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
   if (sorted.length === 0) return null;
 
   const [winner, winnerCount] = sorted[0];
   const owes = (winnerCount * PRICE_PER_SWEAR).toFixed(2);
+  const winnerTopWord = topWords[winner];
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-6 gap-8" dir={lang === 'he' ? 'rtl' : 'ltr'}>
@@ -36,7 +38,12 @@ export default function SlideSwearJar({ data, lang = 'en' }) {
         style={{ background: 'linear-gradient(135deg, rgba(239,68,68,0.3), rgba(219,39,119,0.3))', border: '1px solid rgba(255,255,255,0.1)' }}>
         <p className="text-white/60 text-sm mb-1">{t('mostPottyMouthed', lang)}</p>
         <p className="text-white font-black text-4xl mb-1">{winner}</p>
-        <p className="text-white/50 text-sm">{typeof t('swearOwes', lang) === 'function' ? t('swearOwes', lang)(winnerCount, owes) : `${winnerCount} swear words · owes $${owes}`}</p>
+        {winnerTopWord && (
+          <p className="text-red-300 text-sm font-bold mt-1">
+            {lang === 'he' ? `הקללה האהובה: "${winnerTopWord}"` : `Favorite word: "${winnerTopWord}"`}
+          </p>
+        )}
+        <p className="text-white/50 text-sm mt-1">{typeof t('swearOwes', lang) === 'function' ? t('swearOwes', lang)(winnerCount, owes) : `${winnerCount} swear words · owes $${owes}`}</p>
       </motion.div>
 
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.1 }} className="flex gap-3 w-full">
