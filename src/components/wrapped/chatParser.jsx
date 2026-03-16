@@ -47,6 +47,13 @@ const LAUGH_PATTERNS_HE = new RegExp(
   'gi'
 );
 const EMOJI_REGEX = /(\p{Emoji_Presentation}|\p{Extended_Pictographic})/gu;
+
+// Serious/sad context in Hebrew — skip laugh detection on these messages
+const SERIOUS_CONTEXT_HE = /(?:סבא|סבתא|אבא|אמא|סב|סבת)\s+(?:שלי\s+)?(?:נפטר|מת|הלכ|עבר מהעולם)|(?:נפטר|הלוויה|שבעה|אבל\b|עצוב\b|תאונה|פיגוע|אזעקה|חדשות רעות|טרגדיה|מות|אסון)/i;
+
+// Israeli slang words to track
+const ISRAELI_SLANG_RE = /(?:כפרה|נשמ[הא]|אחי|גבר|ברו|פיק מי|חי בסרט|הזיה|יאללה|וואלה|תכלס)/gi;
+
 // Matches WhatsApp "media omitted" in all languages/formats
 const MEDIA_PATTERN = /(omitted|<media omitted>|התמונה הושמטה|הסרטון הושמט|הקובץ הושמט|המדיה הושמטה|הסטיקר הושמט|האודיו הושמט|המסמך הושמט|הושמט|הושמטה)/i;
 
@@ -54,17 +61,89 @@ const MEDIA_PATTERN = /(omitted|<media omitted>|התמונה הושמטה|הסר
 const MEDIA_STOP_WORDS = new Set(['omitted', 'הושמט', 'הושמטה']);
 const ORGANIZER_WORDS = new Set(['dinner','lunch','breakfast','plan','meet','meeting','time','when','tomorrow','today','tonight','weekend','schedule','come','join','invite','birthday','party','trip','going']);
 
-const SWEAR_WORDS = new Set([
-  // English
-  'fuck','fucking','fucked','fucker','shit','shitting','bullshit','damn','damnit','ass','asshole',
-  'bitch','bitches','bastard','crap','cunt','dick','pussy','cock','piss','hell','wtf','stfu',
-  'motherfucker','motherfucking','jackass','douchebag','idiot','moron','retard','screw','screwed',
-  'fck','fk','sh*t','f*ck','b*tch','a**','s**t',
-  // Hebrew
-  'זין','כוס','תזדיין','תזדייני','מזדיין','מזדיינת','בן זונה','בת זונה','זונה','מנייק','מניאק',
-  'כוסאמק','כוסאמאק','לעזאזל','לך תזדיין','דפוק','דפוקה','מטומטם','מטומטמת','אידיוט','אידיוטית',
-  'שרמוטה','חרא','חאראס','ביצים','תחת','פאק','פאקינג','נזדיין','שיט',
-]);
+// ─── Swear Detection ──────────────────────────────────────────────────────────
+// English: regex patterns catching roots + common variations
+const EN_SWEAR_PATTERNS = [
+  [/\bf+u+c+k(?:ing|ed|er|s|face|wit|head|wad)?\b/gi, 'fuck'],
+  [/\bfck\b|\bfk\b/gi, 'fuck'],
+  [/\bsh[i1]+t(?:ting|ted|hole|face|bag)?\b/gi, 'shit'],
+  [/\bbullsh[i1]+t\b/gi, 'bullshit'],
+  [/\bb[i1]+tch(?:es|ing|y)?\b/gi, 'bitch'],
+  [/\bass(?:hole|wipe|hat|bag)?\b/gi, 'ass'],
+  [/\bcunt\b/gi, 'cunt'],
+  [/\bd[i1]+ck(?:head|face|wad)?\b/gi, 'dick'],
+  [/\bp[u]+ss[yie]\b/gi, 'pussy'],
+  [/\bcock\b/gi, 'cock'],
+  [/\bwtf\b/gi, 'wtf'],
+  [/\bstfu\b/gi, 'stfu'],
+  [/\bdamn(?:it)?\b/gi, 'damn'],
+  [/\bmother\s?fuck(?:ing|er)?\b/gi, 'motherfucker'],
+  [/\bjack\s?ass\b/gi, 'jackass'],
+  [/\bdouchebag\b/gi, 'douchebag'],
+  [/\bbastard\b/gi, 'bastard'],
+  [/\bpiss(?:ed)?\b/gi, 'piss'],
+  [/\bcrap\b/gi, 'crap'],
+];
+
+// Hebrew roots — checked after stripping prefixes. Order matters (longer first).
+const HE_SWEAR_ROOTS = [
+  ['כוסאמאמאק', 'כוסאמאמאק'],
+  ['כוסאמק', 'כוסאמק'],
+  ['פאקינג', 'פאק'],
+  ['שרמוטות', 'שרמוטה'],
+  ['שרמוטה', 'שרמוטה'],
+  ['מזדיינת', 'מזדיין'],
+  ['מזדיין', 'מזדיין'],
+  ['מניאקית', 'מניאק'],
+  ['מניאק', 'מניאק'],
+  ['קוקסינל', 'קוקסינל'],
+  ['שרלילה', 'שרלילה'],
+  ['דפוקה', 'דפוק'],
+  ['דפוק', 'דפוק'],
+  ['מפגרת', 'מפגר'],
+  ['מפגר', 'מפגר'],
+  ['זונות', 'זונה'],
+  ['זונה', 'זונה'],
+  ['סעמק', 'סעמק'],
+  ['חרא', 'חרא'],
+  ['שיט', 'שיט'],
+  ['פאק', 'פאק'],
+  ['זין', 'זין'],
+  ['כוס', 'כוס'],
+];
+
+// Strip up to 3 common Hebrew preposition/article prefixes attached to a word
+function stripHebrewPrefixes(word) {
+  return word.replace(/^(?:[הבלכמשו](?:ה)?){1,3}/, '');
+}
+
+// Returns { normalizedWord -> count } for all swear matches in one message
+function detectSwearsInMessage(content, lang) {
+  const found = {};
+  EN_SWEAR_PATTERNS.forEach(([re, norm]) => {
+    re.lastIndex = 0;
+    const matches = content.match(re) || [];
+    if (matches.length) found[norm] = (found[norm] || 0) + matches.length;
+  });
+  if (lang === 'he') {
+    // Multi-word: בן זונה / בן-זונה
+    const benZona = content.match(/בן[- ]?זונ[הא]/gi) || [];
+    if (benZona.length) found['בן זונה'] = (found['בן זונה'] || 0) + benZona.length;
+    // Word-by-word with prefix stripping
+    const words = content.replace(/[^א-תa-zA-Z\s]/g, ' ').split(/\s+/);
+    for (const rawWord of words) {
+      if (!rawWord) continue;
+      const stripped = stripHebrewPrefixes(rawWord);
+      for (const [root, norm] of HE_SWEAR_ROOTS) {
+        if (stripped === root) {
+          found[norm] = (found[norm] || 0) + 1;
+          break;
+        }
+      }
+    }
+  }
+  return found;
+}
 
 function detectLang(text) {
   // Count Hebrew characters in a sample — if significant, treat as Hebrew
@@ -222,13 +301,21 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
   const laughCounts = {};
   participants.forEach(p => (laughCounts[p] = 0));
   filteredText.forEach(m => {
-    // For Hebrew, skip laugh-detection on long messages (>8 words) containing מת
-    // to avoid false positives like "סבא שלי מת" (my grandpa died)
-    const wordCount = m.content.trim().split(/\s+/).length;
-    const isFalsePositiveRisk = lang === 'he' && wordCount > 8 && /מת/.test(m.content);
-    if (isFalsePositiveRisk) return;
+    // For Hebrew, skip laugh-detection on messages with serious/sad context
+    // e.g. "סבא שלי מת" (grandpa died) — avoid counting "מת" as a laugh expression
+    if (lang === 'he' && SERIOUS_CONTEXT_HE.test(m.content)) return;
     const matches = m.content.match(LAUGH_PATTERNS) || [];
     if (laughCounts[m.sender] !== undefined) laughCounts[m.sender] += matches.length;
+  });
+
+  // Israeli slang counts
+  const israeliSlangCount = {};
+  participants.forEach(p => (israeliSlangCount[p] = 0));
+  filteredText.forEach(m => {
+    if (!participants.includes(m.sender)) return;
+    ISRAELI_SLANG_RE.lastIndex = 0;
+    const matches = m.content.match(ISRAELI_SLANG_RE) || [];
+    israeliSlangCount[m.sender] += matches.length;
   });
 
   const nightOwlCounts = {};
@@ -288,14 +375,68 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     avgWordsPerMessage[p] = msgTextCounts[p] > 0 ? wordTotals[p] / msgTextCounts[p] : 0;
   });
 
-  // Swear counts
+  // Swear counts + top swear word per user
   const swearCounts = {};
-  participants.forEach(p => (swearCounts[p] = 0));
+  const topSwearWord = {};
+  const _userSwearMaps = {};
+  participants.forEach(p => { swearCounts[p] = 0; _userSwearMaps[p] = {}; });
   filteredText.forEach(m => {
     if (!participants.includes(m.sender)) return;
-    const words = m.content.toLowerCase().split(/\s+/);
-    words.forEach(w => { if (SWEAR_WORDS.has(w.replace(/[^a-z*]/g, ''))) swearCounts[m.sender]++; });
+    const found = detectSwearsInMessage(m.content, lang);
+    for (const [word, count] of Object.entries(found)) {
+      swearCounts[m.sender] += count;
+      _userSwearMaps[m.sender][word] = (_userSwearMaps[m.sender][word] || 0) + count;
+    }
   });
+  participants.forEach(p => {
+    const entries = Object.entries(_userSwearMaps[p]);
+    topSwearWord[p] = entries.length > 0 ? entries.sort((a, b) => b[1] - a[1])[0][0] : null;
+  });
+
+  // ─── Viral Behavior Analytics ───────────────────────────────────────────────
+  // Voice notes
+  const VOICE_NOTE_PATTERN = /(?:audio omitted|האודיו הושמט)/i;
+  const voiceNoteCounts = {};
+  participants.forEach(p => (voiceNoteCounts[p] = 0));
+  filtered.forEach(m => {
+    if (VOICE_NOTE_PATTERN.test(m.content) && voiceNoteCounts[m.sender] !== undefined)
+      voiceNoteCounts[m.sender]++;
+  });
+
+  // Link sharing
+  const linkCounts = {};
+  participants.forEach(p => (linkCounts[p] = 0));
+  filteredText.forEach(m => {
+    if (!participants.includes(m.sender)) return;
+    if (/https?:\/\//.test(m.content)) linkCounts[m.sender]++;
+  });
+
+  // Average characters per message (Yapper vs Enter-Key Abuser)
+  const _charTotals = {};
+  const _charMsgCounts = {};
+  participants.forEach(p => { _charTotals[p] = 0; _charMsgCounts[p] = 0; });
+  filteredText.forEach(m => {
+    if (!participants.includes(m.sender)) return;
+    _charTotals[m.sender] += m.content.length;
+    _charMsgCounts[m.sender]++;
+  });
+  const avgCharsPerMessage = {};
+  participants.forEach(p => {
+    avgCharsPerMessage[p] = _charMsgCounts[p] > 0 ? Math.round(_charTotals[p] / _charMsgCounts[p]) : 0;
+  });
+
+  // Ghost / Ignored: how many times a user sent the last message before a 12h+ gap
+  // and the next message was from a different sender
+  const ignoredCounts = {};
+  participants.forEach(p => (ignoredCounts[p] = 0));
+  for (let i = 0; i < filtered.length - 1; i++) {
+    const curr = filtered[i];
+    const next = filtered[i + 1];
+    const deltaHours = (parseDate(next) - parseDate(curr)) / 3600000;
+    if (deltaHours > 12 && next.sender !== curr.sender && participants.includes(curr.sender)) {
+      ignoredCounts[curr.sender]++;
+    }
+  }
 
   // Regret index (deleted messages)
   const regretCounts = {};
@@ -418,6 +559,7 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     topWords,
     signatureEmojis,
     laughCounts,
+    israeliSlangCount,
     nightOwlCounts,
     mediaCounts,
     capsLockCounts,
@@ -428,7 +570,12 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     summoningSpell,
     doubleTextCounts,
     avgWordsPerMessage,
+    avgCharsPerMessage,
     swearCounts,
+    topSwearWord,
+    voiceNoteCounts,
+    linkCounts,
+    ignoredCounts,
     regretCounts,
     fullChatText,
     doubleDownCounts,
