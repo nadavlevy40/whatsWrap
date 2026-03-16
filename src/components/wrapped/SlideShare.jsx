@@ -4,6 +4,7 @@ import { Copy, Check, MessageCircle } from 'lucide-react';
 import { t, isRTL } from './i18n';
 import confetti from 'canvas-confetti';
 
+
 function generateShareUrl() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
   const code = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
