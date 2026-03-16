@@ -141,35 +141,54 @@ Use the LOCAL STATS from the user message to determine winners — trust those n
       ].join('\n...\n');
 
       const statsStr = JSON.stringify({
-        totalMessages: parsed.totalMessages,
         msgCounts: parsed.msgCounts,
-        topWords: parsed.topWords,
+        topWords: parsed.topWords.slice(1, 6), // Hide the #1 word to force "B-Side" questions
         laughCounts: parsed.laughCounts,
-        nightOwlCounts: parsed.nightOwlCounts,
         replyTimes: parsed.replyTimes,
-        initiatorCounts: parsed.initiatorCounts,
         signatureEmojis: parsed.signatureEmojis,
+        apologies: parsed.apologyCountsLocal, // Who says sorry the most
+        swearWords: parsed.swearCounts, // Who curses the most
+        passiveAggressive: parsed.tensionCounts, // Who says "fine/סבבה/טוב" the most
+        mediaSent: parsed.mediaCounts, // Who sends the most photos/voice notes
+        busiestDay: parsed.busiestDay, // { date, count }
+        longestStreak: parsed.longestStreak, // { user, count }
+        firstMessage: parsed.firstMessage // { sender, date, content }
       });
+      const revealedInsightsStr = JSON.stringify(parsed.aiInsights?.superlatives || {});
 
       const triviaLangNote = language === 'he'
-        ? `IMPORTANT: Write ALL question prompts, options, and funFacts in Hebrew using casual Israeli language.
-CRITICAL GENDER-NEUTRAL RULE: When selecting quotes for "Who said it?" questions, you MUST pick completely gender-neutral phrases. Do NOT pick quotes that contain gendered present-tense verbs (e.g., הולך/הולכת, אוכל/אוכלת) or gendered adjectives (e.g., עייף/עייפה, שמח/שמחה). Instead, select quotes based on neutral slang, nouns, questions, or first-person past-tense phrases (e.g., "אין מצב", "איזה סיוט", "יאללה מתי יוצאים", "הלכתי לישון", "מה קורה פה"). The quote must NOT give away the gender of the speaker.`
-        : 'Write all questions in English.';
+        ? `CRITICAL HEBREW RULES: 
+1. Write ALL questions, options, and funFacts in casual Israeli Hebrew slang.
+2. GENDER-NEUTRAL QUOTES ONLY: For "Who said it?" questions, NEVER use quotes with gendered verbs/adjectives (like הולך/הולכת, עייף/עייפה). Use neutral phrases.`
+        : 'Write all questions in English using casual, fun language.';
 
-      const triviaSystem = `You are a creative and witty trivia game designer for a WhatsApp chat "Wrapped" experience.
+      const triviaSystem = `You are a witty, savage trivia game host for a WhatsApp "Wrapped" app.
 ${triviaLangNote}
-Generate 6 surprising, fun, creative trivia questions based on ACTUAL content of the chat.
-Rules:
-- Questions must be based on REAL things found in the chat: specific moments, recurring themes, inside jokes, unusual habits, fun patterns.
-- Be creative and vary question types. Good examples:
-  * "Which topic came up the most in [month]?"
-  * "Who sent the longest message in the whole chat?"
-  * "Fill in the blank: '[partial quote]...'"
-  * "Who was more likely to double-text?"
-- Questions should be surprising — even someone in the chat should have to think.
-- Each question must have exactly 4 answer options, one being correct.
+Your job is to generate 6 fun, 100% FACTUAL trivia questions based ONLY on the provided "Chat Stats".
+
+CRITICAL ANTI-DUPLICATION RULES:
+Do NOT ask about the absolute #1 sender or the specific winners of these awards: ${revealedInsightsStr}
+
+TRIVIA TOPIC INSPIRATION (Use the provided stats to create these):
+- "The Busiest Day": Ask what date the chat exploded with [X] messages. (Use busiestDay stat).
+- "The Monologue": Ask who holds the record for sending [X] messages in a row without anyone replying. (Use longestStreak stat).
+- "The Genesis": Ask what the very first message in the chat was, or who sent it. (Use firstMessage stat).
+- "The Apologizer": Ask who has said 'sorry' or 'סליחה' the most times. (Use apologies stat).
+- "The Passive Aggressive": Ask who used words like 'fine/סבבה/טוב' the most. (Use passiveAggressive stat).
+- "The Media Mogul": Ask who sent the most pictures/voice notes. (Use mediaSent stat).
+- "Who Said It?": Pick a funny, out-of-context quote from the "Chat sample" and ask who said it.
+
+Output Requirements:
+- Make wrong answers plausible (e.g., use the other participants' names).
 - Return JSON with key "questions": array of 6 objects:
-  { "prompt": string, "emoji": string, "label": string, "options": [4 strings], "correct": string, "funFact": string }`;
+  {
+    "prompt": string (the question),
+    "emoji": string,
+    "label": string (e.g. "Chat History 📜", "Toxic Traits 🚩", "Record Breaker 🏆"),
+    "options": array of 4 strings,
+    "correct": string (must exactly match one of the options),
+    "funFact": string (A sassy, funny 1-sentence comment explaining the answer)
+  }`;
 
       const triviaUser = `Participants: ${(parsed.participants || []).join(', ')}
 Chat stats: ${statsStr}

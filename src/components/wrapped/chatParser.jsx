@@ -549,6 +549,36 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
 
   // Summoning spell: find the least active user and what keyword triggers their replies
   const summoningSpell = computeSummoningSpell(filtered, participants, msgCounts, stopWords, lang);
+  // 1. The Busiest Day Ever (Most messages in a single date)
+  const dailyCounts = {};
+  filtered.forEach(m => {
+    dailyCounts[m.date] = (dailyCounts[m.date] || 0) + 1;
+  });
+  let busiestDay = { date: '', count: 0 };
+  for (const [date, count] of Object.entries(dailyCounts)) {
+    if (count > busiestDay.count) busiestDay = { date, count };
+  }
+
+  // 2. The Longest Monologue (Most consecutive messages sent by one person before anyone replied)
+  let longestStreak = { user: '', count: 0 };
+  let currentStreak = 1;
+  let streakUser = filtered.length > 0 ? filtered[0].sender : null;
+  for (let i = 1; i < filtered.length; i++) {
+    if (filtered[i].sender === streakUser) {
+      currentStreak++;
+      if (currentStreak > longestStreak.count && participants.includes(streakUser)) {
+        longestStreak = { user: streakUser, count: currentStreak };
+      }
+    } else {
+      currentStreak = 1;
+      streakUser = filtered[i].sender;
+    }
+  }
+
+  // 3. The Genesis (The very first text message in the chat)
+  const firstMessage = filteredText.length > 0 
+    ? { sender: filteredText[0].sender, date: filteredText[0].date, content: filteredText[0].content } 
+    : null;
 
   return {
     participants,
@@ -582,6 +612,9 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     lastWordCounts,
     apologyCountsLocal,
     tensionCounts,
+    busiestDay,
+    longestStreak,
+    firstMessage,
     isMock: false,
   };
 }
