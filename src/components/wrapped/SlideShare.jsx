@@ -2,8 +2,7 @@ import { useState, useMemo, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, Check, MessageCircle } from 'lucide-react';
 import { t, isRTL } from './i18n';
-import ReactConfetti from 'canvas-confetti';
-import { useWindowSize } from 'react-use';
+import confetti from 'canvas-confetti';
 
 function generateShareUrl() {
   const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
