@@ -36,12 +36,8 @@ export default function SlideShare({ data, onRestart, lang = 'en' }) {
   const rtl = isRTL(lang);
 
   // Confetti logic
-  const { width, height } = useWindowSize();
-  const [showConfetti, setShowConfetti] = useState(true);
   useEffect(() => {
-    setShowConfetti(true);
-    const timeout = setTimeout(() => setShowConfetti(false), 4000);
-    return () => clearTimeout(timeout);
+    confetti({ particleCount: 400, spread: 160, origin: { y: 0.4 }, gravity: 0.15 });
   }, []);
 
   const handleCopy = () => {
