@@ -88,7 +88,11 @@ For mode="family", aiInsights must be:
 { "boomerScores": { [name]: number 0-100 }, "ignoredAward": { "user": string, "roast": string } }
 
 ALWAYS include a top-level "premiumInsights" object with this EXACT schema:
-{ "vibeShiftTimeline": "2-sentence story of exactly which month the chat turned from polite to unhinged", "personas": { "mainCharacter": string, "therapist": string, "chaosAgent": string, "boomerInTraining": string }, "relationshipDeepDive": { "firstVsLast": string, "apologyAnalysis": string, "duoName": string }, "theVault": { "hallOfFame": [{"sender": string, "quote": string}, {"sender": string, "quote": string}], "mostIgnoredTopic": string } }`;
+{ "vibeShiftTimeline": "2-sentence story of exactly which month the chat turned from polite to unhinged", "personas": { "mainCharacter": string, "therapist": string, "chaosAgent": string, "boomerInTraining": string }, "relationshipDeepDive": { "firstVsLast": string, "apologyAnalysis": string, "duoName": string }, "theVault": { "hallOfFame": [{"sender": string, "quote": string}, {"sender": string, "quote": string}], "mostIgnoredTopic": string } }
+
+ALWAYS include a top-level "superlatives" object with this EXACT schema (write all roast text in the specified language/tone):
+{ "theGhost": { "user": string|null, "roast": string|null }, "theSwearer": { "user": string|null, "topWord": string|null, "roast": string|null }, "thePodcastHost": { "user": string|null, "roast": string|null }, "theYapper": { "user": string|null, "roast": string|null }, "theEnterAbuser": { "user": string|null, "roast": string|null }, "theTikToker": { "user": string|null, "roast": string|null } }
+Use the LOCAL STATS from the user message to determine winners — trust those numbers, do NOT re-compute from chat text.`;
 
     const participantsNote = `IMPORTANT:
 1. Participant names are message authors (text before the colon). Do NOT include names in topWords, quotes, or summoningSpell keywords.
