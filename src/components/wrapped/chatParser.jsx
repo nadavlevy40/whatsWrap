@@ -438,6 +438,27 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     }
   }
 
+  let longestSilence = { gapMinutes: 0, brokenBy: '', date: '' };
+  for (let i = 1; i < filtered.length; i++) {
+    const delta = (parseDate(filtered[i]) - parseDate(filtered[i - 1])) / 60000;
+    if (delta > longestSilence.gapMinutes && participants.includes(filtered[i].sender)) {
+      longestSilence = { 
+        gapMinutes: delta, 
+        brokenBy: filtered[i].sender, 
+        date: filtered[i].date 
+      };
+    }
+  }
+
+  const NARCISSIST_WORDS = lang === 'he' ? ['אני', 'שלי', 'אותי', 'לי'] : ['i', 'me', 'my', 'mine'];
+  const narcissistCounts = {};
+  participants.forEach(p => (narcissistCounts[p] = 0));
+  filteredText.forEach(m => {
+    if (!participants.includes(m.sender)) return;
+    const words = m.content.toLowerCase().split(/\s+/);
+    words.forEach(w => { if (NARCISSIST_WORDS.includes(w)) narcissistCounts[m.sender]++; });
+  });
+
   // Regret index (deleted messages)
   const regretCounts = {};
   participants.forEach(p => (regretCounts[p] = 0));
@@ -606,6 +627,8 @@ function analyzeMessages(messages, stopWords = STOP_WORDS_EN, organizerWords = O
     voiceNoteCounts,
     linkCounts,
     ignoredCounts,
+    longestSilence,
+    narcissistCounts,
     regretCounts,
     fullChatText,
     doubleDownCounts,

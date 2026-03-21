@@ -140,6 +140,11 @@ Use the LOCAL STATS from the user message to determine winners — trust those n
         fullChat.slice(Math.max(0, len - 6000)),
       ].join('\n...\n');
 
+      const langInstruction = language === 'he'
+        ? `CRITICAL HEBREW RULES: Write ALL insight text, roasts, and stories in casual, modern Israeli internet slang. 
+        - Use terms like: "טוקסיק", "פה ג'ורה", "אחי", "אמאל'ה", "חיים שלי", "פיק מי", "חי בסרט", "מסנן/ת", "חופר/ת".
+        - Humor must be cynical, direct, and slightly dramatic. NEVER use formal, robotic Hebrew.`
+        : `Write all insight text in English. Act like a witty, slightly savage Gen-Z behavioral psychologist roasting their friends (e.g., "unhinged", "chronically online", "toxic").`;
       const statsStr = JSON.stringify({
         msgCounts: parsed.msgCounts,
         topWords: parsed.topWords.slice(1, 6), // Hide the #1 word to force "B-Side" questions
@@ -152,7 +157,10 @@ Use the LOCAL STATS from the user message to determine winners — trust those n
         mediaSent: parsed.mediaCounts, // Who sends the most photos/voice notes
         busiestDay: parsed.busiestDay, // { date, count }
         longestStreak: parsed.longestStreak, // { user, count }
-        firstMessage: parsed.firstMessage // { sender, date, content }
+        firstMessage: parsed.firstMessage, // { sender, date, content },
+        narcissists: parsed.narcissistCounts,
+        longestSilence: parsed.longestSilence, // The biggest gap in the chat
+        emojiDiversity: parsed.emojiDiversity // Who uses the most unique emojis
       });
       const revealedInsightsStr = JSON.stringify(parsed.aiInsights?.superlatives || {});
 
@@ -164,12 +172,12 @@ Use the LOCAL STATS from the user message to determine winners — trust those n
 
       const triviaSystem = `You are a witty, savage trivia game host for a WhatsApp "Wrapped" app.
 ${triviaLangNote}
-Your job is to generate 6 fun, 100% FACTUAL trivia questions based ONLY on the provided "Chat Stats".
+Your job is to generate 10 fun, 100% FACTUAL trivia questions based ONLY on the provided "Chat Stats".
 
 CRITICAL ANTI-DUPLICATION RULES:
 Do NOT ask about the absolute #1 sender or the specific winners of these awards: ${revealedInsightsStr}
 
-TRIVIA TOPIC INSPIRATION (Use the provided stats to create these):
+TRIVIA TOPIC INSPIRATION (Mix these up to reach 10 questions):
 - "The Busiest Day": Ask what date the chat exploded with [X] messages. (Use busiestDay stat).
 - "The Monologue": Ask who holds the record for sending [X] messages in a row without anyone replying. (Use longestStreak stat).
 - "The Genesis": Ask what the very first message in the chat was, or who sent it. (Use firstMessage stat).
@@ -198,7 +206,7 @@ IMPORTANT: Lines containing "omitted", "הושמט", "הושמטה" are system p
 Chat sample:
 ${triviaSample}
 
-Generate 6 creative trivia questions. Return only JSON.`;
+Generate exactly 10 creative trivia questions. Return only JSON.`;
 
       const triviaCompletion = await openai.chat.completions.create({
         model: 'gpt-4o-mini',
